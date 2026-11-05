@@ -1,7 +1,8 @@
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import include, path, re_path, reverse_lazy
+from django.urls import include, path, reverse_lazy
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -59,16 +60,4 @@ handler404 = "journal.views.not_found"
 handler500 = "journal.views.server_error"
 
 if settings.DEBUG:
-    # Serve static/media with no-cache headers so the explorer always reflects
-    # the files on disk. Run the dev server with `--nostatic` for this to take
-    # effect (otherwise runserver serves static before these URL patterns).
-    from config.dev_views import media_serve_no_cache, static_serve_no_cache
-
-    urlpatterns += [
-        re_path(r"^static/(?P<path>.*)$", static_serve_no_cache, {"insecure": True}),
-        re_path(
-            r"^media/(?P<path>.*)$",
-            media_serve_no_cache,
-            {"document_root": settings.MEDIA_ROOT},
-        ),
-    ]
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
