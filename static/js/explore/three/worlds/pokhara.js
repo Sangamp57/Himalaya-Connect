@@ -1,14 +1,7 @@
 import * as THREE from "three";
-import {
-  addLighting,
-  addSun,
-  bird,
-  cloud,
-  createSky,
-  mountain,
-  pine,
-  tree,
-} from "../helpers.js";
+import { bird, cloud, mountain, pine, tree } from "../helpers.js";
+import { buildWalkableTown } from "./walk-town.js";
+import { fbm, ss, lerp } from "./walk-engine.js";
 
 function mesh(stage, geometry, material, x = 0, y = 0, z = 0) {
   stage.trackGeometry(geometry);
@@ -108,160 +101,271 @@ function viewpoint(stage, x, z, rot = 0) {
   return group;
 }
 
-export default function buildPokhara({ scene, stage }) {
-  const detail = stage.quality !== "low";
-  createSky(scene, {
-    top: "#20445f",
-    bottom: "#e8c08b",
-    fog: "#cdb18c",
-    near: 60,
-    far: 160,
-  });
-  addLighting(scene, { shadows: detail, sun: [24, 32, 18], color: "#ffd6a4", intensity: 2.5, ambient: 1.5 });
-  addSun(scene, { position: [-32, 28, -46], size: 5.0, color: "#ffd7a8" });
+export default function buildPokhara({ scene, stage, manager }) {
+  const LAKE = { x: -20, z: 25, rx: 38, rz: 28, level: 0.9 };
+  const lakeD = (x, z) => Math.hypot((x - LAKE.x) / LAKE.rx, (z - LAKE.z) / LAKE.rz);
 
-  const grass = stage.material("#6f8a5a", { roughness: 1 });
-  const rock = stage.material("#5d5951", { roughness: 1 });
-  const sand = stage.material("#b9a47c", { roughness: 1 });
-  const water = stage.material("#2f8fa3", { roughness: 0.16, metalness: 0.18, transparent: true, opacity: 0.95 });
-
-  const island = cylinder(stage, 34, 29, 3.4, 18, rock, 0, -1.7, 0);
-  island.scale.y = 1.05;
-  stage.add(island);
-  stage.add(cylinder(stage, 33, 33, 0.45, 18, grass, 0, 0.22, 0));
-
-  // Phewa Lake.
-  const lake = mesh(stage, new THREE.CircleGeometry(14.5, 44), water, -4, 0.5, 2);
-  lake.rotation.x = -Math.PI / 2;
-  lake.scale.set(1.5, 1, 0.95);
-  stage.add(lake);
-  const shore = mesh(stage, new THREE.TorusGeometry(14.6, 0.55, 6, 48), sand, -4, 0.46, 2);
-  shore.rotation.x = -Math.PI / 2;
-  shore.scale.set(1.5, 1, 0.95);
-  stage.add(shore);
-
-  // Green hills and the World Peace Pagoda.
-  const hill = mesh(stage, new THREE.ConeGeometry(8.4, 7.5, 12), stage.material("#58744d", { roughness: 1 }), 14, 3.7, -5);
-  stage.add(hill);
-  const pagoda = stupa(stage, 14, 7.2, -5, 1.15);
-  stage.add(pagoda);
-
-  // Lakeside houses and a small market.
-  const houseWall = stage.material("#d8c8aa", { roughness: 0.95 });
-  const roofMat = stage.material("#7a4a32", { roughness: 0.9 });
-  for (let i = 0; i < 5; i += 1) {
-    const x = -20 + i * 7;
-    const z = 13 + (i % 2) * 3;
-    const w = 4.2 + (i % 2) * 0.8;
-    const h = 2.6 + (i % 3) * 0.3;
-    stage.add(box(stage, w, h, 3.4, houseWall, x, h / 2, z));
-    const roof = mesh(stage, new THREE.ConeGeometry(w * 0.8, 1.4, 4), roofMat, x, h + 0.7, z);
-    roof.rotation.y = Math.PI / 4;
-    stage.add(roof);
-    stage.add(box(stage, 0.9, 1.6, 0.12, stage.material("#3b2a1c", { roughness: 0.9 }), x - 0.8, 0.8, z + 1.7));
+  function heightFn(x, z) {
+    let h = 3.2 + fbm(x * 0.03, z * 0.03, 4) * 2.6;
+    h += 54 * Math.exp(-(((x - 82) ** 2 + (z + 48) ** 2) / (2 * 42 * 42)));
+    h += 26 * Math.exp(-(((x - 44) ** 2 + (z - 64) ** 2) / (2 * 26 * 26)));
+    h += 30 * Math.exp(-(((x + 82) ** 2 + (z + 44) ** 2) / (2 * 34 * 34)));
+    const pad = Math.hypot(x - 36, z - 20);
+    if (pad < 46) h = lerp(h, 4.1, ss(46, 22, pad));
+    const viewPads = [
+      [44, 64, 10, 30.5],
+      [82, -58, 12, 58.0],
+      [-82, -58, 12, 32.0],
+    ];
+    for (const [cx, cz, r, target] of viewPads) {
+      const d = Math.hypot(x - cx, z - cz);
+      if (d < r + 8) h = lerp(h, target, ss(r + 8, r, d));
+    }
+    const d = lakeD(x, z);
+    if (d < 1.16) h = lerp(h, -2.6, 1 - ss(0.72, 1.12, d));
+    return h;
   }
 
-  // Boats on the lake.
-  const boats = [];
-  ["#c94d3b", "#2f7f8f", "#d4a33c", "#4a6b9a"].forEach((color, i) => {
-    const b = boat(stage, -10 + i * 5.5, 1 + (i % 2) * 3.5, color, 0.5 + i * 0.7);
-    stage.add(b);
-    boats.push({ mesh: b, baseY: b.position.y, phase: i * 1.3 });
-  });
-
-  // Paraglider drifting above the valley.
-  const glider = paraglider(stage);
-  stage.add(glider);
-
-  // Annapurna and surrounding peaks.
-  const peaks = [
-    [-24, -30, 28, 13, "#526b7c", 0.42],
-    [-11, -34, 34, 15, "#4d6272", 0.4],
-    [4, -36, 31, 14, "#586f80", 0.43],
-    [18, -31, 25, 12, "#526878", 0.45],
-    [29, -25, 20, 10, "#5d7382", 0.46],
-  ];
-  peaks.forEach(([x, z, h, r, color, snow], i) => {
-    const peak = mountain(h, r, color, "#f6f2e8", snow, detail ? 7 : 5);
-    peak.position.set(x, 0.2, z);
-    peak.rotation.y = i * 0.7;
-    stage.add(peak);
-  });
-
-  // Trees and birds.
-  const treeSpots = [
-    [-24, 8], [-17, 16], [-10, 18], [2, 17], [8, 14],
-    [22, 9], [25, 2], [19, 12], [-26, -3], [-19, -8],
-    [7, 9], [-6, 10],
-  ];
-  treeSpots.forEach(([x, z], i) => {
-    const t = tree(x, z, 0.8 + (i % 3) * 0.12, "#4f7650", i % 4 === 0 ? "#e7b4ac" : null);
-    t.position.y = 0.4;
-    stage.add(t);
-  });
-  for (let i = 0; i < (detail ? 10 : 4); i += 1) {
-    const p = pine(-28 + i * 6, -14 - (i % 2) * 3, 0.7 + (i % 3) * 0.1, "#315b4c");
-    p.position.y = 0.4;
-    stage.add(p);
-  }
-  for (let i = 0; i < 6; i += 1) {
-    stage.add(bird(-12 + i * 5, 13 + i * 0.6, -8 - i * 2));
+  function colorFn(x, z, h) {
+    const d = lakeD(x, z);
+    if (d < 1.0 && h < 1.0) return new THREE.Color("#2f8fa3");
+    if (d < 1.12 && h < 2.6) return new THREE.Color("#b9a47c");
+    const n = fbm(x * 0.05, z * 0.05, 3);
+    if (h > 30) return new THREE.Color("#5d6b58").lerp(new THREE.Color("#7d8a6a"), n);
+    return new THREE.Color("#6f8a5a").lerp(new THREE.Color("#8fa04a"), n);
   }
 
-  const clouds = [];
-  for (let i = 0; i < (detail ? 6 : 3); i += 1) {
-    const c = cloud(1.6 + (i % 3) * 0.5);
-    c.position.set(-26 + i * 10, 9 + (i % 3) * 2, -22 - (i % 2) * 6);
-    stage.add(c);
-    clouds.push({ mesh: c, speed: 0.18 + i * 0.03 });
-  }
+  return buildWalkableTown({
+    scene,
+    stage,
+    manager,
+    seed: 20261110,
+    terrain: { heightFn, colorFn, segments: 170 },
+    places: {
+      lakeside: {
+        n: "Lakeside",
+        zh: "湖畔区",
+        sub: "جھیل کنارہ",
+        x: 36,
+        z: 20,
+        r: 34,
+        spawn: [34, 28],
+        look: [10, 45],
+        pitch: 1.3,
+        dist: 14,
+      },
+      phewa: {
+        n: "Phewa Lake",
+        zh: "费瓦湖",
+        sub: "پیوا جھیل",
+        x: -20,
+        z: 25,
+        r: 40,
+        spawn: [8, 52],
+        look: [-20, 25],
+        pitch: 1.32,
+        dist: 16,
+      },
+      sarangkot: {
+        n: "Sarangkot",
+        zh: "萨朗科特",
+        sub: "سرانکوٹ",
+        x: 82,
+        z: -58,
+        r: 26,
+        spawn: [82, -54],
+        look: [20, -120],
+        pitch: 1.36,
+        dist: 16,
+      },
+      peace: {
+        n: "World Peace Pagoda",
+        zh: "世界和平塔",
+        sub: "عالمی امن پگوڈا",
+        x: 44,
+        z: 64,
+        r: 24,
+        spawn: [44, 75],
+        look: [44, 64],
+        pitch: 1.34,
+        dist: 18,
+      },
+      annapurna: {
+        n: "Annapurna Viewpoint",
+        zh: "安纳普尔纳观景点",
+        sub: "اناپورنا نظارہ گاہ",
+        x: -82,
+        z: -58,
+        r: 26,
+        spawn: [-82, -54],
+        look: [10, -120],
+        pitch: 1.36,
+        dist: 16,
+      },
+    },
+    startPlace: "lakeside",
+    worldName: { en: "Pokhara", zh: "博卡拉", sub: "پوکھرا" },
+    mapBounds: { x0: -120, x1: 120, z0: -120, z1: 120 },
+    mapLines: [
+      [[-120, 25], [-20, 25], [80, 25]],
+      [[36, 20], [10, 52], [-40, 66], [-82, 20], [-82, -58]],
+      [[36, 20], [56, -8], [70, -36], [82, -58]],
+    ],
+    mapColor: (x, z) => {
+      const d = lakeD(x, z);
+      if (d < 1.0) return [47, 143, 163];
+      const h = heightFn(x, z);
+      if (h > 34) return [104, 112, 92];
+      return [111, 138, 90];
+    },
+    waterMask: (x, z, h) => lakeD(x, z) < 1.0 && h < 1.2,
+    fogDensity: 0.00055,
+    exposureScale: 0.95,
+    build: ({ kit, W, stage, hgt, makePath }) => {
+      const water = stage.material("#2f8fa3", { roughness: 0.16, metalness: 0.18, transparent: true, opacity: 0.95 });
+      const lake = mesh(stage, new THREE.CircleGeometry(1, 48), water, LAKE.x, LAKE.level, LAKE.z);
+      lake.rotation.x = -Math.PI / 2;
+      lake.scale.set(LAKE.rx, LAKE.rz, 1);
+      stage.add(lake);
+      const shore = mesh(stage, new THREE.TorusGeometry(1, 0.035, 5, 64), stage.material("#b9a47c", { roughness: 1 }), LAKE.x, LAKE.level + 0.03, LAKE.z);
+      shore.rotation.x = -Math.PI / 2;
+      shore.scale.set(LAKE.rx, LAKE.rz, 1);
+      stage.add(shore);
 
-  // Interactive landmarks.
-  const phewaGroup = boats[0].mesh;
-  stage.addInteractive("np-phewa", phewaGroup, {
-    label: "Phewa Lake",
-    accent: "#e6bc6a",
-    focus: [-10, 1, 1],
-    radius: 15,
-    beaconPosition: [-10, 0.9, 4],
-    labelOffset: 1.2,
+      // Lakeside houses.
+      const wall = stage.material("#d8c8aa", { roughness: 0.95 });
+      const roof = stage.material("#7a4a32", { roughness: 0.9 });
+      for (let i = 0; i < 6; i += 1) {
+        const x = 50 + (i % 3) * 8;
+        const z = 4 + Math.floor(i / 3) * 10;
+        const w = 4.2 + (i % 2) * 0.7;
+        const h = 2.8;
+        stage.add(box(stage, w, h, 3.5, wall, x, hgt(x, z) + h / 2, z));
+        const r = mesh(stage, new THREE.ConeGeometry(w * 0.8, 1.3, 4), roof, x, hgt(x, z) + h + 0.65, z);
+        r.rotation.y = Math.PI / 4;
+        stage.add(r);
+      }
+
+      // Boats and the lake beacon.
+      const boatGroup = boat(stage, 8, 50, "#c94d3b", 0.4);
+      boatGroup.position.y = LAKE.level + 0.12;
+      stage.add(boatGroup);
+      for (let i = 0; i < 3; i += 1) {
+        const b = boat(stage, -18 + i * 12, 34 - i * 6, ["#2f7f8f", "#d4a33c", "#4a6b9a"][i], 0.7 + i * 0.4);
+        b.position.y = LAKE.level + 0.12;
+        stage.add(b);
+      }
+
+      // Peace Pagoda.
+      const pagoda = stupa(stage, 44, hgt(44, 64), 64, 1.05);
+      stage.add(pagoda);
+
+      // Sarangkot and Annapurna viewpoints.
+      const sarangkot = viewpoint(stage, 82, -58, -0.8);
+      sarangkot.position.y = hgt(82, -58);
+      stage.add(sarangkot);
+      const annapurna = viewpoint(stage, -82, -58, 0.8);
+      annapurna.position.y = hgt(-82, -58);
+      stage.add(annapurna);
+
+      // Paraglider above the ridge.
+      const glider = paraglider(stage);
+      glider.position.set(72, 24, -38);
+      stage.add(glider);
+      stage.animate((time, delta) => {
+        if (stage.reducedMotion) return;
+        glider.position.x += delta * 0.45;
+        glider.position.y = 24 + Math.sin(time * 0.4) * 0.5;
+        if (glider.position.x > 110) glider.position.x = 35;
+      });
+
+      // Paths.
+      makePath([[36, 20], [24, 38], [12, 50], [8, 52]], 3.0);
+      makePath([[36, 20], [50, 2], [64, -22], [74, -42], [82, -54]], 2.8);
+      makePath([[36, 20], [36, 38], [42, 54], [44, 62], [44, 75]], 2.6);
+      makePath([[8, 52], [-24, 68], [-58, 56], [-78, 18], [-82, -20], [-82, -54]], 2.8);
+
+      // Trees.
+      const treeSpots = [
+        [20, 36], [28, 44], [50, 36], [58, 30], [16, 58], [60, 58],
+        [4, 64], [-20, 72], [-46, 62], [-64, 36], [-70, 4], [-56, -18],
+        [70, -20], [90, -34], [62, -50], [30, 70],
+      ];
+      treeSpots.forEach(([x, z], i) => {
+        const t = tree(x, z, 0.75 + (i % 3) * 0.12, "#4f7650", i % 4 === 0 ? "#e7b4ac" : null);
+        t.position.y = hgt(x, z);
+        stage.add(t);
+      });
+      for (let i = 0; i < 8; i += 1) {
+        const p = pine(-92 + i * 8, -70 - (i % 2) * 4, 0.8 + (i % 3) * 0.12, "#315b4c");
+        p.position.y = hgt(-92 + i * 8, -70 - (i % 2) * 4);
+        stage.add(p);
+      }
+
+      // Annapurna range behind the valley.
+      const peaks = [
+        [-46, -116, 64, 34, "#526b7c", 0.4],
+        [-24, -122, 82, 42, "#4d6272", 0.38],
+        [-2, -124, 76, 38, "#586f80", 0.42],
+        [22, -120, 68, 34, "#526878", 0.44],
+        [48, -114, 56, 30, "#5d7382", 0.46],
+        [68, -108, 46, 24, "#617482", 0.48],
+      ];
+      peaks.forEach(([x, z, h, r, color, snow], i) => {
+        const peak = mountain(h, r, color, "#f6f2e8", snow, 7);
+        peak.position.set(x, 0, z);
+        peak.rotation.y = i * 0.7;
+        stage.add(peak);
+      });
+
+      const clouds = [];
+      for (let i = 0; i < 5; i += 1) {
+        const c = cloud(1.8 + (i % 3) * 0.5);
+        c.position.set(-60 + i * 28, 24 + (i % 3) * 3, -70 - (i % 2) * 8);
+        stage.add(c);
+        clouds.push({ mesh: c, speed: 0.18 + i * 0.03 });
+      }
+      for (let i = 0; i < 6; i += 1) {
+        stage.add(bird(-40 + i * 18, 22 + i * 0.8, -20 - i * 4));
+      }
+      stage.animate((time, delta) => {
+        if (stage.reducedMotion) return;
+        clouds.forEach((c) => {
+          c.mesh.position.x += c.speed * delta;
+          if (c.mesh.position.x > 120) c.mesh.position.x = -120;
+        });
+      });
+
+      W.interactive("np-phewa", boatGroup, "Phewa Lake", [8, 52], { radius: 18, labelOffset: 1.4 });
+      W.interactive("np-annapurna", annapurna, "Annapurna viewpoint", [-80, -56], { radius: 18, labelOffset: 1.6 });
+      W.interactive("np-sarangkot", sarangkot, "Sarangkot launch", [80, -56], { radius: 18, labelOffset: 1.6 });
+    },
+    people: (W) => {
+      const mix = ["trekker", "hunza-woman", "hunza-man", "schoolgirl", "elder", "porter"];
+      const add = (cx, cz, radius, count) => {
+        for (let i = 0; i < count; i += 1) {
+          const a = W.stage.quality === "low" ? i * 1.7 : Math.random() * Math.PI * 2;
+          const d = 4 + Math.random() * radius;
+          const x = cx + Math.cos(a) * d;
+          const z = cz + Math.sin(a) * d;
+          W.addNpc({
+            kind: Math.random() < 0.4 ? "idle" : "wander",
+            cx,
+            cz,
+            R: radius,
+            x,
+            z,
+            tx: 0,
+            tz: 0,
+            wait: Math.random() * 4,
+            design: W.pick(mix),
+          });
+        }
+      };
+      add(36, 20, 16, 16);
+      add(10, 58, 4, 6);
+      add(82, -54, 8, 4);
+      add(-82, -54, 8, 3);
+    },
   });
-
-  const annapurna = viewpoint(stage, -18, -10, 0.5);
-  stage.add(annapurna);
-  stage.addInteractive("np-annapurna", annapurna, {
-    label: "Annapurna viewpoint",
-    accent: "#e6bc6a",
-    focus: [-18, 1.2, -10],
-    radius: 14,
-    beaconPosition: [-18, 0.8, -7],
-    labelOffset: 1.2,
-  });
-
-  const launch = viewpoint(stage, 23, 8, -0.8);
-  stage.add(launch);
-  stage.addInteractive("np-sarangkot", launch, {
-    label: "Sarangkot launch",
-    accent: "#e6bc6a",
-    focus: [23, 1.2, 8],
-    radius: 14,
-    beaconPosition: [23, 0.8, 11],
-    labelOffset: 1.2,
-  });
-
-  stage.animate((time, delta) => {
-    if (stage.reducedMotion) return;
-    boats.forEach((b) => {
-      b.mesh.position.y = b.baseY + Math.sin(time * 0.7 + b.phase) * 0.05;
-    });
-    glider.position.x += delta * 0.55;
-    glider.position.y = 17 + Math.sin(time * 0.4) * 0.5;
-    if (glider.position.x > 20) glider.position.x = -22;
-    clouds.forEach((c) => {
-      c.mesh.position.x += c.speed * delta;
-      if (c.mesh.position.x > 34) c.mesh.position.x = -34;
-    });
-  });
-
-  return { objectId: "pokhara" };
 }

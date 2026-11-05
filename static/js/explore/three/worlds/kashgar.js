@@ -1,17 +1,17 @@
 import * as THREE from "three";
 import {
-  addLighting,
-  addSun,
   bird,
   brickTexture,
   cloud,
   colors,
-  createSky,
   makeCanvasTexture,
   pavingTexture,
   tileTexture,
+  tree,
   woodTexture,
 } from "../helpers.js";
+import { buildWalkableTown } from "./walk-town.js";
+import { fbm, ss, lerp } from "./walk-engine.js";
 
 function mesh(stage, geometry, material, x = 0, y = 0, z = 0) {
   stage.trackGeometry(geometry);
@@ -421,256 +421,302 @@ function buildTradingStation(stage) {
   return group;
 }
 
-export default function buildKashgar({ scene, stage }) {
-  const detail = stage.quality !== "low";
-  createSky(scene, {
-    top: "#17324e",
-    bottom: "#efb873",
-    fog: "#cdac80",
-    near: 42,
-    far: 105,
-  });
-  addLighting(scene, { shadows: detail, sun: [20, 25, 16], color: "#ffca88", intensity: 2.4, ambient: 1.35 });
-  addSun(scene, { position: [34, 23, -34], size: 5.2, color: "#ffcf8f" });
+function kashgarMosque(stage, wallMap, timberMap) {
+  const group = new THREE.Group();
+  group.position.set(38, 0, -30);
+  const wall = stage.material("#ffffff", { map: wallMap, roughness: 0.97 });
+  const timber = stage.material("#ffffff", { map: timberMap, roughness: 0.9 });
+  const dark = stage.material("#2a1e17", { roughness: 0.9 });
+  const tile = stage.material("#3f7a76", { roughness: 0.8 });
+  const gold = stage.material("#d8a541", { metalness: 0.4, roughness: 0.35 });
 
-  const wallMap = stage.trackTexture(brickTexture("#b58a5c", "#8b6642", [3, 3]));
-  const timberMap = stage.trackTexture(woodTexture("#67422a", "#3c2416", [2, 2]));
-  const roofMap = stage.trackTexture(tileTexture("#a06e45", "#735035", [3, 3]));
-  const pavingMap = stage.trackTexture(pavingTexture("#b39a77", "#81684b", [8, 8]));
-  const atlasMap = stage.trackTexture(atlasTexture());
-
-  const ground = box(stage, 42, 0.8, 34, stage.material("#ffffff", { map: pavingMap, roughness: 0.98 }), 0, -0.4, 0);
-  ground.receiveShadow = true;
-  stage.add(ground);
-  const street = box(stage, 8.5, 0.07, 30, stage.material("#a28665", { roughness: 1 }), 0, 0.02, 2.5);
-  stage.add(street);
-  const gutter = box(stage, 0.5, 0.06, 30, stage.material("#6f5843", { roughness: 1 }), 4.4, 0.03, 2.5);
-  stage.add(gutter);
-  const gutterB = gutter.clone();
-  gutterB.position.x = -4.4;
-  stage.add(gutterB);
-
-  // Arched gateway in the distance.
-  const gate = new THREE.Group();
-  gate.position.set(0, 0, -13.5);
-  const gateWall = box(stage, 12, 8, 1.2, stage.material("#ffffff", { map: wallMap, roughness: 0.97 }), 0, 4, 0);
-  gate.add(gateWall);
-  const gateOpening = box(stage, 4.3, 5.6, 0.2, stage.material("#251c17", { roughness: 0.9 }), 0, 2.8, 0.7);
-  gate.add(gateOpening);
-  const gateArch = mesh(stage, new THREE.CircleGeometry(2.15, 18, 0, Math.PI), stage.material("#251c17", { roughness: 0.9 }), 0, 5.6, 0.72);
-  gate.add(gateArch);
-  const gateTrim = box(stage, 5.4, 6.2, 0.25, stage.material("#bf8449", { roughness: 0.9 }), 0, 3.1, 0.57);
-  gate.add(gateTrim);
-  const gateInner = box(stage, 4.3, 5.6, 0.25, stage.material("#251c17", { roughness: 0.9 }), 0, 2.8, 0.79);
-  gate.add(gateInner);
-  const gateArch2 = mesh(stage, new THREE.CircleGeometry(2.15, 18, 0, Math.PI), stage.material("#251c17", { roughness: 0.9 }), 0, 5.6, 0.8);
-  gate.add(gateArch2);
-  for (let index = 0; index < 4; index += 1) {
-    const miniWindow = box(stage, 0.8, 1.2, 0.1, stage.material("#2b2019", { roughness: 0.9 }), -4.6 + index * 3.05, 6.5, 0.68);
-    gate.add(miniWindow);
+  group.add(box(stage, 26, 0.6, 22, stage.material("#b39a77", { roughness: 1 }), 0, 0.3, 0));
+  for (let i = 0; i < 4; i += 1) {
+    const x = i < 2 ? -12 : 12;
+    const z = i % 2 ? -10 : 10;
+    group.add(box(stage, 0.8, 2.2, 20, wall, x, 1.7, 0));
+    group.add(box(stage, 24, 2.2, 0.8, wall, 0, 1.7, z));
   }
-  stage.add(gate);
-
-  const housesLeft = [
-    { x: -12.3, z: -5, rotation: Math.PI / 2, width: 5.0, depth: 4.2, height: 5.2, accent: "#a86c3b" },
-    { x: -12.6, z: 1.6, rotation: Math.PI / 2, width: 4.8, depth: 4.0, height: 4.2, accent: "#985936" },
-    { x: -12.2, z: 8.5, rotation: Math.PI / 2, width: 5.4, depth: 4.5, height: 5.6, accent: "#b27b46" },
-    { x: 12.5, z: -5.6, rotation: -Math.PI / 2, width: 5.2, depth: 4.4, height: 4.8, accent: "#a0613b" },
-    { x: 12.8, z: 1.8, rotation: -Math.PI / 2, width: 5.0, depth: 4.2, height: 5.4, accent: "#b77a43" },
-    { x: 12.4, z: 9.0, rotation: -Math.PI / 2, width: 5.6, depth: 4.4, height: 4.4, accent: "#955a36" },
-  ];
-  housesLeft.forEach((spec) => stage.add(buildHouse(stage, { ...spec, wallMap, timberMap, roofMap })));
-
-  const copper = buildCopperWorkshop(stage, wallMap, timberMap);
-  stage.add(copper);
-  stage.addInteractive("cn-copper", copper, {
-    label: "Copper workshop",
-    accent: "#e6bc6a",
-    focus: [-8.9, 1.7, -1.4],
-    radius: 8.3,
-    beaconPosition: [-7.9, 0.12, 0.1],
-  });
-
-  const food = buildFoodStall(stage);
-  stage.add(food);
-  stage.addInteractive("cn-food", food, {
-    label: "Naan & polo",
-    accent: "#e6bc6a",
-    focus: [3.2, 1.7, 5.9],
-    radius: 8.4,
-    beaconPosition: [3.2, 0.1, 7.4],
-  });
-
-  const rawap = buildRawapShop(stage, wallMap, timberMap);
-  stage.add(rawap);
-  stage.addInteractive("cn-rawap", rawap, {
-    label: "Rawap",
-    accent: "#e6bc6a",
-    focus: [9.4, 1.9, -3.2],
-    radius: 8.3,
-    beaconPosition: [8.1, 0.12, -2.1],
-  });
-
-  const atlas = buildAtlasWorkshop(stage, atlasMap, wallMap, timberMap);
-  stage.add(atlas);
-  stage.addInteractive("cn-atlas", atlas, {
-    label: "Atlas silk",
-    accent: "#e6bc6a",
-    focus: [-8.6, 1.9, 6.3],
-    radius: 8.7,
-    beaconPosition: [-7.5, 0.12, 7.7],
-  });
-
-  const courtyard = buildCourtyardHouse(stage, wallMap, timberMap, roofMap);
-  stage.add(courtyard);
-  stage.addInteractive("cn-courtyard", courtyard, {
-    label: "Courtyard house",
-    accent: "#e6bc6a",
-    focus: [9.6, 2.7, 3.8],
-    radius: 18,
-    beaconPosition: [8.1, 0.15, 5.8],
-    labelOffset: 1.1,
-  });
-
-  const doppa = buildDoppaStall(stage);
-  stage.add(doppa);
-  stage.addInteractive("cn-doppa", doppa, {
-    label: "Doppa",
-    accent: "#e6bc6a",
-    focus: [2.8, 1.3, -5.2],
-    radius: 7.5,
-    beaconPosition: [2.8, 0.1, -3.7],
-  });
-
-  const door = buildCarvedDoor(stage, wallMap, timberMap);
-  stage.add(door);
-  stage.addInteractive("cn-door", door, {
-    label: "Carved door",
-    accent: "#e6bc6a",
-    focus: [-10.2, 1.7, 10.2],
-    radius: 8.1,
-    beaconPosition: [-8.8, 0.12, 11.4],
-  });
-
-  const trading = buildTradingStation(stage);
-  stage.add(trading);
-  stage.addInteractive("cn-market", trading, {
-    label: "Grand Bazaar",
-    accent: "#e6bc6a",
-    focus: [-2.8, 1.5, 9.8],
-    radius: 9.4,
-    beaconPosition: [-2.8, 0.12, 11.4],
-    labelOffset: 1.0,
-  });
-
-  // Awnings, textiles, lanterns and market clutter.
-  const awningColors = ["#9d3e30", "#c4973c", "#2f6a58", "#7b4a6f"];
-  const awnings = [
-    [-5.5, -0.5, 4.8, 0.1, 0],
-    [5.9, 5.1, 4.2, -0.15, 1],
-    [-5.2, 8.7, 3.8, 0.12, 2],
-    [5.0, 10.9, 4.4, 0.08, 3],
-  ];
-  awnings.forEach(([x, z, width, rotation, index]) => {
-    const awning = box(stage, width, 0.1, 2.5, stage.material(awningColors[index], { roughness: 0.92 }), x, 3.0, z);
-    awning.rotation.z = rotation;
-    stage.add(awning);
-    for (let stripe = 0; stripe < Math.floor(width / 0.55); stripe += 1) {
-      const trim = box(stage, 0.5, 0.02, 2.5, stage.material("#f1dfba", { roughness: 0.9 }), x - width / 2 + 0.4 + stripe * 0.55, 3.06, z);
-      trim.rotation.z = rotation;
-      stage.add(trim);
-    }
-  });
-
-  const lanternMaterial = stage.material("#f3b94f", { emissive: new THREE.Color("#b95e19"), emissiveIntensity: 0.8 });
-  for (let index = 0; index < 8; index += 1) {
-    const x = -5.2 + (index % 4) * 3.45;
-    const z = index < 4 ? -2.5 : 6.5;
-    const cable = box(stage, 4.0, 0.025, 0.025, stage.material("#4d3827", { roughness: 0.8 }), x + 1.7, 6.0, z);
-    stage.add(cable);
-    const lantern = cylinder(stage, 0.2, 0.28, 0.55, 8, lanternMaterial, x, 5.55, z);
-    stage.add(lantern);
-    const cap = mesh(stage, new THREE.ConeGeometry(0.28, 0.2, 8), stage.material("#75422a", { metalness: 0.2, roughness: 0.6 }), x, 5.9, z);
-    stage.add(cap);
+  group.add(box(stage, 16, 8, 10, wall, 0, 4.6, -2));
+  group.add(box(stage, 16.6, 0.4, 10.6, timber, 0, 8.8, -2));
+  const dome = mesh(stage, new THREE.SphereGeometry(5.2, 20, 12), tile, 0, 10.6, -2);
+  dome.scale.y = 0.75;
+  group.add(dome);
+  group.add(cylinder(stage, 0.2, 0.3, 2.0, 8, gold, 0, 14.0, -2));
+  group.add(mesh(stage, new THREE.ConeGeometry(0.3, 0.8, 8), gold, 0, 15.0, -2));
+  for (const x of [-10, 10]) {
+    group.add(cylinder(stage, 1.5, 2.0, 14.0, 14, wall, x, 7.2, -8));
+    group.add(cylinder(stage, 1.8, 1.8, 0.35, 14, tile, x, 14.3, -8));
+    const cap = mesh(stage, new THREE.ConeGeometry(1.5, 1.5, 12), tile, x, 15.0, -8);
+    group.add(cap);
   }
-
-  const rugMaterial = stage.material("#a34a37", { roughness: 0.94, side: THREE.DoubleSide });
-  const rug = mesh(stage, new THREE.PlaneGeometry(2.2, 3.0), rugMaterial, 10.9, 4.0, 7.2);
-  rug.rotation.y = -Math.PI / 2;
-  stage.add(rug);
-  for (let index = 0; index < 3; index += 1) {
-    const stripe = mesh(stage, new THREE.PlaneGeometry(2.0, 0.08), stage.material(["#d4aa51", "#eddfbd", "#3b6f5d"][index], { roughness: 0.9, side: THREE.DoubleSide }), 10.89, 3.2 + index * 0.55, 7.2);
-    stripe.rotation.y = -Math.PI / 2;
-    stage.add(stripe);
+  group.add(box(stage, 4.2, 4.6, 0.3, dark, 0, 2.6, 3.1));
+  const arch = mesh(stage, new THREE.CircleGeometry(2.1, 18, 0, Math.PI), dark, 0, 4.9, 3.15);
+  group.add(arch);
+  for (let i = 0; i < 3; i += 1) {
+    group.add(box(stage, 1.0, 1.5, 0.12, dark, -5 + i * 5, 4.5, 3.1));
   }
+  return group;
+}
 
-  const crateMaterial = stage.material("#755033", { roughness: 0.95 });
-  for (let index = 0; index < 5; index += 1) {
-    const crate = box(stage, 1.05, 0.85, 0.9, crateMaterial, -9.8 + index * 0.5, 0.42, 12.4);
-    stage.add(crate);
-    stage.add(box(stage, 1.05, 0.08, 0.9, stage.material("#9e6b3c", { roughness: 0.9 }), -9.8 + index * 0.5, 0.88, 12.4));
+function kashgarTeaHouse(stage, wallMap, timberMap) {
+  const group = new THREE.Group();
+  group.position.set(0, 0, 42);
+  const wall = stage.material("#ffffff", { map: wallMap, roughness: 0.97 });
+  const timber = stage.material("#ffffff", { map: timberMap, roughness: 0.9 });
+  const dark = stage.material("#3a2a1c", { roughness: 0.9 });
+  group.add(box(stage, 10, 3.6, 8, wall, 0, 1.8, 0));
+  group.add(box(stage, 10.6, 0.35, 8.6, timber, 0, 3.8, 0));
+  group.add(box(stage, 8.6, 2.8, 0.3, dark, 0, 1.4, 4.05));
+  group.add(box(stage, 4.4, 0.3, 3.2, timber, 0, 3.0, 5.4));
+  for (const x of [-4.4, 4.4]) {
+    group.add(box(stage, 0.16, 2.8, 0.16, timber, x, 1.4, 6.6));
   }
-  const spiceColors = ["#d9852e", "#b23c27", "#c8a343", "#7b5e35"];
-  for (let index = 0; index < 4; index += 1) {
-    const basket = cylinder(stage, 0.45, 0.32, 0.45, 12, stage.material("#a97b4a", { roughness: 0.98 }), 6.2 + index * 0.9, 0.23, 12.3);
-    stage.add(basket);
-    const spice = mesh(stage, new THREE.ConeGeometry(0.42, 0.45, 12), stage.material(spiceColors[index], { roughness: 0.9 }), 6.2 + index * 0.9, 0.65, 12.3);
-    stage.add(spice);
+  for (let i = 0; i < 4; i += 1) {
+    group.add(box(stage, 2.0, 0.5, 1.0, timber, -4 + (i % 2) * 8, 0.7, 5.6 + Math.floor(i / 2) * 2));
+    group.add(box(stage, 1.8, 0.12, 0.8, dark, -4 + (i % 2) * 8, 1.0, 5.6 + Math.floor(i / 2) * 2));
   }
+  group.add(box(stage, 0.1, 2.0, 0.1, timber, -5.0, 1.0, 4.8));
+  group.add(box(stage, 2.0, 0.7, 0.08, timber, -5.0, 2.0, 4.8));
+  return group;
+}
 
-  const people = [
-    person(stage, 0.6, 3.8, "#6d4b3c", "#a9473d", 0.9, 0.4),
-    person(stage, -5.2, 5.4, "#345e58", "#d0a44d", 0.84, 1.2),
-    person(stage, 7.2, 1.8, "#7b3f65", "#324a55", 0.88, 2.3),
-    person(stage, 4.7, 9.0, "#9a5f35", "#b7463a", 0.8, 3.5),
-  ];
-  people.forEach((figure) => stage.add(figure));
+export default function buildKashgar({ scene, stage, manager }) {
+  return buildWalkableTown({
+    scene,
+    stage,
+    manager,
+    seed: 20261113,
+    terrain: {
+      heightFn: (x, z) => 4.0 + fbm(x * 0.035, z * 0.035, 3) * 0.45,
+      colorFn: (x, z) => {
+        const n = fbm(x * 0.08, z * 0.08, 2);
+        return new THREE.Color("#b39a77").lerp(new THREE.Color("#8c7858"), n * 0.5);
+      },
+      segments: 150,
+    },
+    places: {
+      oldcity: {
+        n: "Old City",
+        zh: "老城",
+        sub: "قدیم شہر",
+        x: 0,
+        z: 0,
+        r: 36,
+        spawn: [0, 14],
+        look: [0, -10],
+        pitch: 1.3,
+        dist: 14,
+      },
+      bazaar: {
+        n: "Grand Bazaar",
+        zh: "大巴扎",
+        sub: "بڑا بازار",
+        x: -44,
+        z: 10,
+        r: 26,
+        spawn: [-32, 10],
+        look: [-44, 10],
+        pitch: 1.34,
+        dist: 15,
+      },
+      idkah: {
+        n: "Id Kah Mosque",
+        zh: "艾提尕尔清真寺",
+        sub: "عید گاہ مسجد",
+        x: 38,
+        z: 6,
+        r: 30,
+        spawn: [38, 16],
+        look: [38, -30],
+        pitch: 1.5,
+        dist: 24,
+      },
+      teahouse: {
+        n: "Tea House",
+        zh: "茶馆",
+        sub: "چائے خانہ",
+        x: 0,
+        z: 52,
+        r: 24,
+        spawn: [0, 62],
+        look: [0, 42],
+        pitch: 1.5,
+        dist: 20,
+      },
+      craftlane: {
+        n: "Craft Lane",
+        zh: "手工艺巷",
+        sub: "دستکاری گلی",
+        x: 40,
+        z: 20,
+        r: 26,
+        spawn: [32, 20],
+        look: [48, 20],
+        pitch: 1.32,
+        dist: 14,
+      },
+    },
+    startPlace: "oldcity",
+    worldName: { en: "Kashgar", zh: "喀什", sub: "کاشغر" },
+    mapBounds: { x0: -90, x1: 90, z0: -90, z1: 90 },
+    mapLines: [
+      [[-70, 0], [70, 0]],
+      [[0, -60], [0, 60]],
+      [[-44, 10], [-20, 6], [0, 0]],
+      [[38, -30], [20, -12], [0, 0]],
+      [[0, 42], [0, 20], [0, 0]],
+      [[40, 20], [20, 16], [0, 0]],
+    ],
+    mapColor: (x, z) => {
+      const n = fbm(x * 0.04, z * 0.04, 2);
+      return [Math.round(159 + n * 20), Math.round(139 + n * 16), Math.round(107 + n * 12)];
+    },
+    fogDensity: 0.00045,
+    exposureScale: 0.95,
+    build: ({ kit, W, stage, hgt, makePath }) => {
+      const wallMap = stage.trackTexture(brickTexture("#b58a5c", "#8b6642", [3, 3]));
+      const timberMap = stage.trackTexture(woodTexture("#67422a", "#3c2416", [2, 2]));
+      const roofMap = stage.trackTexture(tileTexture("#a06e45", "#735035", [3, 3]));
+      const pavingMap = stage.trackTexture(pavingTexture("#b39a77", "#81684b", [8, 8]));
+      const atlasMap = stage.trackTexture(atlasTexture());
 
-  const clouds = [];
-  for (let index = 0; index < (detail ? 4 : 2); index += 1) {
-    const cloudGroup = cloud(1.1 + (index % 2) * 0.35);
-    cloudGroup.position.set(-20 + index * 12, 12 + (index % 2) * 2, -28 - index * 3);
-    stage.add(cloudGroup);
-    clouds.push({ mesh: cloudGroup, speed: 0.1 + index * 0.03 });
-  }
-  stage.animate((time, delta) => {
-    if (stage.reducedMotion) return;
-    clouds.forEach((item) => {
-      item.mesh.position.x += item.speed * delta;
-      if (item.mesh.position.x > 26) item.mesh.position.x = -28;
-    });
+      // Paved old-city ground and lanes.
+      stage.add(box(stage, 86, 0.12, 86, stage.material("#ffffff", { map: pavingMap, roughness: 0.98 }), 0, 4.04, 0));
+      makePath([[-70, 0], [-40, 0], [0, 0], [40, 0], [70, 0]], 7.0, stage.material("#a28665", { roughness: 1 }));
+      makePath([[0, -60], [0, -20], [0, 0], [0, 20], [0, 60]], 6.0, stage.material("#a28665", { roughness: 1 }));
+      makePath([[-44, 10], [-20, 6], [0, 0]], 4.0, stage.material("#a28665", { roughness: 1 }));
+      makePath([[38, -30], [20, -12], [0, 0]], 4.0, stage.material("#a28665", { roughness: 1 }));
+      makePath([[38, -30], [38, 16]], 4.0, stage.material("#a28665", { roughness: 1 }));
+      makePath([[0, 42], [0, 20]], 4.0, stage.material("#a28665", { roughness: 1 }));
+      makePath([[0, 42], [0, 62]], 4.0, stage.material("#a28665", { roughness: 1 }));
+      makePath([[40, 20], [20, 16], [0, 0]], 4.0, stage.material("#a28665", { roughness: 1 }));
+
+      // House rows along the lanes.
+      const houses = [
+        { x: -14, z: -26, rotation: Math.PI / 2, width: 5.2, depth: 4.4, height: 4.8, accent: "#a86c3b" },
+        { x: -14, z: -14, rotation: Math.PI / 2, width: 4.8, depth: 4.2, height: 4.3, accent: "#985936" },
+        { x: -14, z: 14, rotation: Math.PI / 2, width: 5.2, depth: 4.4, height: 5.2, accent: "#b27b46" },
+        { x: -14, z: 26, rotation: Math.PI / 2, width: 4.6, depth: 4.0, height: 4.4, accent: "#a0613b" },
+        { x: 14, z: -26, rotation: -Math.PI / 2, width: 5.0, depth: 4.4, height: 4.6, accent: "#b77a43" },
+        { x: 14, z: -14, rotation: -Math.PI / 2, width: 4.8, depth: 4.2, height: 5.0, accent: "#955a36" },
+        { x: 14, z: 26, rotation: -Math.PI / 2, width: 5.4, depth: 4.4, height: 4.5, accent: "#a86c3b" },
+        { x: 14, z: 38, rotation: -Math.PI / 2, width: 4.8, depth: 4.0, height: 4.2, accent: "#b27b46" },
+      ];
+      houses.forEach((spec) => {
+        const h = buildHouse(stage, { ...spec, wallMap, timberMap, roofMap });
+        h.position.y = hgt(spec.x, spec.z);
+        stage.add(h);
+        kit.blockRect(spec.x, spec.z, spec.width, spec.depth, spec.rotation);
+      });
+
+      // Landmark groups, placed around the lanes.
+      const copper = buildCopperWorkshop(stage, wallMap, timberMap);
+      copper.position.set(-24, hgt(-24, -8), -8);
+      copper.rotation.y = 0.8;
+      stage.add(copper);
+
+      const food = buildFoodStall(stage);
+      food.position.set(8, hgt(8, 50), 50);
+      stage.add(food);
+
+      const rawap = buildRawapShop(stage, wallMap, timberMap);
+      rawap.position.set(18, hgt(18, 4), 4);
+      stage.add(rawap);
+
+      const atlas = buildAtlasWorkshop(stage, atlasMap, wallMap, timberMap);
+      atlas.position.set(-24, hgt(-24, 22), 22);
+      stage.add(atlas);
+
+      const courtyard = buildCourtyardHouse(stage, wallMap, timberMap, roofMap);
+      courtyard.position.set(28, hgt(28, 18), 18);
+      stage.add(courtyard);
+
+      const doppa = buildDoppaStall(stage);
+      doppa.position.set(-6, hgt(-6, -18), -18);
+      stage.add(doppa);
+
+      const door = buildCarvedDoor(stage, wallMap, timberMap);
+      door.position.set(18, hgt(18, 32), 32);
+      stage.add(door);
+
+      const trading = buildTradingStation(stage);
+      trading.position.set(-44, hgt(-44, 10), 10);
+      stage.add(trading);
+
+      // Id Kah Mosque and the tea house.
+      const mosque = kashgarMosque(stage, wallMap, timberMap);
+      mosque.position.y = hgt(38, -30);
+      stage.add(mosque);
+      kit.blockRect(38, -30, 26, 22, 0);
+
+      const tea = kashgarTeaHouse(stage, wallMap, timberMap);
+      tea.position.y = hgt(0, 42);
+      stage.add(tea);
+      kit.blockRect(0, 42, 10, 8, 0);
+
+      // City gate.
+      const gate = new THREE.Group();
+      gate.position.set(0, hgt(0, -52), -52);
+      gate.add(box(stage, 14, 8, 1.4, stage.material("#ffffff", { map: wallMap, roughness: 0.97 }), 0, 4, 0));
+      gate.add(box(stage, 4.8, 5.8, 0.3, stage.material("#2a1e17", { roughness: 0.9 }), 0, 2.9, 0.8));
+      const gateArch = mesh(stage, new THREE.CircleGeometry(2.4, 18, 0, Math.PI), stage.material("#2a1e17", { roughness: 0.9 }), 0, 5.8, 0.85);
+      gate.add(gateArch);
+      stage.add(gate);
+
+      // Plane trees and a few birds/clouds.
+      const treeSpots = [
+        [-28, -34], [-28, 34], [28, -38], [28, 42], [-58, -4], [58, 4],
+        [10, -40], [-10, 46], [52, -20], [-52, 28],
+      ];
+      treeSpots.forEach(([x, z], i) => {
+        const t = tree(x, z, 0.75 + (i % 3) * 0.1, "#557550", null);
+        t.position.y = hgt(x, z);
+        stage.add(t);
+      });
+      for (let i = 0; i < 5; i += 1) {
+        const c = cloud(1.6 + (i % 3) * 0.5);
+        c.position.set(-50 + i * 26, 22 + (i % 3) * 2, -60 - (i % 2) * 6);
+        stage.add(c);
+      }
+      for (let i = 0; i < 5; i += 1) {
+        stage.add(bird(-30 + i * 15, 18 + i * 0.6, -25 - i * 4));
+      }
+
+      W.interactive("cn-copper", copper, "Copper workshop", [-20, -4], { radius: 12, labelOffset: 1.4 });
+      W.interactive("cn-food", food, "Naan & polo", [8, 52], { radius: 12, labelOffset: 1.4 });
+      W.interactive("cn-rawap", rawap, "Rawap", [20, 8], { radius: 12, labelOffset: 1.4 });
+      W.interactive("cn-atlas", atlas, "Atlas silk", [-22, 26], { radius: 12, labelOffset: 1.4 });
+      W.interactive("cn-courtyard", courtyard, "Courtyard house", [26, 22], { radius: 15, labelOffset: 1.4 });
+      W.interactive("cn-doppa", doppa, "Doppa", [-6, -14], { radius: 11, labelOffset: 1.4 });
+      W.interactive("cn-door", door, "Carved door", [18, 36], { radius: 11, labelOffset: 1.4 });
+      W.interactive("cn-market", trading, "Grand Bazaar", [-40, 14], { radius: 16, labelOffset: 1.4 });
+    },
+    people: (W) => {
+      const mix = ["hunza-man", "hunza-woman", "elder", "schoolgirl", "porter", "trekker"];
+      const add = (cx, cz, radius, count) => {
+        for (let i = 0; i < count; i += 1) {
+          const a = Math.random() * Math.PI * 2;
+          const d = 4 + Math.random() * radius;
+          W.addNpc({
+            kind: Math.random() < 0.4 ? "idle" : "wander",
+            cx,
+            cz,
+            R: radius,
+            x: cx + Math.cos(a) * d,
+            z: cz + Math.sin(a) * d,
+            tx: 0,
+            tz: 0,
+            wait: Math.random() * 4,
+            design: W.pick(mix),
+          });
+        }
+      };
+      add(0, 0, 32, 18);
+      add(-44, 10, 16, 6);
+      add(0, 58, 6, 4);
+      add(38, -20, 10, 5);
+      add(40, 20, 14, 4);
+    },
   });
-
-  // Warm market dust.
-  if (detail) {
-    const count = 50;
-    const positions = new Float32Array(count * 3);
-    for (let index = 0; index < count; index += 1) {
-      positions[index * 3] = (Math.random() - 0.5) * 24;
-      positions[index * 3 + 1] = 0.5 + Math.random() * 7;
-      positions[index * 3 + 2] = -8 + Math.random() * 20;
-    }
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    const dust = new THREE.Points(geometry, new THREE.PointsMaterial({ color: "#f5d59e", size: 0.08, transparent: true, opacity: 0.55, depthWrite: false }));
-    stage.trackGeometry(geometry);
-    stage.add(dust);
-    stage.animate((time) => {
-      if (stage.reducedMotion) return;
-      dust.rotation.y = time * 0.008;
-    });
-  }
-
-  for (let index = 0; index < 2; index += 1) {
-    const flying = bird(-8 + index * 9, 15 + index * 1.2, -20 - index * 2, "#3d2f25");
-    stage.add(flying);
-    stage.animate((time, delta) => {
-      if (stage.reducedMotion) return;
-      flying.position.x += delta * (0.7 + index * 0.1);
-      flying.position.y = 15 + Math.sin(time * 0.5 + index) * 0.3;
-      if (flying.position.x > 24) flying.position.x = -24;
-    });
-  }
-
-  return { objectId: "kashgar" };
 }

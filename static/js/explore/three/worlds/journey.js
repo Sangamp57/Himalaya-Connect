@@ -1,14 +1,7 @@
 import * as THREE from "three";
-import {
-  addLighting,
-  addSun,
-  bird,
-  cloud,
-  createSky,
-  mountain,
-  pine,
-  tree,
-} from "../helpers.js";
+import { bird, cloud, mountain, pine, tree } from "../helpers.js";
+import { buildWalkableTown } from "./walk-town.js";
+import { fbm, ss, lerp } from "./walk-engine.js";
 
 const VIDEO_SRC =
   "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/cc/The_Himalayan_-_Mt.Everest_Base_Camp_trek_HD_Time_Lapse.webm/The_Himalayan_-_Mt.Everest_Base_Camp_trek_HD_Time_Lapse.webm.480p.vp9.webm";
@@ -215,137 +208,202 @@ function buildPrayerFlagRidge(stage) {
   return group;
 }
 
-export default function buildJourney({ scene, stage }) {
-  const detail = stage.quality !== "low";
-  createSky(scene, {
-    top: "#12263f",
-    bottom: "#e2aa65",
-    fog: "#c8a17a",
-    near: 46,
-    far: 120,
-  });
-  addLighting(scene, { shadows: detail, sun: [20, 30, 16], color: "#ffd9a1", intensity: 2.5, ambient: 1.3 });
-  addSun(scene, { position: [-36, 26, -44], size: 4.4, color: "#ffdca8" });
+export default function buildJourney({ scene, stage, manager }) {
+  let cinemaVideo = null;
+  const places = {
+    trailhead: {
+      n: "Trailhead",
+      zh: "\u5c71\u5f84\u8d77\u70b9",
+      sub: "\u0679\u0631\u06cc\u0644 \u06c1\u06cc\u0688",
+      x: 0,
+      z: 30,
+      r: 28,
+      spawn: [0, 36],
+      look: [0, 0],
+      pitch: 1.32,
+      dist: 16,
+    },
+    pass: {
+      n: "High Pass",
+      zh: "\u9ad8\u5c71\u51b3\u53e3",
+      sub: "\u0627\u0648\u0646\u0686\u0627 \u062f\u0631\u06c1",
+      x: 0,
+      z: -25,
+      r: 24,
+      spawn: [0, -18],
+      look: [0, -40],
+      pitch: 1.4,
+      dist: 16,
+    },
+    ridge: {
+      n: "Prayer-Flag Ridge",
+      zh: "\u7948\u798f\u65d7\u5c71\u810a",
+      sub: "\u062f\u0639\u0627 \u067e\u0631\u0686\u0645 \u06a9\u06cc \u067e\u06c1\u0627\u0691\u06cc",
+      x: 35,
+      z: -50,
+      r: 24,
+      spawn: [28, -38],
+      look: [45, -65],
+      pitch: 1.34,
+      dist: 16,
+    },
+    cinema: {
+      n: "Trail Cinema",
+      zh: "\u5c71\u5f84\u5f71\u9662",
+      sub: "\u0679\u0631\u06cc\u0644 \u0633\u06cc\u0646\u0645\u0627",
+      x: -30,
+      z: 30,
+      r: 20,
+      spawn: [-18, 30],
+      look: [-35, 30],
+      pitch: 1.34,
+      dist: 15,
+    },
+  };
 
-  const ground = box(stage, 70, 0.8, 60, stage.material("#6f6a58", { roughness: 1 }), 0, -0.4, 0);
-  ground.receiveShadow = true;
-  stage.add(ground);
-
-  // A winding high road from the trailhead toward the back pass.
-  const roadMat = stage.material("#4b4743", { roughness: 0.95 });
-  const roadPoints = [];
-  for (let index = 0; index <= 11; index += 1) {
-    const t = index / 11;
-    roadPoints.push([Math.sin(t * Math.PI * 1.15) * 13, 0.02, -20 + t * 38]);
-  }
-  for (let index = 0; index < roadPoints.length - 1; index += 1) {
-    const [x1, , z1] = roadPoints[index];
-    const [x2, , z2] = roadPoints[index + 1];
-    const dx = x2 - x1;
-    const dz = z2 - z1;
-    const len = Math.hypot(dx, dz);
-    const seg = box(stage, 2.8, 0.08, len + 0.5, roadMat, (x1 + x2) / 2, 0.05, (z1 + z2) / 2);
-    seg.rotation.y = Math.atan2(dx, dz);
-    stage.add(seg);
-  }
-
-  const mountainPalette = ["#4a5d72", "#54697d", "#5e7489"];
-  const ranges = [
-    [-28, -30, 20, 17, 0],
-    [-18, -34, 24, 21, 1],
-    [0, -38, 26, 24, 2],
-    [20, -33, 22, 19, 1],
-    [30, -30, 16, 15, 0],
-    [-26, 24, 18, 15, 1],
-    [26, 28, 20, 18, 2],
-  ];
-  ranges.forEach(([x, z, height, radius, paletteIndex], index) => {
-    const peak = mountain(height, radius, mountainPalette[paletteIndex], "#f5f1e7", 0.34, detail ? 7 : 5);
-    peak.position.set(x, 0.5, z);
-    peak.rotation.y = index * 0.7;
-    stage.add(peak);
-  });
-
-  const trailhead = buildTrailheadSign(stage);
-  stage.add(trailhead);
-  stage.addInteractive("jo-trailhead", trailhead, {
-    label: "Trailhead",
-    accent: "#e6bc6a",
-    focus: [-6.5, 1.4, -14],
-    radius: 9,
-    beaconPosition: [-5.6, 0.15, -12.6],
-  });
-
-  const cairn = buildCairn(stage);
-  stage.add(cairn);
-  stage.addInteractive("jo-cairn", cairn, {
-    label: "Stone cairn",
-    accent: "#e6bc6a",
-    focus: [7.2, 1.8, -6],
-    radius: 8,
-    beaconPosition: [7.2, 0.12, -4.5],
-  });
-
-  const ridge = buildPrayerFlagRidge(stage);
-  stage.add(ridge);
-  stage.addInteractive("jo-flag", ridge, {
-    label: "Prayer flags",
-    accent: "#e6bc6a",
-    focus: [-7.5, 2.2, 8],
-    radius: 9,
-    beaconPosition: [-7.5, 0.14, 10],
-  });
-
-  const cinema = buildCinema(stage, { x: 0, y: 0, z: 12, rotation: 0 });
-  stage.add(cinema.group);
-  stage.addInteractive("video:everest", cinema.group, {
-    label: "Everest time-lapse",
-    accent: "#e6bc6a",
-    focus: [0, 2.8, 12],
-    radius: 13,
-    beaconPosition: [0, 0.18, 9.2],
-    labelOffset: 0.6,
-  });
-
-  const trees = [
-    tree(-11, -12, 1.1, "#4f7757", "#e7a9a0"),
-    tree(11, -13, 0.9, "#547655", "#e6b7b0"),
-    tree(-12, -4, 0.85, "#4c7253", null),
-    tree(12, 0, 1.0, "#55764f", "#e5aaa1"),
-    pine(-9, -18, 0.7, "#385d50"),
-    pine(9, -18, 0.72, "#355a4d"),
-  ];
-  stage.add(...trees);
-
-  const clouds = [];
-  for (let index = 0; index < (detail ? 6 : 3); index += 1) {
-    const cloudGroup = cloud(1.3 + (index % 3) * 0.4);
-    cloudGroup.position.set(-24 + index * 9, 13 + (index % 3) * 1.8, -34 - (index % 2) * 8);
-    stage.add(cloudGroup);
-    clouds.push({ mesh: cloudGroup, speed: 0.12 + index * 0.025 });
-  }
-  stage.animate((time, delta) => {
-    if (stage.reducedMotion) return;
-    clouds.forEach((item) => {
-      item.mesh.position.x += item.speed * delta;
-      if (item.mesh.position.x > 32) item.mesh.position.x = -34;
-    });
-  });
-
-  for (let index = 0; index < (detail ? 3 : 1); index += 1) {
-    const flying = bird(-8 + index * 8, 14 + index, -16 + index * 4);
-    stage.add(flying);
-    stage.animate((time, delta) => {
-      if (stage.reducedMotion) return;
-      flying.position.x += delta * (0.6 + index * 0.15);
-      flying.position.y = 14 + Math.sin(time * 0.7 + index) * 0.35;
-      if (flying.position.x > 26) flying.position.x = -26;
-    });
+  function heightFn(x, z) {
+    let h = 5.0 + fbm(x * 0.03, z * 0.03, 4) * 3.0;
+    h += 26 * Math.exp(-(((x + 45) ** 2 + (z + 45) ** 2) / (2 * 30 * 30)));
+    h += 32 * Math.exp(-(((x - 45) ** 2 + (z + 50) ** 2) / (2 * 32 * 32)));
+    h += 14 * Math.exp(-(((x - 0) ** 2 + (z + 55) ** 2) / (2 * 28 * 28)));
+    const pads = [
+      [0, 30, 24, 14, 5.5],
+      [0, -25, 32, 20, 13.0],
+      [35, -50, 18, 10, 35.0],
+      [-30, 30, 18, 10, 6.0],
+    ];
+    for (const [cx, cz, outer, inner, target] of pads) {
+      const d = Math.hypot(x - cx, z - cz);
+      if (d < outer) h = lerp(h, target, ss(outer, inner, d));
+    }
+    return h;
   }
 
-  const haze = new THREE.PointLight("#ffbd72", 3, 20, 2);
-  haze.position.set(0, 4, 10);
-  scene.add(haze);
+  function colorFn(x, z, h) {
+    const n = fbm(x * 0.06, z * 0.06, 3);
+    if (h > 24) return new THREE.Color("#7b7564").lerp(new THREE.Color("#98917b"), n);
+    if (h > 14) return new THREE.Color("#6f7d5a").lerp(new THREE.Color("#8a9168"), n);
+    return new THREE.Color("#5e7d54").lerp(new THREE.Color("#7d925e"), n);
+  }
 
-  return { objectId: "journey", video: cinema.video };
+  const W = buildWalkableTown({
+    scene,
+    stage,
+    manager,
+    seed: 20261114,
+    terrain: { heightFn, colorFn, segments: 160 },
+    places,
+    startPlace: "trailhead",
+    worldName: { en: "The Great Journey", zh: "\u4f1f\u5927\u65c5\u7a0b", sub: "\u0639\u0638\u06cc\u0645 \u0633\u0641\u0631" },
+    mapBounds: { x0: -80, x1: 80, z0: -80, z1: 80 },
+    mapLines: [
+      [[0, 30], [8, 10], [-6, -8], [0, -25]],
+      [[0, -25], [16, -36], [28, -42], [35, -50]],
+      [[0, 30], [-12, 30], [-30, 30]],
+    ],
+    mapColor: (x, z) => {
+      const h = heightFn(x, z);
+      if (h > 24) return [123, 117, 100];
+      if (h > 14) return [111, 125, 90];
+      return [94, 125, 84];
+    },
+    fogDensity: 0.0007,
+    exposureScale: 0.94,
+    build: ({ kit, W, stage, hgt, makePath }) => {
+      const trailhead = buildTrailheadSign(stage);
+      trailhead.position.set(0, hgt(0, 30), 30);
+      trailhead.rotation.y = 0.4;
+      stage.add(trailhead);
+      W.interactive("jo-trailhead", trailhead, "Trailhead", [3, 30], { radius: 14, labelOffset: 1.5 });
+
+      const cairn = buildCairn(stage);
+      cairn.position.set(0, hgt(0, -25), -25);
+      stage.add(cairn);
+      W.interactive("jo-cairn", cairn, "Stone cairn", [3, -25], { radius: 14, labelOffset: 1.5 });
+
+      const ridge = buildPrayerFlagRidge(stage);
+      ridge.position.set(35, hgt(35, -50), -50);
+      ridge.rotation.y = -0.5;
+      stage.add(ridge);
+      W.interactive("jo-flag", ridge, "Prayer flags", [32, -47], { radius: 14, labelOffset: 1.5 });
+
+      const cinema = buildCinema(stage, { x: -30, y: hgt(-30, 30), z: 30, rotation: Math.PI / 2 });
+      stage.add(cinema.group);
+      cinemaVideo = cinema.video;
+      W.interactive("video:everest", cinema.group, "Everest time-lapse", [-25, 30], { radius: 15, labelOffset: 1.2 });
+
+      makePath([[0, 36], [4, 22], [8, 10], [-6, -8], [0, -25]], 3.2);
+      makePath([[0, -25], [16, -36], [28, -42], [35, -50]], 2.8);
+      makePath([[0, 30], [-12, 30], [-24, 30]], 3.0);
+
+      const peaks = [
+        [-46, -72, 58, 28, "#4c6070", 0.36],
+        [-20, -78, 78, 36, "#465a6b", 0.34],
+        [6, -80, 70, 32, "#526777", 0.38],
+        [32, -76, 60, 28, "#5a6f7f", 0.4],
+        [58, -70, 48, 22, "#617482", 0.44],
+      ];
+      peaks.forEach(([x, z, h, r, color, snow], i) => {
+        const peak = mountain(h, r, color, "#f5f1e6", snow, 7);
+        peak.position.set(x, 0, z);
+        peak.rotation.y = i * 0.7;
+        stage.add(peak);
+      });
+
+      const treeSpots = [
+        [-14, 18], [14, 18], [-10, -4], [12, -8], [-18, -18], [18, -26],
+        [-38, 20], [-44, 34], [42, -40], [46, -56],
+      ];
+      treeSpots.forEach(([x, z], i) => {
+        const t = i % 3 === 0 ? pine(x, z, 0.8, "#315b4c") : tree(x, z, 0.8 + (i % 2) * 0.1, "#557550", i % 4 === 0 ? "#e7b4ac" : null);
+        t.position.y = hgt(x, z);
+        stage.add(t);
+      });
+
+      const clouds = [];
+      for (let i = 0; i < 5; i += 1) {
+        const c = cloud(1.5 + (i % 3) * 0.4);
+        c.position.set(-40 + i * 20, 20 + (i % 3) * 2, -60 - (i % 2) * 6);
+        stage.add(c);
+        clouds.push({ mesh: c, speed: 0.15 + i * 0.03 });
+      }
+      for (let i = 0; i < 5; i += 1) {
+        stage.add(bird(-30 + i * 15, 16 + i * 0.6, -24 - i * 4));
+      }
+      stage.animate((time, delta) => {
+        if (stage.reducedMotion) return;
+        clouds.forEach((c) => {
+          c.mesh.position.x += c.speed * delta;
+          if (c.mesh.position.x > 80) c.mesh.position.x = -80;
+        });
+      });
+    },
+    people: (W) => {
+      const mix = ["trekker", "porter", "elder", "hunza-man", "hunza-woman", "schoolgirl"];
+      const add = (cx, cz, radius, count) => {
+        for (let i = 0; i < count; i += 1) {
+          const a = Math.random() * Math.PI * 2;
+          const d = 4 + Math.random() * radius;
+          W.addNpc({
+            kind: Math.random() < 0.4 ? "idle" : "wander",
+            cx,
+            cz,
+            R: radius,
+            x: cx + Math.cos(a) * d,
+            z: cz + Math.sin(a) * d,
+            tx: 0,
+            tz: 0,
+            wait: Math.random() * 4,
+            design: W.pick(mix),
+          });
+        }
+      };
+      add(0, 30, 12, 10);
+      add(0, -20, 8, 4);
+      add(32, -46, 7, 3);
+      add(-26, 30, 7, 3);
+    },
+  });
+  if (cinemaVideo) W.video = cinemaVideo;
+  return W;
 }
