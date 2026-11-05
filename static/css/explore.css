@@ -1355,25 +1355,71 @@ svg.hc-icon {
   position: absolute;
   inset-inline-start: clamp(14px, 3vw, 44px);
   top: calc(var(--ex-topbar-h) + 16px);
-  width: min(370px, calc(100% - 28px));
-  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: auto;
+  max-width: min(520px, calc(100% - 28px));
+  padding: 10px 14px;
   pointer-events: auto;
 }
 
 .world-head-top {
   display: flex;
+  flex: none;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.world-head-top .ex-kicker {
+  gap: 0;
   margin: 0;
 }
 
+.world-head-top .ex-kicker {
+  display: none;
+}
+
 .world-head h1 {
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  margin-bottom: 8px;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.world-head .world-blurb,
+.world-head .world-route-note,
+.world-head .world-actions {
+  display: none;
+}
+
+.world-head-meta {
+  flex: none;
+  margin-inline-start: auto;
+  gap: 0;
+  flex-wrap: nowrap;
+}
+
+#world-region {
+  display: none;
+}
+
+.world-progress {
+  margin-inline-start: 0;
+  white-space: nowrap;
+}
+
+.ex-round-button {
+  display: inline-grid;
+  place-items: center;
+  line-height: 0;
+}
+
+.ex-round-button svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin: auto;
 }
 
 .world-blurb {
@@ -4360,10 +4406,10 @@ body.reduce-motion *::after {
   }
   .world-head {
     inset-inline: 10px;
-    width: min(230px, calc(100% - 82px));
+    width: auto;
     top: calc(var(--ex-topbar-h) + 8px);
-    max-width: 230px;
-    padding: 11px 12px;
+    max-width: calc(100% - 82px);
+    padding: 9px 11px;
   }
   .world-head-top {
     margin-bottom: 6px;
@@ -4400,7 +4446,7 @@ body.reduce-motion *::after {
     font-size: 8px;
   }
   .world-head.is-collapsed {
-    width: 170px;
+    width: 220px;
     max-width: calc(100% - 82px);
     padding: 8px 10px;
   }
@@ -4420,7 +4466,6 @@ body.reduce-motion *::after {
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .world-head.is-collapsed .world-head-meta,
   .world-head.is-collapsed .world-actions,
   .world-head.is-collapsed .world-blurb,
   .world-head.is-collapsed .world-route-note {
