@@ -53,6 +53,39 @@ const guide = new CulturalGuide({
 });
 
 let currentView = "home";
+
+/* The home scene is a fixed 3D backdrop with a scrolling content layer. */
+const homePanel = document.querySelector('[data-view-panel="home"]');
+let homeScrollFrame = 0;
+function syncHomeScroll() {
+  homeScrollFrame = 0;
+  if (!homePanel) return;
+  const offset = homePanel.scrollTop;
+  homePanel.style.setProperty("--home-scroll", `${offset}px`);
+  window.__homeScroll = offset;
+}
+homePanel?.addEventListener(
+  "scroll",
+  () => {
+    if (!homeScrollFrame) homeScrollFrame = window.requestAnimationFrame(syncHomeScroll);
+  },
+  { passive: true }
+);
+window.addEventListener(
+  "wheel",
+  (event) => {
+    if (currentView !== "home" || !homePanel || event.ctrlKey || event.metaKey) return;
+    const max = homePanel.scrollHeight - homePanel.clientHeight;
+    if (max <= 0) return;
+    const next = Math.max(0, Math.min(max, homePanel.scrollTop + event.deltaY));
+    if (next !== homePanel.scrollTop) {
+      homePanel.scrollTop = next;
+      event.preventDefault();
+    }
+  },
+  { passive: false }
+);
+syncHomeScroll();
 let currentWorldId = store.state.lastWorld && WORLDS[store.state.lastWorld] ? store.state.lastWorld : "kathmandu";
 let currentObjectId = null;
 let collectionFilter = "all";

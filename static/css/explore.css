@@ -819,9 +819,21 @@ svg.hc-icon {
    -------------------------------------------------------------------------- */
 
 .ex-view--home {
-  padding: calc(var(--ex-topbar-h) + 18px) clamp(16px, 3.5vw, 54px) 20px;
+  padding: calc(var(--ex-topbar-h) + 18px) clamp(16px, 3.5vw, 54px) 28px;
   pointer-events: none;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(230, 188, 106, 0.35) transparent;
+}
+
+.ex-view--home::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ex-view--home::-webkit-scrollbar-thumb {
+  border-radius: 99px;
+  background: rgba(230, 188, 106, 0.28);
 }
 
 .home-shell {
@@ -830,9 +842,26 @@ svg.hc-icon {
   grid-template-rows: 1fr auto;
   gap: clamp(16px, 2vw, 28px);
   width: min(1520px, 100%);
-  height: calc(100svh - var(--ex-topbar-h) - 38px);
+  min-height: calc(100svh - var(--ex-topbar-h) - 46px);
+  height: auto;
   margin-inline: auto;
+  padding-bottom: 24px;
   pointer-events: none;
+}
+
+.home-hero {
+  transform: translate3d(0, calc(var(--home-scroll, 0px) * 0.1), 0);
+  will-change: transform;
+}
+
+.home-rail {
+  transform: translate3d(0, calc(var(--home-scroll, 0px) * -0.045), 0);
+  will-change: transform;
+}
+
+.home-worlds {
+  transform: translate3d(0, calc(var(--home-scroll, 0px) * 0.028), 0);
+  will-change: transform;
 }
 
 .home-hero {

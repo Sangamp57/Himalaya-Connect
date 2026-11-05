@@ -34,14 +34,27 @@ function sphere(stage, radius, material, x, y, z, detail = 1) {
 function island(stage, x, z, radius, topColor) {
   const group = new THREE.Group();
   group.position.set(x, 0, z);
-  const rock = mesh(stage, new THREE.CylinderGeometry(radius, radius * 0.32, 3.4, 9), stage.material("#655d55", { roughness: 1 }), 0, -1.7, 0);
-  rock.scale.y = 1.1;
+  const rockMat = stage.material("#73695b", { roughness: 1 });
+  const rockLight = stage.material("#95856f", { roughness: 1 });
+  const rockDark = stage.material("#514b42", { roughness: 1 });
+  const rock = mesh(stage, new THREE.CylinderGeometry(radius, radius * 0.3, 3.7, 11, 3), rockMat, 0, -1.85, 0);
+  rock.scale.y = 1.08;
   group.add(rock);
-  const grass = mesh(stage, new THREE.CylinderGeometry(radius, radius, 0.45, 9), stage.material(topColor, { roughness: 1 }), 0, 0.22, 0);
+  const band = mesh(stage, new THREE.CylinderGeometry(radius * 0.9, radius * 0.67, 0.8, 11), rockLight, 0, -1.0, 0);
+  band.rotation.y = 0.2;
+  group.add(band);
+  const band2 = mesh(stage, new THREE.CylinderGeometry(radius * 0.62, radius * 0.44, 0.7, 11), rockDark, 0, -2.25, 0);
+  band2.rotation.y = -0.15;
+  group.add(band2);
+  const keel = mesh(stage, new THREE.ConeGeometry(radius * 0.3, 1.7, 11), rockDark, 0, -4.15, 0);
+  keel.rotation.x = Math.PI;
+  group.add(keel);
+  const grass = mesh(stage, new THREE.CylinderGeometry(radius * 1.01, radius, 0.48, 11), stage.material(topColor, { roughness: 1 }), 0, 0.24, 0);
   group.add(grass);
-  const rim = mesh(stage, new THREE.TorusGeometry(radius * 0.98, 0.06, 5, 40), stage.material("#d8b061", { roughness: 0.6, metalness: 0.2 }), 0, 0.44, 0);
+  const rim = mesh(stage, new THREE.TorusGeometry(radius * 0.99, 0.055, 5, 48), stage.material("#d8b061", { roughness: 0.6, metalness: 0.2 }), 0, 0.48, 0);
   rim.rotation.x = -Math.PI / 2;
   group.add(rim);
+  group.userData.baseY = 0;
   return group;
 }
 
@@ -249,7 +262,8 @@ export default function buildOverview({ scene, stage }) {
   const skardu = island(stage, -12.6, -7.6, 2.8, "#8b7f5c");
   const turpan = island(stage, 13.4, -0.6, 2.8, "#9a8552");
   const dunhuang = island(stage, 13.8, 6.2, 2.8, "#b08a56");
-  [nepal, pakistan, china, karakoram, journey, pokhara, skardu, turpan, dunhuang].forEach((item) => stage.add(item));
+  const islandWorlds = [nepal, pakistan, china, karakoram, journey, pokhara, skardu, turpan, dunhuang];
+  islandWorlds.forEach((item) => stage.add(item));
   nepal.add(miniPagoda(stage, 0, 0.42, 0));
   pakistan.add(miniFort(stage, 0, 0.42, 0));
   china.add(miniMarket(stage, 0, 0.42, 0));
@@ -259,6 +273,15 @@ export default function buildOverview({ scene, stage }) {
   skardu.add(miniSkardu(stage, 0, 0.42, 0));
   turpan.add(miniTurpan(stage, 0, 0.42, 0));
   dunhuang.add(miniDunhuang(stage, 0, 0.42, 0));
+
+  stage.animate((time) => {
+    if (stage.reducedMotion) return;
+    const scroll = window.__homeScroll || 0;
+    islandWorlds.forEach((item, index) => {
+      item.position.y = (item.userData.baseY || 0) + Math.sin(time * 0.35 + index) * 0.07 - Math.min(scroll, 1200) * 0.0016;
+      item.rotation.y = Math.sin(time * 0.08 + index) * 0.012;
+    });
+  });
 
   stage.addInteractive("overview:kathmandu", nepal, {
     label: "Nepal",
