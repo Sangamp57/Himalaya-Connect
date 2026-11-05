@@ -247,18 +247,6 @@ export default function buildJourney({ scene, stage, manager }) {
       pitch: 1.34,
       dist: 16,
     },
-    dunhuang: {
-      n: "Dunhuang Gate",
-      zh: "\u6566\u714c\u4e4b\u95e8",
-      sub: "\u6566\u714c\u4e4b\u95e8",
-      x: -35,
-      z: -45,
-      r: 24,
-      spawn: [-26, -35],
-      look: [-45, -55],
-      pitch: 1.32,
-      dist: 15,
-    },
     cinema: {
       n: "Trail Cinema",
       zh: "\u5c71\u5f84\u5f71\u9662",
@@ -282,7 +270,6 @@ export default function buildJourney({ scene, stage, manager }) {
       [0, 30, 24, 14, 5.5],
       [0, -25, 32, 20, 13.0],
       [35, -50, 18, 10, 35.0],
-      [-35, -45, 18, 10, 18.0],
       [-30, 30, 18, 10, 6.0],
     ];
     for (const [cx, cz, outer, inner, target] of pads) {
@@ -312,7 +299,6 @@ export default function buildJourney({ scene, stage, manager }) {
     mapLines: [
       [[0, 30], [8, 10], [-6, -8], [0, -25]],
       [[0, -25], [16, -36], [28, -42], [35, -50]],
-      [[0, -25], [-16, -32], [-28, -40], [-35, -45]],
       [[0, 30], [-12, 30], [-30, 30]],
     ],
     mapColor: (x, z) => {
@@ -341,24 +327,6 @@ export default function buildJourney({ scene, stage, manager }) {
       stage.add(ridge);
       W.interactive("jo-flag", ridge, "Prayer flags", [32, -47], { radius: 14, labelOffset: 1.5 });
 
-      const gate = new THREE.Group();
-      gate.position.set(-35, hgt(-35, -45), -45);
-      gate.rotation.y = 0.4;
-      const gateWall = stage.material("#a77b52", { roughness: 0.97 });
-      const gateWood = stage.material("#5d3d26", { roughness: 0.9 });
-      const gateDark = stage.material("#2a1c15", { roughness: 0.95 });
-      gate.add(box(stage, 10, 5.0, 1.2, gateWall, 0, 2.5, 0));
-      gate.add(box(stage, 10.8, 0.4, 1.6, gateWood, 0, 5.1, 0));
-      gate.add(box(stage, 4.2, 4.4, 0.3, gateDark, 0, 2.2, 0.7));
-      gate.add(box(stage, 2.2, 3.8, 0.35, gateDark, 0, 1.9, 0.72));
-      for (const x of [-4.3, 4.3]) {
-        gate.add(box(stage, 0.5, 6.0, 0.5, gateWood, x, 3.0, 0));
-        gate.add(box(stage, 1.2, 0.35, 1.2, gateDark, x, 6.1, 0));
-      }
-      gate.add(box(stage, 3.0, 0.7, 0.2, gateWood, 0, 4.1, 0.8));
-      stage.add(gate);
-      W.interactive("jo-dunhuang", gate, "Dunhuang Gate", [-31, -41], { radius: 15, labelOffset: 1.5 });
-
       const cinema = buildCinema(stage, { x: -30, y: hgt(-30, 30), z: 30, rotation: Math.PI / 2 });
       stage.add(cinema.group);
       cinemaVideo = cinema.video;
@@ -366,7 +334,6 @@ export default function buildJourney({ scene, stage, manager }) {
 
       makePath([[0, 36], [4, 22], [8, 10], [-6, -8], [0, -25]], 3.2);
       makePath([[0, -25], [16, -36], [28, -42], [35, -50]], 2.8);
-      makePath([[0, -25], [-16, -32], [-28, -40], [-35, -45]], 2.8);
       makePath([[0, 30], [-12, 30], [-24, 30]], 3.0);
 
       const peaks = [
@@ -434,7 +401,6 @@ export default function buildJourney({ scene, stage, manager }) {
       add(0, 30, 12, 10);
       add(0, -20, 8, 4);
       add(32, -46, 7, 3);
-      add(-30, -40, 7, 3);
       add(-26, 30, 7, 3);
     },
   });

@@ -27,34 +27,17 @@ function cylinder(stage, rt, rb, h, segments, material, x, y, z) {
   return mesh(stage, new THREE.CylinderGeometry(rt, rb, h, segments), material, x, y, z);
 }
 
-function sphere(stage, radius, material, x, y, z, detail = 1) {
-  return mesh(stage, new THREE.IcosahedronGeometry(radius, detail), material, x, y, z);
-}
-
 function island(stage, x, z, radius, topColor) {
   const group = new THREE.Group();
   group.position.set(x, 0, z);
-  const rockMat = stage.material("#73695b", { roughness: 1 });
-  const rockLight = stage.material("#95856f", { roughness: 1 });
-  const rockDark = stage.material("#514b42", { roughness: 1 });
-  const rock = mesh(stage, new THREE.CylinderGeometry(radius, radius * 0.3, 3.7, 11, 3), rockMat, 0, -1.85, 0);
-  rock.scale.y = 1.08;
+  const rock = mesh(stage, new THREE.CylinderGeometry(radius, radius * 0.32, 3.4, 9), stage.material("#655d55", { roughness: 1 }), 0, -1.7, 0);
+  rock.scale.y = 1.1;
   group.add(rock);
-  const band = mesh(stage, new THREE.CylinderGeometry(radius * 0.9, radius * 0.67, 0.8, 11), rockLight, 0, -1.0, 0);
-  band.rotation.y = 0.2;
-  group.add(band);
-  const band2 = mesh(stage, new THREE.CylinderGeometry(radius * 0.62, radius * 0.44, 0.7, 11), rockDark, 0, -2.25, 0);
-  band2.rotation.y = -0.15;
-  group.add(band2);
-  const keel = mesh(stage, new THREE.ConeGeometry(radius * 0.3, 1.7, 11), rockDark, 0, -4.15, 0);
-  keel.rotation.x = Math.PI;
-  group.add(keel);
-  const grass = mesh(stage, new THREE.CylinderGeometry(radius * 1.01, radius, 0.48, 11), stage.material(topColor, { roughness: 1 }), 0, 0.24, 0);
+  const grass = mesh(stage, new THREE.CylinderGeometry(radius, radius, 0.45, 9), stage.material(topColor, { roughness: 1 }), 0, 0.22, 0);
   group.add(grass);
-  const rim = mesh(stage, new THREE.TorusGeometry(radius * 0.99, 0.055, 5, 48), stage.material("#d8b061", { roughness: 0.6, metalness: 0.2 }), 0, 0.48, 0);
+  const rim = mesh(stage, new THREE.TorusGeometry(radius * 0.98, 0.06, 5, 40), stage.material("#d8b061", { roughness: 0.6, metalness: 0.2 }), 0, 0.44, 0);
   rim.rotation.x = -Math.PI / 2;
   group.add(rim);
-  group.userData.baseY = 0;
   return group;
 }
 
@@ -159,29 +142,6 @@ function miniKarakoram(stage, x, y, z) {
   return group;
 }
 
-function miniDunhuang(stage, x, y, z) {
-  const group = new THREE.Group();
-  group.position.set(x, y, z);
-  const water = stage.material("#2f8fa3", { roughness: 0.16, metalness: 0.18, transparent: true, opacity: 0.95 });
-  const lake = mesh(stage, new THREE.CircleGeometry(0.9, 20), water, -1.0, 0.06, 0.5);
-  lake.rotation.x = -Math.PI / 2;
-  lake.scale.set(1.5, 1, 0.8);
-  group.add(lake);
-  for (let i = 0; i < 4; i += 1) {
-    const dune = sphere(stage, 0.75, stage.material("#cfb07c", { roughness: 1 }), 0.8 + (i % 2) * 0.8, 0.2, -0.9 + Math.floor(i / 2) * 1.2, 0);
-    dune.scale.set(1.5, 0.3, 0.9);
-    group.add(dune);
-  }
-  const cliff = box(stage, 2.2, 2.2, 1.0, stage.material("#9b6847", { roughness: 1 }), 0.8, 1.1, -1.2);
-  group.add(cliff);
-  for (let i = 0; i < 3; i += 1) {
-    group.add(box(stage, 0.36, 0.55, 0.1, stage.material("#2a1c15", { roughness: 0.95 }), 0.2 + i * 0.62, 1.25, -0.68));
-  }
-  group.add(box(stage, 0.12, 1.0, 0.12, stage.material("#6a4a31", { roughness: 0.9 }), -0.8, 0.5, 1.3));
-  group.add(box(stage, 0.8, 0.3, 0.05, stage.material("#a83e32", { roughness: 0.9 }), -0.5, 0.85, 1.3));
-  return group;
-}
-
 function miniJourney(stage, x, y, z) {
   const group = new THREE.Group();
   group.position.set(x, y, z);
@@ -240,6 +200,50 @@ function miniTurpan(stage, x, y, z) {
   return group;
 }
 
+/* Yunnan: terraced tea hill with a pavilion (Pu'er) */
+function miniPuer(stage, x, y, z) {
+  const group = new THREE.Group();
+  group.position.set(x, y, z);
+  const soil = stage.material("#8d5a3a", { roughness: 1 });
+  const tea = stage.material("#4f7f2c", { roughness: 0.9 });
+  for (let i = 0; i < 5; i += 1) {
+    const r = 2.1 - i * 0.38;
+    group.add(cylinder(stage, r, r, 0.22, 20, soil, 0, 0.11 + i * 0.22, 0));
+    const ring = mesh(stage, new THREE.TorusGeometry(r - 0.12, 0.09, 5, 24), tea, 0, 0.26 + i * 0.22, 0);
+    ring.rotation.x = -Math.PI / 2;
+    group.add(ring);
+  }
+  const red = stage.material("#9e2a20", { roughness: 0.7 });
+  [[-0.2, -0.2], [0.2, -0.2], [0.2, 0.2], [-0.2, 0.2]].forEach(([a, b]) => group.add(cylinder(stage, 0.03, 0.03, 0.4, 5, red, a, 1.3, b)));
+  group.add(mesh(stage, new THREE.ConeGeometry(0.42, 0.3, 4), stage.material("#5f6366", { roughness: 0.8 }), 0, 1.62, 0));
+  return group;
+}
+
+/* Yunnan: white pagoda, palm and stilt house (Xishuangbanna) */
+function miniBanna(stage, x, y, z) {
+  const group = new THREE.Group();
+  group.position.set(x, y, z);
+  const white = stage.material("#f2eee4", { roughness: 0.8 });
+  const gold = stage.material("#d9a93c", { metalness: 0.6, roughness: 0.35 });
+  group.add(cylinder(stage, 0.9, 1.0, 0.25, 8, white, -0.6, 0.12, -0.3));
+  group.add(mesh(stage, new THREE.LatheGeometry([[0.5, 0], [0.5, 0.3], [0.42, 0.6], [0.24, 1.0], [0.1, 1.3], [0.0, 1.7]].map(([r, h]) => new THREE.Vector2(r, h)), 16), white, -0.6, 0.25, -0.3));
+  group.add(mesh(stage, new THREE.ConeGeometry(0.05, 0.4, 6), gold, -0.6, 2.1, -0.3));
+  const wood = stage.material("#5a3a24", { roughness: 0.9 });
+  [[0.6, 0.4], [1.4, 0.4], [0.6, 1.0], [1.4, 1.0]].forEach(([a, b]) => group.add(cylinder(stage, 0.04, 0.04, 0.45, 5, wood, a, 0.22, b)));
+  group.add(box(stage, 1.0, 0.35, 0.8, stage.material("#cdb27a", { roughness: 0.9 }), 1.0, 0.62, 0.7));
+  group.add(mesh(stage, new THREE.ConeGeometry(0.85, 0.6, 4), stage.material("#b5532c", { roughness: 0.8 }), 1.0, 1.08, 0.7));
+  group.add(cylinder(stage, 0.05, 0.07, 1.6, 6, stage.material("#8f8576", { roughness: 0.9 }), -1.3, 0.8, 0.9));
+  for (let i = 0; i < 6; i += 1) {
+    const leaf = box(stage, 0.12, 0.03, 0.9, stage.material("#4d7a30", { roughness: 0.8 }), -1.3, 1.6, 0.9);
+    leaf.rotation.y = (i / 6) * Math.PI * 2;
+    leaf.rotation.x = 0.35;
+    group.add(leaf);
+  }
+  const river = box(stage, 0.5, 0.04, 2.6, stage.material("#5d7a6c", { roughness: 0.2, metalness: 0.1 }), 2.0, 0.04, -0.2);
+  group.add(river);
+  return group;
+}
+
 export default function buildOverview({ scene, stage }) {
   const detail = stage.quality !== "low";
   createSky(scene, {
@@ -261,9 +265,9 @@ export default function buildOverview({ scene, stage }) {
   const pokhara = island(stage, -13.4, 5.4, 2.8, "#6f8a70");
   const skardu = island(stage, -12.6, -7.6, 2.8, "#8b7f5c");
   const turpan = island(stage, 13.4, -0.6, 2.8, "#9a8552");
-  const dunhuang = island(stage, 13.8, 6.2, 2.8, "#b08a56");
-  const islandWorlds = [nepal, pakistan, china, karakoram, journey, pokhara, skardu, turpan, dunhuang];
-  islandWorlds.forEach((item) => stage.add(item));
+  const puer = island(stage, 12.6, -8.6, 2.8, "#6f8a50");
+  const xishuangbanna = island(stage, 2.0, -11.8, 2.8, "#5f8a4a");
+  [nepal, pakistan, china, karakoram, journey, pokhara, skardu, turpan, puer, xishuangbanna].forEach((item) => stage.add(item));
   nepal.add(miniPagoda(stage, 0, 0.42, 0));
   pakistan.add(miniFort(stage, 0, 0.42, 0));
   china.add(miniMarket(stage, 0, 0.42, 0));
@@ -272,16 +276,8 @@ export default function buildOverview({ scene, stage }) {
   pokhara.add(miniPokhara(stage, 0, 0.42, 0));
   skardu.add(miniSkardu(stage, 0, 0.42, 0));
   turpan.add(miniTurpan(stage, 0, 0.42, 0));
-  dunhuang.add(miniDunhuang(stage, 0, 0.42, 0));
-
-  stage.animate((time) => {
-    if (stage.reducedMotion) return;
-    const scroll = window.__homeScroll || 0;
-    islandWorlds.forEach((item, index) => {
-      item.position.y = (item.userData.baseY || 0) + Math.sin(time * 0.35 + index) * 0.07 - Math.min(scroll, 1200) * 0.0016;
-      item.rotation.y = Math.sin(time * 0.08 + index) * 0.012;
-    });
-  });
+  puer.add(miniPuer(stage, 0, 0.42, 0));
+  xishuangbanna.add(miniBanna(stage, 0, 0.42, 0));
 
   stage.addInteractive("overview:kathmandu", nepal, {
     label: "Nepal",
@@ -355,13 +351,23 @@ export default function buildOverview({ scene, stage }) {
     beaconPosition: [13.4, 0.7, 2.2],
     labelOffset: 1.0,
   });
-  stage.addInteractive("overview:dunhuang", dunhuang, {
-    label: "Dunhuang",
+
+  stage.addInteractive("overview:puer", puer, {
+    label: "Pu'er",
     hideLabel: true,
     accent: "#e6bc6a",
-    focus: [13.8, 0.8, 6.2],
+    focus: [12.6, 0.8, -8.6],
     radius: 9.2,
-    beaconPosition: [13.8, 0.7, 9.0],
+    beaconPosition: [12.6, 0.7, -5.8],
+    labelOffset: 1.0,
+  });
+  stage.addInteractive("overview:xishuangbanna", xishuangbanna, {
+    label: "Xishuangbanna",
+    hideLabel: true,
+    accent: "#e6bc6a",
+    focus: [2.0, 0.8, -11.8],
+    radius: 9.2,
+    beaconPosition: [2.0, 0.7, -9.0],
     labelOffset: 1.0,
   });
 

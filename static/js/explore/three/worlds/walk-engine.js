@@ -1,4 +1,4 @@
-import * as THREE from "three";
+﻿import * as THREE from "three";
 import { OBJECT_MAP } from "../../data.js";
 import { DESIGNS, PLAYER_DESIGN, makeCrowd, makeFigure } from "./kathmandu-people.js";
 
@@ -92,15 +92,92 @@ export function createKit(stage, renderer, seed = 1) {
   const bx = (w, h, d, mat, x, y, z, par, ry) => mk(new THREE.BoxGeometry(w, h, d), mat, x, y, z, par, ry);
   const cy = (rt, rb, h, seg, mat, x, y, z, par, ry) => mk(new THREE.CylinderGeometry(rt, rb, h, seg), mat, x, y, z, par, ry);
 
-  /* collision: circles in a grid */
-  const BG = new Map(), BC = 10;
-  function block(x, z, r) {
-    const x0 = Math.floor((x - r) / BC), x1 = Math.floor((x + r) / BC), z0 = Math.floor((z - r) / BC), z1 = Math.floor((z + r) / BC);
+  /* collision: circles ([x, z, r]) and oriented boxes ({ box }) in a grid.
+     Items are registered in every cell they touch, padded by QPAD so a query
+     circle of radius <= QPAD only needs to look at its own cell. */
+  const BG = new Map(), BC = 10, QPAD = 1.2;
+  const COLLIDERS = [];
+  function addToCells(item, x0w, x1w, z0w, z1w) {
+    const x0 = Math.floor((x0w - QPAD) / BC), x1 = Math.floor((x1w + QPAD) / BC);
+    const z0 = Math.floor((z0w - QPAD) / BC), z1 = Math.floor((z1w + QPAD) / BC);
     for (let a = x0; a <= x1; a += 1) for (let b = z0; b <= z1; b += 1) {
       const k = a + "," + b;
       if (!BG.has(k)) BG.set(k, []);
-      BG.get(k).push([x, z, r]);
+      BG.get(k).push(item);
     }
+  }
+  function block(x, z, r) {
+    const item = [x, z, r];
+    COLLIDERS.push(item);
+    addToCells(item, x - r, x + r, z - r, z + r);
+  }
+  /* Oriented box collider: centre, full width (local x), full depth (local z),
+     rotation about Y using the same convention as Object3D.rotation.y. */
+  function blockBox(cx, cz, w, d, ry = 0) {
+    const c = Math.cos(ry), s = Math.sin(ry), hw = w / 2, hd = d / 2;
+    const ex = Math.abs(hw * c) + Math.abs(hd * s), ez = Math.abs(hw * s) + Math.abs(hd * c);
+    const item = { box: true, x: cx, z: cz, hw, hd, c, s, ry };
+    COLLIDERS.push(item);
+    addToCells(item, cx - ex, cx + ex, cz - ez, cz + ez);
+    return item;
+  }
+  /* Box collider for an object placed inside a rotated/translated group. */
+  function blockBoxIn(group, lx, lz, w, d, lry = 0) {
+    const gr = group.rotation.y, c = Math.cos(gr), s = Math.sin(gr), sc = group.scale.x;
+    return blockBox(group.position.x + (lx * c + lz * s) * sc, group.position.z + (-lx * s + lz * c) * sc, w * sc, d * sc, gr + lry);
+  }
+  function boxHit(b, x, z, pr) {
+    const dx = x - b.x, dz = z - b.z;
+    const lx = dx * b.c - dz * b.s, lz = dx * b.s + dz * b.c;
+    const qx = lx < -b.hw ? -b.hw : lx > b.hw ? b.hw : lx;
+    const qz = lz < -b.hd ? -b.hd : lz > b.hd ? b.hd : lz;
+    const ox = lx - qx, oz = lz - qz;
+    return ox * ox + oz * oz < pr * pr;
+  }
+  /* Push a circle of radius pr out of every collider it overlaps; repeated
+     a few times so corners between two colliders resolve cleanly. The
+     result slides along walls instead of stopping dead. */
+  function resolve(x, z, pr) {
+    for (let it = 0; it < 4; it += 1) {
+      const l = BG.get(Math.floor(x / BC) + "," + Math.floor(z / BC));
+      if (!l) return [x, z];
+      let moved = false;
+      for (const b of l) {
+        if (b.box) {
+          const dx = x - b.x, dz = z - b.z;
+          const lx = dx * b.c - dz * b.s, lz = dx * b.s + dz * b.c;
+          const qx = lx < -b.hw ? -b.hw : lx > b.hw ? b.hw : lx;
+          const qz = lz < -b.hd ? -b.hd : lz > b.hd ? b.hd : lz;
+          let px = 0, pz = 0;
+          if (qx === lx && qz === lz) {
+            /* centre inside the box: leave by the nearest face */
+            const fx = b.hw - Math.abs(lx), fz = b.hd - Math.abs(lz);
+            if (fx < fz) px = (lx >= 0 ? 1 : -1) * (fx + pr + 1e-3);
+            else pz = (lz >= 0 ? 1 : -1) * (fz + pr + 1e-3);
+          } else {
+            const ox = lx - qx, oz = lz - qz, d2 = ox * ox + oz * oz;
+            if (d2 >= pr * pr) continue;
+            const d = Math.sqrt(d2) || 1e-6, push = pr - d + 1e-3;
+            px = (ox / d) * push;
+            pz = (oz / d) * push;
+          }
+          x += px * b.c + pz * b.s;
+          z += -px * b.s + pz * b.c;
+          moved = true;
+        } else {
+          const dx = x - b[0], dz = z - b[1], R = b[2] + pr, d2 = dx * dx + dz * dz;
+          if (d2 >= R * R) continue;
+          const d = Math.sqrt(d2);
+          if (d < 1e-5) { x += R; moved = true; continue; }
+          const push = R - d + 1e-3;
+          x += (dx / d) * push;
+          z += (dz / d) * push;
+          moved = true;
+        }
+      }
+      if (!moved) break;
+    }
+    return [x, z];
   }
   function blockRect(cx, cz, w, d, ry) {
     const c = Math.cos(ry), s = Math.sin(ry), r = Math.min(w, d) / 2;
@@ -115,6 +192,10 @@ export function createKit(stage, renderer, seed = 1) {
     const l = BG.get(Math.floor(x / BC) + "," + Math.floor(z / BC));
     if (!l) return false;
     for (const b of l) {
+      if (b.box) {
+        if (boxHit(b, x, z, pr)) return true;
+        continue;
+      }
       const dx = x - b[0], dz = z - b[1], R2 = b[2] + pr;
       if (dx * dx + dz * dz < R2 * R2) return true;
     }
@@ -174,7 +255,11 @@ export function createKit(stage, renderer, seed = 1) {
     }
   }
 
-  return { rnd, rr, track, M, ctex, noiseFill, repeatTex, mk, bx, cy, block, blockRect, blocked, ribbon, flagString, FLAGS, _o: new THREE.Object3D() };
+  return {
+    rnd, rr, track, M, ctex, noiseFill, repeatTex, mk, bx, cy,
+    block, blockRect, blockBox, blockBoxIn, blocked, resolve, COLLIDERS,
+    ribbon, flagString, FLAGS, _o: new THREE.Object3D(),
+  };
 }
 
 /* Default sky colours by sun height (linear values). */
@@ -190,15 +275,15 @@ const SKY_KEYS = [
 const BASE_STR = {
   en: {
     travel: "Travel", here: "you are here", km: "km", arriving: "Arriving at", learn: "Learn about",
-    times: ["Morning", "Midday", "Golden hour", "Night"], langBtn: "中文", langLabel: "Switch to Chinese",
-    hintTouch: "Left thumb to walk · drag to look · tap a beacon to read",
-    hintDesk: "W A S D to walk · Shift to run · drag to look · E or click a beacon to read", map: "Route map. Select to travel.",
+    times: ["Morning", "Midday", "Golden hour", "Night"], langBtn: "ä¸­æ–‡", langLabel: "Switch to Chinese",
+    hintTouch: "Left thumb to walk Â· drag to look Â· tap a beacon to read",
+    hintDesk: "W A S D to walk Â· Shift to run Â· drag to look Â· E or click a beacon to read", map: "Route map. Select to travel.",
   },
   zh: {
-    travel: "前往", here: "你在这里", km: "公里", arriving: "抵达", learn: "了解",
-    times: ["清晨", "正午", "黄昏", "夜晚"], langBtn: "EN", langLabel: "切换到英文",
-    hintTouch: "左手拇指行走 · 拖动转换视角 · 点按光柱阅读",
-    hintDesk: "W A S D 行走 · Shift 奔跑 · 拖动转换视角 · 按 E 或点击光柱阅读", map: "路线地图，点击可前往各地。",
+    travel: "å‰å¾€", here: "ä½ åœ¨è¿™é‡Œ", km: "å…¬é‡Œ", arriving: "æŠµè¾¾", learn: "äº†è§£",
+    times: ["æ¸…æ™¨", "æ­£åˆ", "é»„æ˜", "å¤œæ™š"], langBtn: "EN", langLabel: "åˆ‡æ¢åˆ°è‹±æ–‡",
+    hintTouch: "å·¦æ‰‹æ‹‡æŒ‡è¡Œèµ° Â· æ‹–åŠ¨è½¬æ¢è§†è§’ Â· ç‚¹æŒ‰å…‰æŸ±é˜…è¯»",
+    hintDesk: "W A S D è¡Œèµ° Â· Shift å¥”è·‘ Â· æ‹–åŠ¨è½¬æ¢è§†è§’ Â· æŒ‰ E æˆ–ç‚¹å‡»å…‰æŸ±é˜…è¯»", map: "è·¯çº¿åœ°å›¾ï¼Œç‚¹å‡»å¯å‰å¾€å„åœ°ã€‚",
   },
 };
 
@@ -217,6 +302,10 @@ export function createWalker(opts) {
   const { _o } = kit;
   const camera = manager.camera, controls = manager.controls, renderer = manager.renderer;
   const LOWQ = stage.quality === "low";
+  /* collision: "slide" pushes the walker out of circle/box colliders so it
+     glides along walls (Pu'er, Xishuangbanna). Older worlds keep "stop". */
+  const SLIDE = opts.collision === "slide";
+  const PR = opts.playerRadius || 0.5;
 
   /* camera and controls, restored on dispose */
   const saved = {
@@ -328,6 +417,105 @@ export function createWalker(opts) {
   const addNpc = (o) => NPC.push(Object.assign({ ph: kit.rnd() * 6, sp: kit.rr(0.9, 1.4), y: 0, yaw: kit.rnd() * Math.PI * 2, swing: 0, x: 0, z: 0 }, o));
   let crowd = null;
   const extraUpdates = [];
+  /* Rideables (elephants, boats...). A rideable is
+     { kind, label:{en,zh}, radius, blockR, pos():{x,z}, mount(), step(dt, input) -> {x,y,z,face},
+       dismount() -> [x,z] | null, reset()?, camLift?, camDist? }.
+     F (or the on-screen prompt) mounts the nearest one and dismounts again. */
+  const RIDES = [];
+  let riding = null;
+  let nearRide = null;
+  const RIDE_STR = {
+    en: { ride: "Ride", off: "Get off", shore: "Steer closer to the shore or a pier to get off" },
+    zh: { ride: "ä¹˜å", off: "ä¸‹æ¥", shore: "é è¿‘å²¸è¾¹æˆ–ç å¤´æ‰èƒ½ä¸‹æ¥" },
+  };
+  function pushDyn(x, z) {
+    for (const r of RIDES) {
+      if (r === riding || !r.blockR) continue;
+      const p = r.pos(), dx = x - p.x, dz = z - p.z, R = r.blockR + PR, d = Math.hypot(dx, dz);
+      if (d < R && d > 1e-5) { x = p.x + (dx / d) * R; z = p.z + (dz / d) * R; }
+    }
+    return [x, z];
+  }
+  function mount(r) {
+    if (riding || !r) return;
+    riding = r;
+    r.mount();
+    saved.rideRadius = controls.desiredRadius;
+    controls.desiredRadius = r.camDist || 18;
+    promptKey = "";
+  }
+  function showNote(text) {
+    arrive.innerHTML = "<small></small><strong></strong>";
+    arrive.querySelector("small").textContent = "";
+    arrive.querySelector("strong").textContent = text;
+    arrive.querySelector("strong").style.fontSize = "22px";
+    arrive.style.opacity = "1";
+    timers.push(window.setTimeout(() => (arrive.style.opacity = "0"), 2200));
+  }
+  function dismount(force = false) {
+    if (!riding) return;
+    let spot = riding.dismount();
+    if (!spot && !force) { showNote(RIDE_STR[lang].shore); return; }
+    if (!spot) spot = [st.x, st.z];
+    const r = riding;
+    riding = null;
+    if (force && r.reset) r.reset();
+    if (SLIDE) [st.x, st.z] = kit.resolve(spot[0], spot[1], PR);
+    else { st.x = spot[0]; st.z = spot[1]; }
+    controls.desiredRadius = saved.rideRadius || 14;
+    if (r.dismounted) r.dismounted();
+    promptKey = "";
+  }
+  function addRideable(r) { RIDES.push(r); return r; }
+  /* Small looping actions for idle NPCs (n.act): picking tea, working a wok,
+     splashing water, dancing, rowing, praying. Arms only; cheap. */
+  function actPose(n, time, dt) {
+    const p = time * (n.rate || 1) + n.ph;
+    n.armZ = 0; n.waveR = 0;
+    switch (n.act) {
+      case "pick":
+        n.wave = -1.05 - 0.35 * Math.sin(p * 3.1);
+        n.waveR = -0.9 - 0.45 * Math.sin(p * 3.1 + 1.7);
+        break;
+      case "work":
+        n.wave = -0.9;
+        n.waveR = -1.0 - 0.5 * Math.sin(p * 4.2);
+        break;
+      case "roll":
+        n.wave = -1.1 + 0.25 * Math.sin(p * 5);
+        n.waveR = -1.1 - 0.25 * Math.sin(p * 5);
+        break;
+      case "splash": {
+        const c = (p * 0.9) % 1;
+        const swing = c < 0.25 ? c / 0.25 : c < 0.4 ? 1 : Math.max(0, 1 - (c - 0.4) / 0.6);
+        n.wave = -0.5;
+        n.waveR = 0.3 - 2.6 * swing;
+        n.splashPhase = c;
+        break;
+      }
+      case "dance":
+        n.armZ = 1.15 + 0.35 * Math.sin(p * 2.2);
+        n.wave = -0.25 + 0.2 * Math.sin(p * 2.2 + 1);
+        n.waveR = n.wave;
+        n.yaw += dt * 0.5 * Math.sin(p * 0.4);
+        n.bob = Math.abs(Math.sin(p * 2.2)) * 0.06;
+        break;
+      case "row":
+        n.wave = -1.2 - 0.6 * Math.sin(p * 3.4);
+        n.waveR = n.wave;
+        break;
+      case "pray":
+        n.wave = -1.35;
+        n.waveR = -1.35;
+        break;
+      case "pour":
+        n.wave = -0.6;
+        n.waveR = -1.25 - 0.3 * Math.max(0, Math.sin(p * 0.9));
+        break;
+      default:
+        n.wave = 0;
+    }
+  }
 
   /* ---------- on-screen controls ---------- */
   const STR = {
@@ -437,10 +625,10 @@ export function createWalker(opts) {
       local.textContent = placeSub(p);
       const sep = document.createElement("span");
       sep.className = "ktm-sep";
-      sep.textContent = placeSub(p) ? "·" : "";
+      sep.textContent = placeSub(p) ? "Â·" : "";
       const dist = document.createElement("span");
       dist.className = "ktm-dist";
-      dist.textContent = here ? tr().here : "≈ " + Math.round(d * kmPer) + " " + tr().km;
+      dist.textContent = here ? tr().here : "â‰ˆ " + Math.round(d * kmPer) + " " + tr().km;
       small.append(local, sep, dist);
       b.append(name, small);
       b.addEventListener("click", () => travelTo(k));
@@ -468,9 +656,10 @@ export function createWalker(opts) {
     timeBtn.textContent = t.times[timeIdx];
     travelBtn.textContent = t.travel;
     q("map").setAttribute("aria-label", t.map);
-    if (hintEl) hintEl.textContent = touch ? t.hintTouch : t.hintDesk;
+    if (hintEl) hintEl.textContent = (touch ? t.hintTouch : t.hintDesk) + (RIDES.length && !touch ? (lang === "zh" ? " Â· F ä¹˜å" : " Â· F to ride") : "");
     lastPlace = "";
     nearId = "__refresh__";
+    promptKey = "";
     if (!menu.hidden) renderMenu();
   }
   langBtn.addEventListener("click", () => {
@@ -494,11 +683,13 @@ export function createWalker(opts) {
   }
   function travelTo(k) {
     toggleMenu(false);
+    if (riding) dismount(true);
     const p = PL[k];
     fade.classList.add("on");
     timers.push(window.setTimeout(() => {
       st.x = p.spawn[0];
       st.z = p.spawn[1];
+      if (SLIDE) [st.x, st.z] = kit.resolve(st.x, st.z, PR);
       aimAt(p);
       arrive.innerHTML = "<small></small><strong></strong><span></span>";
       arrive.querySelector("small").textContent = tr().arriving;
@@ -509,8 +700,11 @@ export function createWalker(opts) {
       fade.classList.remove("on");
     }, 480));
   }
+  let promptKind = "", promptKey = "";
   prompt.addEventListener("click", () => {
-    if (nearId && POS[nearId]) manager.onSelect(nearId);
+    if (promptKind === "off") dismount();
+    else if (promptKind === "ride" && nearRide) mount(nearRide);
+    else if (nearId && POS[nearId]) manager.onSelect(nearId);
   });
 
   /* map */
@@ -563,7 +757,12 @@ export function createWalker(opts) {
   const onKeyDown = (e) => {
     if (typing(e.target) || document.querySelector("dialog[open]")) return;
     keysDown[e.code] = true;
-    if (e.code === "KeyE" && nearId && POS[nearId] && worldVisible()) manager.onSelect(nearId);
+    if (e.code === "KeyF" && worldVisible() && !e.repeat) {
+      if (riding) dismount();
+      else if (nearRide) mount(nearRide);
+    }
+    if (e.code === "KeyE" && nearId && POS[nearId] && worldVisible() && !(promptKind === "ride" && nearRide)) manager.onSelect(nearId);
+    else if (e.code === "KeyE" && promptKind === "ride" && nearRide && worldVisible()) mount(nearRide);
   };
   const onKeyUp = (e) => { keysDown[e.code] = false; };
   const onBlur = () => Object.keys(keysDown).forEach((k) => (keysDown[k] = false));
@@ -651,16 +850,48 @@ export function createWalker(opts) {
     if (joy.id !== null) { ix += joy.dx; iz -= joy.dy; run = run || Math.hypot(joy.dx, joy.dy) > 0.92; }
     const L = Math.hypot(ix, iz);
     let moving = false;
-    if (L > 0.08 && worldVisible()) {
+    let gy;
+    if (riding) {
+      /* steering a ridden elephant or boat: the vehicle decides where it can go */
+      let mx = 0, mz = 0, n = 0;
+      if (L > 0.08 && worldVisible()) {
+        n = Math.min(1, L);
+        const th = controls.theta, ux = ix / L, uz = iz / L;
+        mx = -Math.sin(th) * uz + Math.cos(th) * ux;
+        mz = -Math.cos(th) * uz - Math.sin(th) * ux;
+      }
+      const seat = riding.step(dt, { mx, mz, n, run, reduced, time });
+      st.x = seat.x; st.z = seat.z; st.face = seat.face; st.speed = 0;
+      gy = seat.y;
+    } else if (L > 0.08 && worldVisible()) {
       const n = Math.min(1, L);
       ix /= L; iz /= L;
       const th = controls.theta;
       const fx = -Math.sin(th), fz = -Math.cos(th), rx = Math.cos(th), rz = -Math.sin(th);
       const mx = fx * iz + rx * ix, mz = fz * iz + rz * ix, sp = (run ? (opts.runSpeed || 12) : 4.6) * n;
-      const nx = st.x + mx * sp * dt, nz = st.z + mz * sp * dt;
-      if (opts.canStand(nx, nz)) { st.x = nx; st.z = nz; }
-      else if (opts.canStand(nx, st.z)) st.x = nx;
-      else if (opts.canStand(st.x, nz)) st.z = nz;
+      if (SLIDE) {
+        /* sub-stepped push-out: the walker slides along walls and round corners */
+        const stepLen = sp * dt, steps = Math.max(1, Math.ceil(stepLen / 0.25));
+        for (let k = 0; k < steps; k += 1) {
+          const tx = st.x + (mx * stepLen) / steps, tz = st.z + (mz * stepLen) / steps;
+          const [rx, rz] = pushDyn(...kit.resolve(tx, tz, PR));
+          if (opts.canStand(rx, rz)) { st.x = rx; st.z = rz; }
+          else {
+            const [ax, az] = kit.resolve(tx, st.z, PR);
+            if (opts.canStand(ax, az)) { st.x = ax; st.z = az; }
+            else {
+              const [bx2, bz2] = kit.resolve(st.x, tz, PR);
+              if (opts.canStand(bx2, bz2)) { st.x = bx2; st.z = bz2; }
+              else break;
+            }
+          }
+        }
+      } else {
+        const nx = st.x + mx * sp * dt, nz = st.z + mz * sp * dt;
+        if (opts.canStand(nx, nz)) { st.x = nx; st.z = nz; }
+        else if (opts.canStand(nx, st.z)) st.x = nx;
+        else if (opts.canStand(st.x, nz)) st.z = nz;
+      }
       let df = Math.atan2(mx, mz) - st.face;
       df = Math.atan2(Math.sin(df), Math.cos(df));
       st.face += df * Math.min(1, dt * 10);
@@ -668,12 +899,13 @@ export function createWalker(opts) {
       st.speed = sp;
       moving = true;
     } else st.speed = 0;
-    const gy = opts.groundY(st.x, st.z);
+    if (gy === undefined) gy = opts.groundY(st.x, st.z);
     player.root.position.set(st.x, gy, st.z);
     player.inner.rotation.y = st.face;
-    player.pose(moving ? Math.sin(st.walk) * Math.min(0.75, st.speed * 0.09) : 0);
+    if (riding) player.sit();
+    else player.pose(moving ? Math.sin(st.walk) * Math.min(0.75, st.speed * 0.09) : 0);
     player.inner.position.y = moving ? Math.abs(Math.cos(st.walk)) * 0.05 : 0;
-    controls.target.set(st.x, gy + 1.6, st.z);
+    controls.target.set(st.x, gy + (riding ? riding.camLift || 1.6 : 1.6), st.z);
     controls.desiredTarget.copy(controls.target);
     sun.position.set(st.x + sunDir.x * 260, gy + sunDir.y * 260, st.z + sunDir.z * 260);
     sun.target.position.set(st.x, gy, st.z);
@@ -705,9 +937,14 @@ export function createWalker(opts) {
         const tx = b.x - a.x, tz = b.z - a.z, LL = Math.hypot(tx, tz) || 1;
         n.x = a.x + tx * u - (tz / LL) * n.off * n.dir; n.z = a.z + tz * u + (tx / LL) * n.off * n.dir;
         n.yaw = Math.atan2(tx * n.dir, tz * n.dir);
+      } else if (n.kind === "script") {
+        /* position driven by the world (caravans, boats); n.moving animates the legs */
+        mov = Boolean(n.moving);
+        if (n.act && !reduced) actPose(n, time, dt);
       } else if (n.kind === "idle") {
         mov = false;
-        n.wave = Math.sin(time * 1.3 + n.ph) > 0.97 ? -1.2 : 0;
+        if (n.act && !reduced) actPose(n, time, dt);
+        else n.wave = Math.sin(time * 1.3 + n.ph) > 0.97 ? -1.2 : 0;
       } else {
         if (n.wait > 0) { n.wait -= dt; mov = false; }
         else {
@@ -722,10 +959,10 @@ export function createWalker(opts) {
           }
         }
       }
-      n.y = opts.groundY(n.x, n.z);
+      n.y = n.fixedY != null ? n.fixedY : opts.groundY(n.x, n.z);
       const walkPh = time * 6 * n.sp + n.ph;
       n.swing = mov && !reduced ? Math.sin(walkPh) * 0.55 : 0;
-      n.bob = mov && !reduced ? Math.abs(Math.cos(walkPh)) * 0.04 : 0;
+      if (!(n.act === "dance" && !mov)) n.bob = mov && !reduced ? Math.abs(Math.cos(walkPh)) * 0.04 : 0;
     });
     if (crowd) crowd.update();
     extraUpdates.forEach((fn) => fn(time, dt, st));
@@ -741,13 +978,29 @@ export function createWalker(opts) {
       entry.beacon.group.scale.setScalar(1.6 * Math.max(1, d / 50));
       if (d < bd) { bd = d; best = entry.id; }
     });
-    if (best !== nearId) {
-      nearId = best;
-      if (best) {
-        prompt.innerHTML = `<span></span><kbd>${touch ? "Tap" : "E"}</kbd>`;
-        prompt.firstChild.textContent = tr().learn + (lang === "zh" ? "：" : " ") + objectName(best);
+    /* nearest rideable within reach (only when walking) */
+    nearRide = null;
+    if (!riding) {
+      let rd = 1e9;
+      RIDES.forEach((r) => { const p = r.pos(), d = Math.hypot(p.x - st.x, p.z - st.z); if (d < r.radius && d < rd) { rd = d; nearRide = r; } });
+      /* Rideables take priority over nearby beacons: F should mount at a pier or trek station. */
+    }
+    if (best !== nearId) { nearId = best; promptKey = ""; }
+    const kind = riding ? "off" : nearRide ? "ride" : best ? "learn" : "";
+    const key = kind + "|" + (kind === "ride" ? RIDES.indexOf(nearRide) : kind === "learn" ? best : "") + "|" + lang;
+    if (key !== promptKey) {
+      promptKey = key;
+      promptKind = kind;
+      if (!kind) prompt.hidden = true;
+      else {
+        const k2 = kind === "learn" ? (touch ? "Tap" : "E") : touch ? "Tap" : "F";
+        prompt.innerHTML = `<span></span><kbd>${k2}</kbd>`;
+        const R2 = RIDE_STR[lang];
+        prompt.firstChild.textContent = kind === "off" ? R2.off + (riding.label ? (lang === "zh" ? "" : " Â· ") + riding.label[lang] : "")
+          : kind === "ride" ? R2.ride + (lang === "zh" ? "" : " ") + nearRide.label[lang]
+            : tr().learn + (lang === "zh" ? "ï¼š" : " ") + objectName(best);
         prompt.hidden = false;
-      } else prompt.hidden = true;
+      }
     }
     if (frame % 15 === 0) {
       if ((manager.language === "zh" ? "zh" : "en") !== lang) applyLanguage();
@@ -805,10 +1058,13 @@ export function createWalker(opts) {
   };
 
   const api = {
-    st, sun, hemi, sunDir, setTime, lights, interactive, controls, stage, addNpc, pick, D, NPC, start, travelTo, figMat,
+    st, sun, hemi, sunDir, skyU, setTime, lights, interactive, controls, stage, addNpc, pick, D, NPC, start, travelTo, figMat, kit, player,
+    getTimeIdx: () => timeIdx, getLang: () => lang, POS,
+    addRideable, mount, dismount, isRiding: () => riding, RIDES,
     onUpdate: (fn) => extraUpdates.push(fn),
     setTimeIdx: (i) => { timeIdx = i; timeBtn.textContent = tr().times[i]; setTime(TIMES[i]); },
   };
   window.__walk = api;
   return api;
 }
+
