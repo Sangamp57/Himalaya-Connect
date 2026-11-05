@@ -13,7 +13,7 @@ import {
   woodTexture,
 } from "../helpers.js";
 
-function mesh(stage, geometry, material, x = 0, y = 0, z = 0) {
+export function mesh(stage, geometry, material, x = 0, y = 0, z = 0) {
   stage.trackGeometry(geometry);
   const object = new THREE.Mesh(geometry, material);
   object.position.set(x, y, z);
@@ -22,19 +22,19 @@ function mesh(stage, geometry, material, x = 0, y = 0, z = 0) {
   return object;
 }
 
-function box(stage, w, h, d, material, x, y, z) {
+export function box(stage, w, h, d, material, x, y, z) {
   return mesh(stage, new THREE.BoxGeometry(w, h, d), material, x, y, z);
 }
 
-function cylinder(stage, rt, rb, h, segments, material, x, y, z) {
+export function cylinder(stage, rt, rb, h, segments, material, x, y, z) {
   return mesh(stage, new THREE.CylinderGeometry(rt, rb, h, segments), material, x, y, z);
 }
 
-function sphere(stage, radius, mat, x, y, z, detail = 1) {
+export function sphere(stage, radius, mat, x, y, z, detail = 1) {
   return mesh(stage, new THREE.IcosahedronGeometry(radius, detail), mat, x, y, z);
 }
 
-function person(stage, x, z, jacketColor, pantsColor, scale = 1, phase = 0) {
+export function person(stage, x, z, jacketColor, pantsColor, scale = 1, phase = 0) {
   const group = new THREE.Group();
   group.position.set(x, 0, z);
   const jacket = stage.material(jacketColor, { roughness: 0.92 });
@@ -55,7 +55,7 @@ function person(stage, x, z, jacketColor, pantsColor, scale = 1, phase = 0) {
   return group;
 }
 
-function hamletHouse(stage, x, z, stoneMap, timberMap, scale = 0.8) {
+export function hamletHouse(stage, x, z, stoneMap, timberMap, scale = 0.8) {
   const group = new THREE.Group();
   group.position.set(x, 0, z);
   const stone = stage.material("#ffffff", { map: stoneMap, roughness: 1 });
@@ -70,7 +70,7 @@ function hamletHouse(stage, x, z, stoneMap, timberMap, scale = 0.8) {
   return group;
 }
 
-function goat(stage, x, z, scale = 1) {
+export function goat(stage, x, z, scale = 1) {
   const group = new THREE.Group();
   group.position.set(x, 0, z);
   const fur = stage.material("#d8cdb8", { roughness: 1 });
@@ -97,7 +97,7 @@ function goat(stage, x, z, scale = 1) {
   return group;
 }
 
-function buildFort(stage, x, z, stoneMap, timberMap) {
+export function buildFort(stage, x, z, stoneMap, timberMap) {
   const group = new THREE.Group();
   group.position.set(x, 0, z);
   const stone = stage.material("#ffffff", { map: stoneMap, roughness: 0.98 });
@@ -163,7 +163,7 @@ function buildFort(stage, x, z, stoneMap, timberMap) {
   return group;
 }
 
-function buildEmbroideredStall(stage) {
+export function buildEmbroideredStall(stage) {
   const group = new THREE.Group();
   group.position.set(-5.4, 0, 6.6);
   group.rotation.y = 0.2;
@@ -198,7 +198,7 @@ function buildEmbroideredStall(stage) {
   return group;
 }
 
-function buildApricotStall(stage) {
+export function buildApricotStall(stage) {
   const group = new THREE.Group();
   group.position.set(2.1, 0, 8.6);
   group.rotation.y = -0.18;
@@ -228,7 +228,7 @@ function buildApricotStall(stage) {
   return group;
 }
 
-function buildCraftWorkshop(stage) {
+export function buildCraftWorkshop(stage) {
   const group = new THREE.Group();
   group.position.set(8.4, 0, 1.6);
   group.rotation.y = -0.7;
@@ -254,7 +254,7 @@ function buildCraftWorkshop(stage) {
   return group;
 }
 
-function buildVillageHome(stage, stoneMap, timberMap) {
+export function buildVillageHome(stage, stoneMap, timberMap) {
   const group = new THREE.Group();
   group.position.set(-8.0, 0, 3.5);
   group.rotation.y = 0.3;
@@ -291,7 +291,7 @@ function buildVillageHome(stage, stoneMap, timberMap) {
   return group;
 }
 
-function buildWaterChannel(stage) {
+export function buildWaterChannel(stage) {
   const group = new THREE.Group();
   group.position.set(4.2, 0, -2.8);
   group.rotation.y = -0.18;
@@ -323,7 +323,7 @@ function buildWaterChannel(stage) {
   return group;
 }
 
-function buildRubabCorner(stage) {
+export function buildRubabCorner(stage) {
   const group = new THREE.Group();
   group.position.set(-2.4, 0, 1.0);
   group.rotation.y = 0.35;
@@ -358,7 +358,7 @@ function buildRubabCorner(stage) {
   return group;
 }
 
-function buildViewpoint(stage) {
+export function buildViewpoint(stage) {
   const group = new THREE.Group();
   group.position.set(12.3, 0, -9.8);
   const stone = stage.material("#80796b", { roughness: 1 });

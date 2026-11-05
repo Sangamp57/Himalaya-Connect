@@ -66,7 +66,7 @@ let booted = false;
 
 const WORLD_BUILDERS = {
   kathmandu: () => import("./three/worlds/kathmandu.js").then((module) => module.default),
-  hunza: () => import("./three/worlds/hunza.js").then((module) => module.default),
+  hunza: () => import("./three/worlds/hunza-walkable.js").then((module) => module.default),
   kashgar: () => import("./three/worlds/kashgar.js").then((module) => module.default),
   karakoram: () => import("./three/worlds/karakoram.js").then((module) => module.default),
   journey: () => import("./three/worlds/journey.js").then((module) => module.default),

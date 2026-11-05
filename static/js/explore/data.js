@@ -833,6 +833,85 @@ export const OBJECTS = [
     },
   },
 
+  {
+    id: "pk-altit",
+    worldId: "hunza",
+    countryId: "pakistan",
+    category: "landmarks",
+    rarity: "epic",
+    names: { en: "Altit Fort", zh: "阿尔提特堡", ne: "अल्तित किल्ला", ur: "التیت قلعہ" },
+    localName: "التیت قلعہ · Altit Fort",
+    summary: {
+      en: "An older Hunza stronghold above the river, with a tall watchtower and timber balconies.",
+      zh: "河畔更古老的罕萨堡垒，拥有高耸的瞭望塔与木制阳台。",
+      ne: "नदीमाथिको पुरानो हुन्जा किल्ला, अग्लो पहरा बुर्जा र काठका बाल्कनीसहित।",
+      ur: "دریا کے اوپر ہنزہ کا قدیم قلعہ، بلند چوکی اور لکڑی کی بالکنیوں کے ساتھ۔",
+    },
+    story: {
+      en: "Altit Fort stands above the Hunza River near Karimabad and is often described as one of the oldest surviving buildings in Hunza. Its stone walls, timber balconies and watchtower were repaired and enlarged over centuries. The fort is a museum and a local heritage place, not only a viewpoint. Visitors should check access and behave as guests in a living village.",
+    },
+    fact: "Altit Fort is one of the oldest surviving forts in Hunza and has been restored with support from the Aga Khan Trust for Culture.",
+    sources: [SRC.aktc, { label: "Gilgit-Baltistan Tourism · Hunza", url: "https://visitgilgitbaltistan.gov.pk/" }],
+    quiz: {
+      q: "Altit Fort stands above which river?",
+      options: ["Hunza River", "Indus River", "Bagmati River", "Yarkand River"],
+      answer: 0,
+      explain: "Altit Fort overlooks the Hunza River near Karimabad, in Gilgit-Baltistan.",
+    },
+  },
+  {
+    id: "pk-attabad",
+    worldId: "hunza",
+    countryId: "pakistan",
+    category: "landmarks",
+    rarity: "rare",
+    names: { en: "Attabad Lake", zh: "阿塔巴德湖", ne: "अत्ताबाद ताल", ur: "عطا آباد جھیل" },
+    localName: "عطا آباد جھیل · Attabad Lake",
+    summary: {
+      en: "A turquoise lake formed when a landslide blocked the Hunza River in 2010.",
+      zh: "2010年山体滑坡堵塞罕萨河后形成的碧绿湖泊。",
+      ne: "सन् २०१० मा पहिरोले हुन्जा नदी थुनिएर बनेको टर्कोइज ताल।",
+      ur: "2010 میں لینڈ سلائیڈ سے دریائے ہنزہ بند ہونے پر بننے والی فیروزی جھیل۔",
+    },
+    story: {
+      en: "Attabad Lake was created in January 2010 when a massive landslide buried part of the village of Attabad and blocked the Hunza River. The lake is beautiful, but it is also a reminder of hazard, displacement and the engineering that eventually reopened the road. Visit with local guidance, respect the communities whose land and routes were changed, and do not treat the shoreline as an empty photo set.",
+    },
+    fact: "Attabad Lake formed after a 2010 landslide dammed the Hunza River.",
+    sources: [SRC.attabad],
+    quiz: {
+      q: "What created Attabad Lake?",
+      options: ["A landslide that blocked the Hunza River", "A glacier carved the basin", "A volcanic eruption", "A dam built in the 1990s"],
+      answer: 0,
+      explain: "A massive landslide in January 2010 blocked the Hunza River and formed the lake.",
+    },
+  },
+  {
+    id: "pk-hussaini",
+    worldId: "hunza",
+    countryId: "pakistan",
+    category: "landmarks",
+    rarity: "rare",
+    names: { en: "Hussaini Suspension Bridge", zh: "侯赛尼吊桥", ne: "हुसैनी झोलुङ्गे पुल", ur: "حسینی پل" },
+    localName: "حسینی پل · Hussaini Bridge",
+    summary: {
+      en: "A narrow suspension bridge over the Hunza River, a dramatic working crossing.",
+      zh: "横跨罕萨河的狭窄吊桥，是当地重要的通行设施。",
+      ne: "हुन्जा नदीमाथिको साँघुरो झोलुङ्गे पुल, स्थानीय आवतजावतको महत्त्वपूर्ण मार्ग।",
+      ur: "دریائے ہنزہ پر ایک تنگ جھولا پل، مقامی آمدورفت کا اہم راستہ۔",
+    },
+    story: {
+      en: "The Hussaini bridge crosses the Hunza River near Hussaini village. Its narrow planks, cables and exposure to wind make it famous with travellers, but it is first a working crossing for local people. Cross carefully, one at a time if needed, and do not block others. Maintenance, weather and load matter; treat it as infrastructure, not a theme-park ride.",
+    },
+    fact: "The Hussaini bridge is a working local crossing over the Hunza River, not only a viewpoint.",
+    sources: [SRC.kkh],
+    quiz: {
+      q: "What does the Hussaini bridge cross?",
+      options: ["The Hunza River", "The Indus River", "The Bagmati River", "The Yarkand River"],
+      answer: 0,
+      explain: "The Hussaini bridge crosses the Hunza River near Hussaini village in upper Hunza.",
+    },
+  },
+
   /* ---------------------------------------------------------------- CHINA */
   {
     id: "cn-copper",
