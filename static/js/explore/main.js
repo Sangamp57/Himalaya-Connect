@@ -967,6 +967,27 @@ function bindEvents() {
   });
 
   document.getElementById("object-drawer-close")?.addEventListener("click", closeObjectPanel);
+
+  const worldHead = document.querySelector(".world-head");
+  const worldHeadBack = worldHead?.querySelector(".world-head-top [data-view='home']");
+  worldHeadBack?.addEventListener("click", (event) => {
+    if (!window.matchMedia("(max-width: 720px)").matches) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const collapsed = worldHead.classList.toggle("is-collapsed");
+    worldHeadBack.setAttribute(
+      "aria-label",
+      collapsed ? "Expand world information" : "Minimise world information"
+    );
+    worldHeadBack.setAttribute("aria-expanded", String(!collapsed));
+  });
+  window.addEventListener("resize", () => {
+    if (window.matchMedia("(max-width: 720px)").matches) return;
+    worldHead?.classList.remove("is-collapsed");
+    worldHeadBack?.setAttribute("aria-expanded", "true");
+    worldHeadBack?.setAttribute("aria-label", "Return home");
+  });
+
   document.getElementById("world-trail-toggle")?.addEventListener("click", () => toggleTrail(ui.el.worldTrail.hidden));
   document.getElementById("world-trail-close")?.addEventListener("click", () => toggleTrail(false));
   document.getElementById("zoom-in")?.addEventListener("click", () => sceneManager?.zoom(0.82));

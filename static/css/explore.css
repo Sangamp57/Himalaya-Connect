@@ -4316,9 +4316,9 @@ body.reduce-motion *::after {
   }
   .world-head {
     inset-inline: 10px;
-    width: min(250px, calc(100% - 82px));
+    width: min(230px, calc(100% - 82px));
     top: calc(var(--ex-topbar-h) + 8px);
-    max-width: 250px;
+    max-width: 230px;
     padding: 11px 12px;
   }
   .world-head-top {
@@ -4354,6 +4354,33 @@ body.reduce-motion *::after {
     min-height: 32px;
     padding-inline: 9px;
     font-size: 8px;
+  }
+  .world-head.is-collapsed {
+    width: 170px;
+    max-width: calc(100% - 82px);
+    padding: 8px 10px;
+  }
+  .world-head.is-collapsed .world-head-top {
+    margin-bottom: 0;
+  }
+  .world-head.is-collapsed .world-head-top .ex-kicker {
+    display: none;
+  }
+  .world-head.is-collapsed .world-head-top svg {
+    transform: rotate(180deg);
+  }
+  .world-head.is-collapsed h1 {
+    margin: 0;
+    overflow: hidden;
+    font-size: 1.05rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .world-head.is-collapsed .world-head-meta,
+  .world-head.is-collapsed .world-actions,
+  .world-head.is-collapsed .world-blurb,
+  .world-head.is-collapsed .world-route-note {
+    display: none;
   }
   .world-tools {
     inset-inline-end: 10px;
