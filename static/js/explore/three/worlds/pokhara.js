@@ -145,7 +145,7 @@ export default function buildPokhara({ scene, stage, manager }) {
       lakeside: {
         n: "Lakeside",
         zh: "湖畔区",
-        sub: "جھیل کنارہ",
+        sub: "लेकसाइड",
         x: 36,
         z: 20,
         r: 34,
@@ -157,7 +157,7 @@ export default function buildPokhara({ scene, stage, manager }) {
       phewa: {
         n: "Phewa Lake",
         zh: "费瓦湖",
-        sub: "پیوا جھیل",
+        sub: "फेवा ताल",
         x: -20,
         z: 25,
         r: 40,
@@ -169,7 +169,7 @@ export default function buildPokhara({ scene, stage, manager }) {
       sarangkot: {
         n: "Sarangkot",
         zh: "萨朗科特",
-        sub: "سرانکوٹ",
+        sub: "सराङकोट",
         x: 82,
         z: -58,
         r: 26,
@@ -181,7 +181,7 @@ export default function buildPokhara({ scene, stage, manager }) {
       peace: {
         n: "World Peace Pagoda",
         zh: "世界和平塔",
-        sub: "عالمی امن پگوڈا",
+        sub: "विश्व शान्ति स्तूप",
         x: 44,
         z: 64,
         r: 24,
@@ -193,7 +193,7 @@ export default function buildPokhara({ scene, stage, manager }) {
       annapurna: {
         n: "Annapurna Viewpoint",
         zh: "安纳普尔纳观景点",
-        sub: "اناپورنا نظارہ گاہ",
+        sub: "अन्नपूर्ण दृश्यावलोकन",
         x: -82,
         z: -58,
         r: 26,
@@ -204,7 +204,7 @@ export default function buildPokhara({ scene, stage, manager }) {
       },
     },
     startPlace: "lakeside",
-    worldName: { en: "Pokhara", zh: "博卡拉", sub: "پوکھرا" },
+    worldName: { en: "Pokhara", zh: "博卡拉", sub: "पोखरा" },
     mapBounds: { x0: -120, x1: 120, z0: -120, z1: 120 },
     mapLines: [
       [[-120, 25], [-20, 25], [80, 25]],

@@ -2568,6 +2568,26 @@ export const SCAVENGER_HUNTS = [
     },
     targets: ["cn-copper", "cn-atlas", "cn-market", "cn-rawap"],
   },
+  {
+    id: "hunt-journey",
+    icon: "mountain",
+    worldId: "journey",
+    xp: 40,
+    rewardCard: "extra-tea",
+    title: {
+      en: "The High Trail",
+      zh: "高山步道",
+      ne: "उच्च बाटो",
+      ur: "اونچا راستہ",
+    },
+    blurb: {
+      en: "Find the trailhead, the high-pass cairn and the prayer-flag ridge.",
+      zh: "在伟大旅程中寻找步道起点、山口石堆和经幡山脊。",
+      ne: "महान यात्रामा ट्रेलहेड, उच्च दराको ढुङ्गाको थुप्रो र प्रार्थना झन्डाको शिखर खोज्नुहोस्।",
+      ur: "عظیم سفر میں ٹریل ہیڈ، اونچے درے کا پتھر کا ڈھیر اور دعا کے پرچم کی چوٹی تلاش کریں۔",
+    },
+    targets: ["jo-trailhead", "jo-cairn", "jo-flag"],
+  },
 ];
 
 export const MAP_LOCATIONS = [

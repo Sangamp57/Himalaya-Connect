@@ -15,6 +15,7 @@ import {
   SOURCE_NOTES,
   WORLDS,
 } from "./data.js";
+import { OBJECT_IMAGES } from "./object-images.js";
 import { categoryIcon, icon } from "./icons.js";
 import { dirFor, localeFor, translate } from "./i18n.js";
 
@@ -22,6 +23,22 @@ const $ = (selector, scope = document) => scope.querySelector(selector);
 const $$ = (selector, scope = document) => Array.from(scope.querySelectorAll(selector));
 
 const COUNTRY_ACCENT = Object.fromEntries(COUNTRIES.map((country) => [country.id, country.accent]));
+
+function artworkMarkup(card, accent, name, localLabel = card.localName || "") {
+  const photo = OBJECT_IMAGES[card.id];
+  if (!photo) {
+    return `<div class="object-art" style="--art-accent:${accent}">
+      <span class="object-art-icon">${categoryIcon(card.category)}</span>
+      <span class="object-art-local">${escapeHtml(localLabel)}</span>
+    </div>`;
+  }
+  return `<figure class="object-art object-art--photo" style="--art-accent:${accent}">
+    <img src="${escapeHtml(photo.src)}" alt="${escapeHtml(photo.alt || name)}" loading="lazy" decoding="async">
+    <span class="object-art-fallback"><span class="object-art-icon">${categoryIcon(card.category)}</span></span>
+    ${photo.credit ? `<figcaption class="object-art-credit">${photo.source ? `<a href="${escapeHtml(photo.source)}" target="_blank" rel="noopener noreferrer">${escapeHtml(photo.credit)}</a>` : escapeHtml(photo.credit)}</figcaption>` : ""}
+    ${localLabel ? `<span class="object-art-local">${escapeHtml(localLabel)}</span>` : ""}
+  </figure>`;
+}
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -346,8 +363,9 @@ export class ExploreUI {
           const isFound = Boolean(this.store.state.collection[card.id]);
           const accent = COUNTRY_ACCENT[card.countryId] || "#e6bc6a";
           if (isFound) {
+            const photo = OBJECT_IMAGES[card.id];
             return `<button type="button" class="mini-card is-found" style="--mini-accent:${accent}" data-open-card="${card.id}" title="${escapeHtml(localize(card.names, this.lang))}">
-              <span class="mini-card-art" style="background:radial-gradient(circle at 65% 25%, ${accent}, transparent 70%)"></span>
+              <span class="mini-card-art" style="background:radial-gradient(circle at 65% 25%, ${accent}, transparent 70%)">${photo ? `<img src="${escapeHtml(photo.src)}" alt="${escapeHtml(photo.alt || localize(card.names, this.lang))}" loading="lazy" decoding="async">` : ""}</span>
               ${categoryIcon(card.category)}
             </button>`;
           }
@@ -481,10 +499,7 @@ export class ExploreUI {
     const countryData = COUNTRIES.find((item) => item.id === object.countryId);
     const accent = COUNTRY_ACCENT[object.countryId] || "#b83a2e";
     const localizedName = localize(object.names, this.lang);
-    const artifact = `<div class="object-art" style="--art-accent:${accent}">
-      <span class="object-art-icon">${categoryIcon(object.category)}</span>
-      <span class="object-art-local">${escapeHtml(object.localName || "")}</span>
-    </div>`;
+    const artifact = artworkMarkup(object, accent, localizedName);
     const sourceLinks = (object.sources || [])
       .map(
         (source) =>
@@ -533,6 +548,7 @@ export class ExploreUI {
         <h3>${escapeHtml(this.t("object.sources"))}</h3>
         <div class="object-sources">${sourceLinks}</div>
       </div>`;
+    this.bindArtworkErrors(this.el.objectContent);
     this.el.objectDrawer.hidden = false;
     this.hydrateIcons(this.el.objectDrawer);
     const closeButton = $("#object-drawer-close");
@@ -542,6 +558,12 @@ export class ExploreUI {
   hideObject() {
     if (this.el.objectDrawer) this.el.objectDrawer.hidden = true;
     this.currentObject = null;
+  }
+
+  bindArtworkErrors(scope) {
+    scope?.querySelectorAll(".object-art--photo img").forEach((img) => {
+      img.addEventListener("error", () => img.closest(".object-art")?.classList.add("is-missing"), { once: true });
+    });
   }
 
   renderToday(encounter, { saved = false, quizResult = null } = {}) {
@@ -708,6 +730,7 @@ export class ExploreUI {
       : "";
     this.el.collectionGrid.innerHTML = empty + cards.map((card) => this.collectionCard(card, Boolean(found[card.id]))).join("");
     this.hydrateIcons(this.el.collectionGrid);
+    this.bindArtworkErrors(this.el.collectionGrid);
   }
 
   collectionCard(card, isFound) {
@@ -716,8 +739,10 @@ export class ExploreUI {
     const names = localize(card.names, this.lang);
     const country = countryName(card.countryId, this.lang);
     const canRead = isFound || this.readingMode;
+    const photo = canRead ? OBJECT_IMAGES[card.id] : null;
     const content = `
-      <div class="culture-card-art" style="--card-accent:${accent}">
+      <div class="culture-card-art ${photo ? "has-photo" : ""}" style="--card-accent:${accent}">
+        ${photo ? `<img src="${escapeHtml(photo.src)}" alt="${escapeHtml(photo.alt || names)}" loading="lazy" decoding="async">` : ""}
         <span class="culture-card-art-icon">${canRead ? categoryIcon(card.category) : icon("lock")}</span>
         <span class="culture-card-rarity rarity--${card.rarity}">${escapeHtml(rarityName(card.rarity, this.lang))}</span>
         ${!isFound ? `<span class="culture-card-status">${escapeHtml(this.readingMode ? this.t("collection.readingMode") : this.t("common.locked"))}</span>` : ""}
@@ -982,7 +1007,7 @@ export class ExploreUI {
     const accent = COUNTRY_ACCENT[card.countryId] || "#e6bc6a";
     const sources = (card.sources || []).map((source) => `<a class="object-source" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(source.label)}</span>${icon("arrow")}</a>`).join("");
     this.openDialog(`
-      <div class="object-art" style="--art-accent:${accent}"><span class="object-art-icon">${categoryIcon(card.category)}</span><span class="object-art-local">${escapeHtml(countryName(card.countryId, this.lang))}</span></div>
+      ${artworkMarkup(card, accent, localize(card.names, this.lang), countryName(card.countryId, this.lang))}
       <div class="object-kicker"><span>${escapeHtml(categoryName(card.category, this.lang))}</span><span class="rarity rarity--${card.rarity}">${escapeHtml(rarityName(card.rarity, this.lang))}</span></div>
       <h2>${escapeHtml(localize(card.names, this.lang))}</h2>
       <p class="object-summary">${escapeHtml(localize(card.summary, this.lang))}</p>
@@ -995,6 +1020,7 @@ export class ExploreUI {
         <button type="button" class="ex-button ex-button--text" data-dialog-close>${escapeHtml(this.t("common.close"))}</button>
       </div>`);
     this.hydrateIcons(this.el.dialogInner);
+    this.bindArtworkErrors(this.el.dialogInner);
   }
 
   toggleSettings(show = null) {

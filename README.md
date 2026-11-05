@@ -20,7 +20,7 @@ Open **`/explore/`** (also linked as “3D Explorer” in the main navigation).
 - English, Simplified Chinese, Nepali and Urdu interface support, including RTL Urdu. Detailed cultural narratives remain in English where a community-reviewed translation is not yet available, and the interface says so.
 - The Cultural Guide runs from a curated offline knowledge base when no server key is configured. With `OPENAI_API_KEY` set, questions are proxied through the Django server; the key never reaches the browser.
 
-The explorer needs no Node build step. Three.js r169 and Leaflet 1.9 are vendored under `static/vendor/`. Photographs are not used inside the 3D worlds: the environments are built from procedural geometry and generated textures. The Journey world's cinema screen streams a CC BY Himalayan time-lapse from Wikimedia Commons (see credits below); where a browser cannot play WebM inline, a generated poster is shown with a link to the source.
+The explorer needs no Node build step. Three.js r169 and Leaflet 1.9 are vendored under `static/vendor/`. The 3D environments are built from procedural geometry and generated textures; discovery cards use real, locally served photographs with the photographer and licence shown on the card and a link to the source. The Journey world's cinema screen streams a CC BY Himalayan time-lapse from Wikimedia Commons (see credits below); where a browser cannot play WebM inline, a generated poster is shown with a link to the source.
 
 ## Run it locally
 
@@ -146,6 +146,7 @@ static/
 ```text
 static/js/explore/
   data.js                Curated objects, worlds, cards, quizzes, etiquette, map data
+  object-images.js       Real photographs and credits for every discovery card
   i18n.js                Four-language interface dictionaries
   store.js               localStorage progress, XP, achievements, streaks
   ui.js                  Home, world HUD, cards, scenarios, dialogs and toasts
@@ -189,7 +190,7 @@ Browser checks used headless Chromium at desktop and phone widths. They covered 
 
 ## Photo credits
 
-The photographs are served locally from `static/images/` as optimised WebP files. They remain the property of their photographers and are used under the licences recorded by Wikimedia Commons. Each story page renders its credit and a source link.
+The photographs are served locally from `static/images/` as optimised WebP files. They remain the property of their photographers and are used under the licences recorded by Wikimedia Commons. Each story page renders its credit and a source link. Discovery card photographs are also stored under `static/images/objects/`; their photographer and licence are shown in the card drawer with a link to the Commons source.
 
 | Image | Photographer | Licence |
 | --- | --- | --- |

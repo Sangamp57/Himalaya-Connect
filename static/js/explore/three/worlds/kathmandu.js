@@ -1556,7 +1556,7 @@ export default function buildKathmandu({ scene, stage, manager }) {
   let lang = manager.language === "zh" ? "zh" : "en";
   const tr = () => STR[lang];
   const placeName = (p) => (lang === "zh" ? p.zh : p.n);
-  const placeSub = (p) => (lang === "zh" ? p.n : p.np);
+  const placeSub = (p) => (lang === "zh" ? p.zh : p.np);
   const objectName = (id) => {
     const o = OBJECT_MAP[id];
     if (!o) return INTERACTIVE_POS[id]?.label || id;

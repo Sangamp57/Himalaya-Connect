@@ -499,7 +499,7 @@ export default function buildKashgar({ scene, stage, manager }) {
       oldcity: {
         n: "Old City",
         zh: "老城",
-        sub: "قدیم شہر",
+        sub: "老城",
         x: 0,
         z: 0,
         r: 36,
@@ -511,7 +511,7 @@ export default function buildKashgar({ scene, stage, manager }) {
       bazaar: {
         n: "Grand Bazaar",
         zh: "大巴扎",
-        sub: "بڑا بازار",
+        sub: "大巴扎",
         x: -44,
         z: 10,
         r: 26,
@@ -523,10 +523,10 @@ export default function buildKashgar({ scene, stage, manager }) {
       idkah: {
         n: "Id Kah Mosque",
         zh: "艾提尕尔清真寺",
-        sub: "عید گاہ مسجد",
+        sub: "艾提尕尔清真寺",
         x: 38,
         z: 6,
-        r: 30,
+        r: 24,
         spawn: [38, 16],
         look: [38, -30],
         pitch: 1.5,
@@ -535,7 +535,7 @@ export default function buildKashgar({ scene, stage, manager }) {
       teahouse: {
         n: "Tea House",
         zh: "茶馆",
-        sub: "چائے خانہ",
+        sub: "茶馆",
         x: 0,
         z: 52,
         r: 24,
@@ -547,7 +547,7 @@ export default function buildKashgar({ scene, stage, manager }) {
       craftlane: {
         n: "Craft Lane",
         zh: "手工艺巷",
-        sub: "دستکاری گلی",
+        sub: "手工艺巷",
         x: 40,
         z: 20,
         r: 26,
@@ -558,7 +558,7 @@ export default function buildKashgar({ scene, stage, manager }) {
       },
     },
     startPlace: "oldcity",
-    worldName: { en: "Kashgar", zh: "喀什", sub: "کاشغر" },
+    worldName: { en: "Kashgar", zh: "喀什", sub: "喀什" },
     mapBounds: { x0: -90, x1: 90, z0: -90, z1: 90 },
     mapLines: [
       [[-70, 0], [70, 0]],

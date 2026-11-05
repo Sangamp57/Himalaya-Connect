@@ -337,7 +337,7 @@ export function createWalker(opts) {
   let lang = manager.language === "zh" ? "zh" : "en";
   const tr = () => STR[lang];
   const placeName = (p) => (lang === "zh" ? p.zh : p.n);
-  const placeSub = (p) => (lang === "zh" ? p.n : p.sub || "");
+  const placeSub = (p) => (lang === "zh" ? p.zh : p.sub || "");
   const objectName = (id) => {
     const o = OBJECT_MAP[id];
     if (!o) return POS[id]?.label || id;

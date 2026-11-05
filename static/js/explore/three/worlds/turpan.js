@@ -150,7 +150,7 @@ export default function buildTurpan({ scene, stage, manager }) {
       bazaar: {
         n: "Turpan Bazaar",
         zh: "吐鲁番集市",
-        sub: "تورپان بازار",
+        sub: "吐鲁番集市",
         x: 0,
         z: 0,
         r: 32,
@@ -162,7 +162,7 @@ export default function buildTurpan({ scene, stage, manager }) {
       emin: {
         n: "Emin Minaret",
         zh: "额敏塔",
-        sub: "امین مینار",
+        sub: "额敏塔",
         x: -45,
         z: -25,
         r: 26,
@@ -174,7 +174,7 @@ export default function buildTurpan({ scene, stage, manager }) {
       karez: {
         n: "Karez Wells",
         zh: "坎儿井",
-        sub: "کاریز کنویں",
+        sub: "坎儿井",
         x: 50,
         z: 30,
         r: 26,
@@ -186,7 +186,7 @@ export default function buildTurpan({ scene, stage, manager }) {
       vineyard: {
         n: "Turpan Vineyards",
         zh: "吐鲁番葡萄园",
-        sub: "تورپان انگور",
+        sub: "吐鲁番葡萄园",
         x: -55,
         z: 35,
         r: 26,
@@ -198,7 +198,7 @@ export default function buildTurpan({ scene, stage, manager }) {
       flaming: {
         n: "Flaming Mountains Viewpoint",
         zh: "火焰山观景点",
-        sub: "جلتے پہاڑ",
+        sub: "火焰山观景点",
         x: 70,
         z: -55,
         r: 24,
@@ -209,7 +209,7 @@ export default function buildTurpan({ scene, stage, manager }) {
       },
     },
     startPlace: "bazaar",
-    worldName: { en: "Turpan", zh: "吐鲁番", sub: "تورپان" },
+    worldName: { en: "Turpan", zh: "吐鲁番", sub: "吐鲁番" },
     mapBounds: { x0: -120, x1: 120, z0: -120, z1: 120 },
     mapLines: [
       [[0, 0], [-16, -12], [-32, -12], [-45, -25]],
