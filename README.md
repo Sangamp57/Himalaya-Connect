@@ -155,6 +155,23 @@ static/js/explore/
   three/                 Renderer, custom orbit controls, procedural worlds
 ```
 
+## Blender environment generators
+
+The `blender/` folder contains two complete, standalone procedural Blender
+scripts that generate cinematic versions of the project's hero environments:
+
+- `blender/himalaya_monastery.py` — a three-storey Nepalese Buddhist monastery
+  on a rock outcrop, with procedural Himalayan peaks, stone stairs, prayer
+  flags, pines and volumetric lighting.
+- `blender/hunza_valley.py` — Hunza Valley with Karakoram peaks, a turquoise
+  river, Baltit and Altit forts, a stone village, terraced fields, orchards and
+  a set of cinematic cameras.
+
+Both scripts run in Blender 4.2+ (tested on Blender 5.2.3), save an editable
+`.blend` and render a 1920×1080 PNG with Cycles and AgX. See
+[`blender/README.md`](blender/README.md) for commands, preview renders, GPU/CPU
+notes and customisation options.
+
 ## Configuration
 
 Copy `.env.example` to `.env` and set:
