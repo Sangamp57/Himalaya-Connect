@@ -34,7 +34,7 @@ const ui = new ExploreUI({ store });
 const guide = new CulturalGuide({
   store,
   t,
-  aiConfigured: app.dataset.aiConfigured === "true",
+  guideLive: app.dataset.guideLive === "true",
   endpoint: app.dataset.guideUrl || "/culture-guide/",
   csrfToken: document.querySelector('meta[name="csrf-token"]')?.content || "",
   elements: {

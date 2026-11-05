@@ -21,10 +21,10 @@ import {
   goat,
   hamletHouse,
   person,
-} from "./hunza.js";
+} from "./hunza-builders.js";
 
 /* ------------------------------------------------------------------
-   Hunza Valley â€” a walkable valley focused only on Hunza.
+   Hunza Valley Ã¢â‚¬â€ a walkable valley focused only on Hunza.
    Karimabad bazaar, Baltit Fort, Altit Fort, the apricot terraces,
    Ganish and the kuhl, Duikar viewpoint, the Hussaini bridge and
    Attabad Lake. The Karakoram is the backdrop; the walk stays in Hunza.
@@ -766,7 +766,7 @@ export default function buildHunzaValley({ scene, stage, manager }) {
   const duikar = placeGroup(buildViewpoint(stage), -198, 95, -0.85, 2.0);
   placeGroup(hamletHouse(stage, 0, 0, stoneMap, timberMap, 0.9), -212, 90, 0.6);
   blockRect(-212, 90, 6, 5, 0.6);
-  makeSign("DUIKAR Â· EAGLE'S NEST", -188, 108, 0.4);
+  makeSign("DUIKAR Ã‚Â· EAGLE'S NEST", -188, 108, 0.4);
   kit.flagString(
     new THREE.Vector3(-206, hgt(-206, 88) + 6, 88),
     new THREE.Vector3(-188, hgt(-188, 100) + 6, 100),

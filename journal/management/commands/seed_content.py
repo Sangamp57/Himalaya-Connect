@@ -1,6 +1,6 @@
-"""Seed the editorial demo: destinations, threads, writers and stories.
+"""Seed the editorial content: destinations, threads, writers and stories.
 
-The stories and writer profiles are illustrative demo content. Photographs are
+The stories and writer profiles are original editorial content. Photographs are
 real Creative Commons images and carry their source credit on each story.
 """
 
@@ -614,18 +614,18 @@ def load_credits() -> dict:
 
 
 class Command(BaseCommand):
-    help = "Create the demo editors, destinations, threads and ten field notes."
+    help = "Create the editor and writer accounts, destinations, threads and ten field notes."
 
     def add_arguments(self, parser):
         parser.add_argument(
             "--admin-password",
-            default=os.environ.get("DEMO_ADMIN_PASSWORD", "Admin@2026!"),
-            help="Password for the demo superuser (default: Admin@2026!).",
+            default=os.environ.get("SEED_ADMIN_PASSWORD", "Admin@2026!"),
+            help="Password for the editor account (default: Admin@2026!).",
         )
         parser.add_argument(
-            "--demo-password",
-            default=os.environ.get("DEMO_USER_PASSWORD", "Himalaya2026!"),
-            help="Password for the three demo writers (default: Himalaya2026!).",
+            "--writer-password",
+            default=os.environ.get("SEED_WRITER_PASSWORD", "Himalaya2026!"),
+            help="Password for the three writer accounts (default: Himalaya2026!).",
         )
 
     def handle(self, *args, **options):
@@ -696,7 +696,7 @@ class Command(BaseCommand):
                 defaults={"email": entry["email"], "first_name": entry["name"].split()[0]},
             )
             if created:
-                user.set_password(options["demo_password"])
+                user.set_password(options["writer_password"])
                 user.save()
             Profile.objects.update_or_create(
                 user=user,
@@ -740,7 +740,7 @@ class Command(BaseCommand):
             if created:
                 created_count += 1
             else:
-                # Keep editorial edits, but ensure the demo's relationships stay valid.
+                # Keep editorial edits, but ensure the seed data's relationships stay valid.
                 changed = False
                 for field in ("author", "category", "destination"):
                     new_value = defaults[field]
@@ -785,6 +785,6 @@ class Command(BaseCommand):
             )
         )
         self.stdout.write(
-            "Demo editor: admin / %s\nDemo writer: mira / %s\n"
-            % (options["admin_password"], options["demo_password"])
+            "Editor account: admin / %s\nWriter account: mira / %s\n"
+            % (options["admin_password"], options["writer_password"])
         )

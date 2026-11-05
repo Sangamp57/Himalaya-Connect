@@ -25,7 +25,7 @@
   </script>
 </head>
 <body class="explore-body">
-  <div id="explore-app" data-ai-configured="{{ ai_configured|yesno:'true,false' }}" data-journal-url="{% url 'story_list' %}" data-home-url="{% url 'home' %}" data-guide-url="{% url 'cultural_guide' %}">
+  <div id="explore-app" data-guide-live="{{ guide_live|yesno:'true,false' }}" data-journal-url="{% url 'story_list' %}" data-home-url="{% url 'home' %}" data-guide-url="{% url 'cultural_guide' %}">
     <a class="skip-link" href="#ex-main">Skip to the explorer</a>
     <div class="ex-scene" id="ex-scene">
       <canvas id="explore-canvas" tabindex="0" aria-label="Interactive 3D cultural world. Use drag to orbit, scroll to zoom, and click a golden beacon to open a story."></canvas>
@@ -392,12 +392,12 @@
               <h1 id="guide-title" data-i18n="guide.title"></h1>
             </div>
             <div class="guide-head-actions">
-              <span class="mode-chip" id="guide-mode-chip"><span class="mode-dot"></span><span data-i18n="guide.demo">Demo</span></span>
+              <span class="mode-chip" id="guide-mode-chip"><span class="mode-dot"></span><span data-i18n="guide.curated">Curated</span></span>
               <button class="ex-round-button" type="button" id="guide-clear" aria-label="Clear conversation" data-i18n-aria="guide.clear"><span data-icon="reset"></span></button>
               <button class="ex-round-button" type="button" data-view="home" aria-label="Close"><span data-icon="close"></span></button>
             </div>
           </div>
-          <div class="guide-notice" id="guide-notice" data-i18n="guide.demoNotice"></div>
+          <div class="guide-notice" id="guide-notice" data-i18n="guide.curatedNotice"></div>
           <div class="guide-context" id="guide-context">
             <span class="ex-kicker ex-kicker--small" data-i18n="guide.context">Current context</span>
             <span id="guide-context-copy" data-i18n="guide.noContext"></span>

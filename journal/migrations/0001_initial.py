@@ -89,7 +89,7 @@ class Migration(migrations.Migration):
                 ('excerpt', models.TextField(blank=True, help_text='A short summary shown on cards and in search results.', max_length=320)),
                 ('content', models.TextField(help_text='Plain text. Blank lines start new paragraphs; # headings, > quotes, - lists and **bold** are supported.')),
                 ('cover_image', models.ImageField(blank=True, upload_to='covers/%Y/%m/')),
-                ('cover_photo', models.CharField(blank=True, help_text='A static image path used by the demo content.', max_length=255)),
+                ('cover_photo', models.CharField(blank=True, help_text='A static image path used by editorial content.', max_length=255)),
                 ('cover_alt', models.CharField(blank=True, max_length=180)),
                 ('cover_credit', models.CharField(blank=True, max_length=220)),
                 ('cover_credit_url', models.URLField(blank=True)),

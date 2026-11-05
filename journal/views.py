@@ -113,13 +113,13 @@ def explore(request):
 
     The page is deliberately self-contained: the cultural dataset and the local
     progress model live on the client, so the experience works without an
-    account. Optional server-side AI credentials are detected here, never
+    account. Optional server-side language-model credentials are detected here, never
     exposed to the browser.
     """
     return render(
         request,
         "explore/app.html",
-        {"ai_configured": bool(os.environ.get("OPENAI_API_KEY", "").strip())},
+        {"guide_live": bool(os.environ.get("OPENAI_API_KEY", "").strip())},
     )
 
 
@@ -127,7 +127,7 @@ def explore(request):
 def cultural_guide(request):
     """Secure proxy for the optional live cultural-guide model.
 
-    Without a server-side key the endpoint reports demo mode; the browser then
+    Without a server-side key the endpoint reports curated mode; the browser then
     uses its curated knowledge base. With a key, the request is proxied here so
     the credential never reaches frontend code.
     """
@@ -162,9 +162,9 @@ def cultural_guide(request):
     if not api_key:
         return JsonResponse(
             {
-                "mode": "demo",
+                "mode": "curated",
                 "reply": None,
-                "detail": "No live model is configured. The browser is using the curated demo knowledge base.",
+                "detail": "No live model is configured. The browser is using the curated knowledge base.",
             }
         )
 
@@ -226,7 +226,7 @@ def cultural_guide(request):
             {
                 "mode": "live",
                 "error": "The live guide is unavailable right now.",
-                "detail": "The browser can continue with the curated demo knowledge base.",
+                "detail": "The browser can continue with the curated knowledge base.",
             },
             status=502,
         )

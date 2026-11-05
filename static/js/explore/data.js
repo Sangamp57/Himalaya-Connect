@@ -1320,7 +1320,7 @@ export const OBJECTS = [
       ur: "صرف فخر نہیں، محنت کرنے والوں، خطرے اور دیکھ بھال کو یاد رکھنے والی یادگار۔",
     },
     story: {
-      en: "The Karakoram Highway crosses a landscape of steep valleys, glaciers and active faults. Building and maintaining it has cost lives and requires continuous work against landslides and floods. A history monument can easily become a list of dates; a better one asks who did the labour and who bears the risk.\n\nOfficial accounts emphasise Pakistan–China cooperation and engineering achievement. Critical accounts add labour conditions, environmental change and unequal access. Both belong in an honest exhibit. The stone here is a placeholder for that larger conversation.",
+      en: "The Karakoram Highway crosses a landscape of steep valleys, glaciers and active faults. Building and maintaining it has cost lives and requires continuous work against landslides and floods. A history monument can easily become a list of dates; a better one asks who did the labour and who bears the risk.\n\nOfficial accounts emphasise Pakistan–China cooperation and engineering achievement. Critical accounts add labour conditions, environmental change and unequal access. Both belong in an honest exhibit. The stone here is a starting point for that larger conversation.",
     },
     fact: "The highway required decades of construction and continues to need repairs after landslides, floods and earthquakes.",
     sources: [SRC.kkh],

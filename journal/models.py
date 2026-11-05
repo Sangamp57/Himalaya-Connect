@@ -116,7 +116,7 @@ class Post(models.Model):
     cover_photo = models.CharField(
         max_length=255,
         blank=True,
-        help_text="A static image path used by the demo content.",
+        help_text="A static image path used by editorial content.",
     )
     cover_alt = models.CharField(max_length=180, blank=True)
     cover_credit = models.CharField(max_length=220, blank=True)
