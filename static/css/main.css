@@ -4551,7 +4551,7 @@ body:not(.has-overlay-header) .user-menu summary,
 
 .auth-provider-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin-bottom: 16px;
 }
@@ -4599,6 +4599,11 @@ body:not(.has-overlay-header) .user-menu summary,
 
 .auth-provider--wechat .auth-provider-mark {
   background: #07c160;
+  color: #fff;
+}
+
+.auth-provider--facebook .auth-provider-mark {
+  background: #1877f2;
   color: #fff;
 }
 

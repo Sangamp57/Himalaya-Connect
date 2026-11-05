@@ -62,7 +62,7 @@ Or set `SEED_ADMIN_PASSWORD` and `SEED_WRITER_PASSWORD` in `.env` before the fir
 
 ### Public site
 
-- Interactive 3D explorer with nine walkable worlds, including the Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, Dunhuang, the Karakoram Highway and the Great Journey, with Google, WeChat and phone sign-in, speaking beacons, object stories, quizzes, etiquette scenarios, comparison challenges, achievements, local progress and a collectible card gallery.
+- Interactive 3D explorer with nine walkable worlds, including the Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, Dunhuang, the Karakoram Highway and the Great Journey, with Google, WeChat, Facebook and phone sign-in, speaking beacons, object stories, quizzes, etiquette scenarios, comparison challenges, achievements, local progress and a collectible card gallery.
 - A real geographic culture map with OpenStreetMap tiles, verified coordinates and world launch links.
 - A daily encounter that rotates deterministically from a curated set, with save, share and quiz actions.
 - Full-screen parallax home page with layered mountain photography, scroll depth, floating notes and scroll-reveal sections.
@@ -171,6 +171,7 @@ Copy `.env.example` to `.env` and set:
 
 - Google sign-in: set `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET` and the exact `GOOGLE_OAUTH_REDIRECT_URI` (`/accounts/google/callback/`) in `.env`.
 - WeChat sign-in: set `WECHAT_APP_ID`, `WECHAT_APP_SECRET` and `WECHAT_REDIRECT_URI` (`/accounts/wechat/callback/`). WeChat requires a verified web-app domain.
+- Facebook sign-in: set `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` and `FACEBOOK_REDIRECT_URI` (`/accounts/facebook/callback/`).
 - Phone sign-in: `SMS_BACKEND=console` prints codes to the server console in development. For production set `SMS_BACKEND=twilio` with `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` and `TWILIO_FROM_NUMBER`, or `SMS_BACKEND=webhook` with `SMS_WEBHOOK_URL` and optional `SMS_WEBHOOK_TOKEN`.
 - Google and WeChat need credentials from their developer consoles; without them the buttons show a clear configuration message and email/password or phone sign-in remains available.
 

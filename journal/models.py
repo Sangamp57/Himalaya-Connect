@@ -294,6 +294,7 @@ class SocialIdentity(models.Model):
     class Provider(models.TextChoices):
         GOOGLE = "google", "Google"
         WECHAT = "wechat", "WeChat"
+        FACEBOOK = "facebook", "Facebook"
         PHONE = "phone", "Phone"
 
     user = models.ForeignKey(

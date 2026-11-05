@@ -43,8 +43,12 @@ from .models import (
 )
 from .ratelimit import is_rate_limited
 from .social_auth import (
+    exchange_facebook,
     exchange_google,
     exchange_wechat,
+    facebook_configured,
+    facebook_login_url,
+    facebook_redirect_uri,
     generate_code,
     get_or_create_phone_user,
     get_or_create_social_user,
@@ -526,6 +530,11 @@ def social_login(request, provider):
             messages.error(request, "WeChat sign-in is not configured on this installation yet.")
             return redirect("login")
         return redirect(wechat_login_url(request))
+    if provider == "facebook":
+        if not facebook_configured():
+            messages.error(request, "Facebook sign-in is not configured on this installation yet.")
+            return redirect("login")
+        return redirect(facebook_login_url(request))
     messages.error(request, "That sign-in provider is not available.")
     return redirect("login")
 
@@ -547,6 +556,8 @@ def social_callback(request, provider):
             profile = exchange_google(code, google_redirect_uri(request))
         elif provider == "wechat":
             profile = exchange_wechat(code)
+        elif provider == "facebook":
+            profile = exchange_facebook(code, facebook_redirect_uri(request))
         else:
             raise ValueError("Unknown provider.")
         user = get_or_create_social_user(

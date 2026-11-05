@@ -189,6 +189,10 @@ WECHAT_APP_ID = os.environ.get("WECHAT_APP_ID", "")
 WECHAT_APP_SECRET = os.environ.get("WECHAT_APP_SECRET", "")
 WECHAT_REDIRECT_URI = os.environ.get("WECHAT_REDIRECT_URI", "")
 
+FACEBOOK_APP_ID = os.environ.get("FACEBOOK_APP_ID", "")
+FACEBOOK_APP_SECRET = os.environ.get("FACEBOOK_APP_SECRET", "")
+FACEBOOK_REDIRECT_URI = os.environ.get("FACEBOOK_REDIRECT_URI", "")
+
 SMS_BACKEND = os.environ.get("SMS_BACKEND", "console")
 SMS_SENDER = os.environ.get("SMS_SENDER", "Himalaya Connect")
 TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "")

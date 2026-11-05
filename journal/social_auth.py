@@ -23,6 +23,10 @@ def wechat_configured() -> bool:
     return bool(settings.WECHAT_APP_ID and settings.WECHAT_APP_SECRET)
 
 
+def facebook_configured() -> bool:
+    return bool(settings.FACEBOOK_APP_ID and settings.FACEBOOK_APP_SECRET)
+
+
 def google_redirect_uri(request) -> str:
     return settings.GOOGLE_OAUTH_REDIRECT_URI or request.build_absolute_uri(
         reverse("google_callback")
@@ -32,6 +36,12 @@ def google_redirect_uri(request) -> str:
 def wechat_redirect_uri(request) -> str:
     return settings.WECHAT_REDIRECT_URI or request.build_absolute_uri(
         reverse("wechat_callback")
+    )
+
+
+def facebook_redirect_uri(request) -> str:
+    return settings.FACEBOOK_REDIRECT_URI or request.build_absolute_uri(
+        reverse("facebook_callback")
     )
 
 
@@ -61,6 +71,19 @@ def wechat_login_url(request) -> str:
         "state": state,
     }
     return "https://open.weixin.qq.com/connect/qrconnect?" + urlencode(params) + "#wechat_redirect"
+
+
+def facebook_login_url(request) -> str:
+    state = secrets.token_urlsafe(24)
+    request.session["facebook_oauth_state"] = state
+    params = {
+        "client_id": settings.FACEBOOK_APP_ID,
+        "redirect_uri": facebook_redirect_uri(request),
+        "response_type": "code",
+        "scope": "email,public_profile",
+        "state": state,
+    }
+    return "https://www.facebook.com/v19.0/dialog/oauth?" + urlencode(params)
 
 
 def exchange_google(code: str, redirect_uri: str) -> dict:
@@ -132,6 +155,45 @@ def exchange_wechat(code: str) -> dict:
         "email": "",
         "display_name": profile.get("nickname", ""),
         "avatar_url": profile.get("headimgurl", ""),
+    }
+
+
+def exchange_facebook(code: str, redirect_uri: str) -> dict:
+    response = requests.get(
+        "https://graph.facebook.com/v19.0/oauth/access_token",
+        params={
+            "client_id": settings.FACEBOOK_APP_ID,
+            "client_secret": settings.FACEBOOK_APP_SECRET,
+            "redirect_uri": redirect_uri,
+            "code": code,
+        },
+        timeout=20,
+    )
+    response.raise_for_status()
+    token = response.json()
+    if token.get("error"):
+        raise ValueError(token["error"].get("message") or "Facebook rejected the sign-in code.")
+    access_token = token.get("access_token")
+    if not access_token:
+        raise ValueError("Facebook did not return an access token.")
+    profile_response = requests.get(
+        "https://graph.facebook.com/me",
+        params={
+            "fields": "id,name,email,picture.type(large)",
+            "access_token": access_token,
+        },
+        timeout=20,
+    )
+    profile_response.raise_for_status()
+    profile = profile_response.json()
+    if profile.get("error") or not profile.get("id"):
+        raise ValueError("Facebook did not return an account identifier.")
+    picture = profile.get("picture") or {}
+    return {
+        "provider_user_id": str(profile["id"]),
+        "email": profile.get("email", ""),
+        "display_name": profile.get("name", ""),
+        "avatar_url": (picture.get("data") or {}).get("url", ""),
     }
 
 

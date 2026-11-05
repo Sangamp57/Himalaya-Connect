@@ -45,8 +45,10 @@ class PhoneAuthTests(TestCase):
         GOOGLE_OAUTH_CLIENT_SECRET="",
         WECHAT_APP_ID="",
         WECHAT_APP_SECRET="",
+        FACEBOOK_APP_ID="",
+        FACEBOOK_APP_SECRET="",
     )
     def test_unconfigured_social_providers_redirect_to_login(self):
-        for name in ("google_login", "wechat_login"):
+        for name in ("google_login", "wechat_login", "facebook_login"):
             response = self.client.get(reverse(name))
             self.assertRedirects(response, reverse("login"))

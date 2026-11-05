@@ -1534,7 +1534,12 @@ svg.hc-icon {
   padding: 5px;
   border-radius: 999px;
   overflow-x: auto;
+  scrollbar-width: none;
   pointer-events: auto;
+}
+
+.world-dock::-webkit-scrollbar {
+  display: none;
 }
 
 .dock-world {
@@ -4311,22 +4316,44 @@ body.reduce-motion *::after {
   }
   .world-head {
     inset-inline: 10px;
-    width: min(280px, calc(100% - 82px));
+    width: min(250px, calc(100% - 82px));
     top: calc(var(--ex-topbar-h) + 8px);
-    max-width: 280px;
+    max-width: 250px;
+    padding: 11px 12px;
   }
   .world-head-top {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
   .world-head h1 {
-    font-size: 1.55rem;
+    margin-bottom: 6px;
+    font-size: 1.35rem;
+    line-height: 1.05;
+  }
+  .world-blurb,
+  .world-route-note {
+    display: none;
+  }
+  .world-head-meta {
+    gap: 5px;
+  }
+  .world-head-meta .ex-chip {
+    padding: 3px 7px;
+    font-size: 7px;
+  }
+  .world-progress {
+    font-size: 8px;
   }
   .world-actions {
-    margin-top: 8px;
-    padding-top: 8px;
+    margin-top: 7px;
+    padding-top: 7px;
   }
   .world-actions .ex-button--text {
     display: none;
+  }
+  .world-actions .ex-button {
+    min-height: 32px;
+    padding-inline: 9px;
+    font-size: 8px;
   }
   .world-tools {
     inset-inline-end: 10px;
