@@ -1334,6 +1334,11 @@ svg.hc-icon {
   font-size: 9px;
 }
 
+.world-choice-progress {
+  color: var(--ex-gold);
+  font-weight: 700;
+}
+
 .world-choice-arrow {
   color: var(--ex-gold);
 }
@@ -1357,11 +1362,12 @@ svg.hc-icon {
   top: calc(var(--ex-topbar-h) + 16px);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: auto;
-  max-width: min(520px, calc(100% - 28px));
-  padding: 10px 14px;
+  max-width: min(440px, calc(100% - 28px));
+  padding: 8px 12px;
   pointer-events: auto;
+  z-index: 21;
 }
 
 .world-head-top {
@@ -1381,7 +1387,7 @@ svg.hc-icon {
   min-width: 0;
   overflow: hidden;
   margin: 0;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   line-height: 1.1;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1411,13 +1417,13 @@ svg.hc-icon {
 
 .world-head.is-expanded {
   display: block;
-  width: min(370px, calc(100% - 28px));
-  max-width: 370px;
-  padding: 18px 20px;
+  width: min(300px, calc(100% - 28px));
+  max-width: 300px;
+  padding: 13px 15px;
 }
 
 .world-head.is-expanded .world-head-top {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .world-head.is-expanded .world-head-top .ex-kicker {
@@ -1430,8 +1436,8 @@ svg.hc-icon {
 
 .world-head.is-expanded h1 {
   overflow: visible;
-  margin-bottom: 8px;
-  font-size: clamp(2rem, 4vw, 3.2rem);
+  margin-bottom: 6px;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
   line-height: 1;
   text-overflow: clip;
   white-space: normal;
@@ -1455,10 +1461,28 @@ svg.hc-icon {
 
 .world-head.is-expanded .world-actions {
   display: flex;
+  gap: 2px;
+  margin-top: 8px;
+  padding-top: 8px;
+}
+
+.world-head.is-expanded .world-blurb {
+  margin-bottom: 8px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.world-head.is-expanded .world-route-note {
+  font-size: 8px;
+}
+
+.world-head.is-expanded .world-head-meta {
+  gap: 6px;
 }
 
 .world-head.is-expanded .world-progress {
   margin-inline-start: auto;
+  font-size: 9px;
 }
 
 .ex-round-button {
@@ -4498,12 +4522,12 @@ body.reduce-motion *::after {
     font-size: 8px;
   }
   .world-head.is-expanded {
-    width: min(320px, calc(100% - 82px));
+    width: min(290px, calc(100% - 82px));
     max-width: calc(100% - 82px);
-    padding: 14px 16px;
+    padding: 12px 14px;
   }
   .world-head.is-expanded h1 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
   }
   .world-head.is-expanded .world-actions .ex-button--text {
     display: inline-flex;

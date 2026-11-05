@@ -387,6 +387,7 @@ export class ExploreUI {
     }
 
     if (this.el.homeWorlds) {
+      const known = new Set(this.store.state.discoveredObjects);
       this.el.homeWorlds.innerHTML = Object.values(WORLDS)
         .sort((a, b) => a.order - b.order)
         .map((world) => {
@@ -396,11 +397,17 @@ export class ExploreUI {
             ? localize(world.region, this.lang)
             : localize(country?.names, this.lang) || this.t("world.worlds");
           const names = localize(world.names, this.lang);
+          const worldObjects = OBJECTS_BY_WORLD[world.id] || [];
+          const found = worldObjects.filter((id) => known.has(id)).length;
+          const total = worldObjects.length;
+          const progress = total > 0 && found === total
+            ? this.t("world.allCollected")
+            : this.t("world.progress", { done: found, total });
           return `<button type="button" class="world-choice" style="--world-accent:${world.accent}" data-world-choice="${world.id}">
             <span class="world-choice-index"><span class="flag">${flag}</span> ${escapeHtml(indexLabel)}</span>
             <h3>${escapeHtml(names)}</h3>
             <p>${escapeHtml(localize(world.blurb, this.lang))}</p>
-            <span class="world-choice-meta"><span>${OBJECTS_BY_WORLD[world.id].length} ${escapeHtml(this.t("home.statDiscoveries"))}</span><span class="world-choice-arrow">${icon("arrow")}</span></span>
+            <span class="world-choice-meta"><span class="world-choice-progress">${escapeHtml(progress)}</span><span class="world-choice-arrow">${icon("arrow")}</span></span>
           </button>`;
         })
         .join("");
