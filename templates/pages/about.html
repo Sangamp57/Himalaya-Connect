@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load static journal_extras %}
+
+{% block title %}About the journal — Himalaya Connect{% endblock %}
+{% block meta_description %}Why we publish slow, specific travel stories from the Himalaya — and the editorial principles behind them.{% endblock %}
+{% block body_class %}page-about has-overlay-header{% endblock %}
+
+{% block head_extra %}<link rel="preload" as="image" href="{% static 'images/passu-cones.webp' %}" fetchpriority="high">{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero-about">
+  <div class="about-hero-media" data-parallax="0.14">
+    <img src="{% static 'images/passu-cones.webp' %}" alt="The sharp granite peaks of the Passu Cones in the Karakoram" fetchpriority="high">
+  </div>
+  <div class="about-hero-shade"></div>
+  <div class="container page-hero-inner">
+    <p class="eyebrow eyebrow-light" data-reveal><span></span> Why we are here</p>
+    <div class="page-hero-title-row">
+      <h1 data-reveal data-reveal-delay="1">A journal for<br><em>the curious.</em></h1>
+      <p class="page-hero-intro" data-reveal data-reveal-delay="2">Himalaya Connect began with a simple frustration: too much travel writing tells you what a place looks like, and too little tells you what it feels like to pay attention there.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-about-mission">
+  <div class="container about-mission-grid">
+    <div class="about-mission-heading" data-reveal>
+      <p class="eyebrow"><span></span> Our point of view</p>
+      <h2>Specific, not sweeping.<br>Curious, not certain.</h2>
+    </div>
+    <div class="about-mission-copy" data-reveal data-reveal-delay="1">
+      <p class="intro-lead">The Himalaya is not one story. It is thousands of neighbourhoods, kitchens, workshops, languages and weather systems. We resist the tidy summary.</p>
+      <p>Our writers begin with a detail: a carved window, a bowl of noodles, the way a bus fills up before dawn. From there, they follow the thread into history, craft, politics or memory — always with a named place and a real person in view.</p>
+      <p>We are independent, free to read, and edited for accuracy. We correct mistakes openly. We do not accept payment for coverage.</p>
+    </div>
+  </div>
+  <div class="container about-image-band" data-reveal>
+    <div class="about-image-wide">
+      <img src="{% static 'images/kathmandu-durbar.webp' %}" alt="Temple roofs in Kathmandu Durbar Square" loading="lazy">
+    </div>
+    <div class="about-image-caption">
+      <span>Kathmandu Valley · Nepal</span>
+      <p>Living heritage is not a stage set. It is the place where people work, pray, argue and make tea.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-values">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow"><span></span> Editorial principles</p>
+        <h2>Three things we hold onto</h2>
+      </div>
+    </div>
+    <div class="values-grid">
+      <article class="value-card" data-reveal>
+        <span class="value-number">01</span>
+        <h3>Rooted in place</h3>
+        <p>We name the neighbourhood, the maker and the season. We do not use a photograph of one valley to stand in for a whole country.</p>
+      </article>
+      <article class="value-card" data-reveal data-reveal-delay="1">
+        <span class="value-number">02</span>
+        <h3>Edited with care</h3>
+        <p>Stories are read for accuracy, context and respect before publication. When we get something wrong, we say so and change it.</p>
+      </article>
+      <article class="value-card" data-reveal data-reveal-delay="2">
+        <span class="value-number">03</span>
+        <h3>Open to everyone</h3>
+        <p>No paywall, no sponsored detours. Members can save stories, respond and publish their own field notes.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section section-ethics" id="ethics">
+  <div class="container ethics-grid">
+    <div class="ethics-image" data-reveal>
+      <img src="{% static 'images/apricot-blossom.webp' %}" alt="A woman walking beneath apricot blossom in Hunza Valley" loading="lazy">
+      <span class="ethics-caption">Spring, Hunza Valley · Photograph via Wikimedia Commons</span>
+    </div>
+    <div class="ethics-copy" data-reveal data-reveal-delay="1">
+      <p class="eyebrow"><span></span> Travel with care</p>
+      <h2>Leave room for<br>ordinary life.</h2>
+      <div class="ethics-list">
+        <div><span>01</span><p><strong>Ask first.</strong> A photograph is a relationship, not a souvenir. When someone says no, that is the answer.</p></div>
+        <div><span>02</span><p><strong>Pay fairly.</strong> Use local guides, drivers, cooks and craftspeople. Ask what a fair price is rather than bargaining to the lowest number.</p></div>
+        <div><span>03</span><p><strong>Do not perform the place.</strong> Dress and behave with the same consideration you would in a friend's home. Sacred sites are not content sets.</p></div>
+        <div><span>04</span><p><strong>Stay curious.</strong> Learn the name of the valley, the fruit, the festival. Let the place be more complicated than your itinerary.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-contributors">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow"><span></span> The people</p>
+        <h2>Voices in the journal</h2>
+      </div>
+      <a href="{% url 'story_list' %}" class="text-link">Read their stories
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <div class="contributor-grid">
+      {% for contributor in contributors %}
+        <a class="contributor-card" href="{% url 'author_profile' contributor.username %}" data-reveal>
+          {% if contributor.profile.avatar_url %}
+            <img class="avatar avatar-xl" src="{{ contributor.profile.avatar_url }}" alt="">
+          {% else %}
+            <span class="avatar avatar-xl" style="{% avatar_style contributor.profile.name %}">{{ contributor.profile.initial }}</span>
+          {% endif %}
+          <h3>{{ contributor.profile.name|default:contributor.username }}</h3>
+          <p>{{ contributor.profile.bio|default:"A writer in the Himalaya Connect community."|truncatewords:22 }}</p>
+          <span>{{ contributor.story_total }} field note{{ contributor.story_total|pluralize }} <i aria-hidden="true">→</i></span>
+        </a>
+      {% empty %}
+        <p class="empty-state">The first contributors are introducing themselves. Check back soon.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-credits" id="credits">
+  <div class="container credits-grid">
+    <div>
+      <p class="eyebrow"><span></span> Credits & transparency</p>
+      <h2>Standing on good light.</h2>
+    </div>
+    <div class="credits-copy">
+      <p>Demo photography is used under Creative Commons licences via <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>. Each story displays its cover credit and source link. Photographers include Gaurav Dhwaj Khadka, Muhammad Arsalan Mehboob, Furqanlw, Hassanzealous, David Stanley, Radosław Botev and other Commons contributors.</p>
+      <p>Himalaya Connect is an independent editorial project. It does not sell travel packages or accept payment for destination coverage. Spotted an error? <a href="{% url 'contact' %}">Tell us</a>.</p>
+      <p><strong>Demo edition:</strong> the writers, profiles and stories in this build are illustrative. The places and photographs are real; the travel notes should be checked against current local advice before you rely on them.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-cta-band section-cta-band-light">
+  <div class="container cta-band-inner" data-reveal>
+    <div>
+      <p class="eyebrow"><span></span> Add your voice</p>
+      <h2>The journal is better with you in it.</h2>
+      <p>Create a free account to save stories, respond to writers and publish field notes of your own.</p>
+    </div>
+    {% if user.is_authenticated %}
+      <a class="button button-dark" href="{% url 'post_create' %}">Write a field note
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    {% else %}
+      <a class="button button-dark" href="{% url 'signup' %}">Join the journal
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

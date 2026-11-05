@@ -1,0 +1,11 @@
+{% if messages %}
+  <div class="toast-stack" aria-live="polite" aria-atomic="true">
+    {% for message in messages %}
+      <div class="toast toast-{{ message.tags|default:'info' }}" data-toast>
+        <span class="toast-dot" aria-hidden="true"></span>
+        <p>{{ message }}</p>
+        <button type="button" class="toast-close" data-toast-close aria-label="Dismiss message">×</button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

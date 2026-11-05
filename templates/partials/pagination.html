@@ -1,0 +1,36 @@
+{% load journal_extras %}
+{% if page_obj.has_other_pages %}
+  <nav class="pagination" aria-label="Story pages">
+    {% if page_obj.has_previous %}
+      <a class="pagination-arrow" href="?{% query_transform page=page_obj.previous_page_number %}" aria-label="Previous page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      </a>
+    {% else %}
+      <span class="pagination-arrow is-disabled" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>
+      </span>
+    {% endif %}
+
+    <div class="pagination-pages">
+      {% for page in page_obj.paginator.get_elided_page_range %}
+        {% if page == page_obj.paginator.ELLIPSIS %}
+          <span class="pagination-ellipsis">{{ page }}</span>
+        {% elif page == page_obj.number %}
+          <span class="pagination-page is-current" aria-current="page">{{ page }}</span>
+        {% else %}
+          <a class="pagination-page" href="?{% query_transform page=page %}">{{ page }}</a>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {% if page_obj.has_next %}
+      <a class="pagination-arrow" href="?{% query_transform page=page_obj.next_page_number %}" aria-label="Next page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
+    {% else %}
+      <span class="pagination-arrow is-disabled" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m9 18 6-6-6-6"/></svg>
+      </span>
+    {% endif %}
+  </nav>
+{% endif %}

@@ -1,0 +1,48 @@
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path("", views.home, name="home"),
+    path("explore/", views.explore, name="explore"),
+    path("culture-guide/", views.cultural_guide, name="cultural_guide"),
+    path("stories/", views.story_list, name="story_list"),
+    path("stories/new/", views.post_create, name="post_create"),
+    path("stories/<slug:slug>/", views.story_detail, name="story_detail"),
+    path("stories/<slug:slug>/edit/", views.post_edit, name="post_edit"),
+    path("stories/<slug:slug>/delete/", views.post_delete, name="post_delete"),
+    path("stories/<slug:slug>/like/", views.toggle_like, name="toggle_like"),
+    path(
+        "stories/<slug:slug>/bookmark/",
+        views.toggle_bookmark,
+        name="toggle_bookmark",
+    ),
+    path("stories/<slug:slug>/comment/", views.add_comment, name="add_comment"),
+    path("comments/<int:pk>/delete/", views.delete_comment, name="delete_comment"),
+    path("destinations/", views.destination_list, name="destination_list"),
+    path(
+        "destinations/<slug:slug>/",
+        views.destination_detail,
+        name="destination_detail",
+    ),
+    path("categories/<slug:slug>/", views.category_detail, name="category_detail"),
+    path("authors/<str:username>/", views.author_profile, name="author_profile"),
+    path("authors/<str:username>/follow/", views.toggle_follow, name="toggle_follow"),
+    path("about/", views.about, name="about"),
+    path("contact/", views.contact, name="contact"),
+    path(
+        "newsletter/subscribe/",
+        views.newsletter_subscribe,
+        name="newsletter_subscribe",
+    ),
+    path("accounts/signup/", views.signup, name="signup"),
+    path("accounts/login/", views.signin, name="login"),
+    path("accounts/logout/", views.signout, name="logout"),
+    path("accounts/profile/", views.profile_edit, name="profile_edit"),
+    path("accounts/settings/", views.account_settings, name="account_settings"),
+    path("accounts/delete/", views.account_delete, name="account_delete"),
+    path("dashboard/", views.dashboard, name="dashboard"),
+    path("robots.txt", views.robots_txt, name="robots_txt"),
+    path("sitemap.xml", views.sitemap_xml, name="sitemap_xml"),
+    path("health", views.health, name="health"),
+]

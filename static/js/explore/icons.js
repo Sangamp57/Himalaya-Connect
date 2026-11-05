@@ -1,0 +1,73 @@
+const ICONS = {
+  home: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/>',
+  compass: '<circle cx="12" cy="12" r="8.5"/><path d="m15.7 8.3-2.1 5.3-5.3 2.1 2.1-5.3Z"/>',
+  calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M7.5 3v4M16.5 3v4M3.5 9.5h17"/><circle cx="12" cy="14.5" r="2.2"/>',
+  map: '<path d="m3.5 6.5 5-2.5 7 2.5 5-2.5v13l-5 2.5-7-2.5-5 2.5Z"/><path d="M8.5 4v13M15.5 6.5v13"/>',
+  etiquette: '<path d="M8.2 11.2 6.6 9.6a2 2 0 0 1 2.8-2.8l1.4 1.4"/><path d="M15.8 11.2l1.6-1.6a2 2 0 0 0-2.8-2.8l-1.4 1.4"/><path d="M7.5 12.5 12 17l4.5-4.5"/><path d="M5 21h14"/>',
+  collection: '<rect x="3.5" y="5" width="12" height="15" rx="2.5"/><path d="M8.5 3h10.5A2.5 2.5 0 0 1 21.5 5.5V18"/><path d="m8 12 1.7 1.7 3.2-3.4"/>',
+  guide: '<path d="M20.5 12a8.5 8.5 0 0 1-12.4 7.5L3.5 21l1.4-4.6A8.5 8.5 0 1 1 20.5 12Z"/><path d="M8.5 10.5h7M8.5 14h4.5"/>',
+  bridge: '<path d="M3 18V9M21 18V9"/><path d="M3 13c5-5.5 13-5.5 18 0"/><path d="M7 18V13M12 18v-4.3M17 18v-5"/>',
+  book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5Z"/><path d="M4 5.5v16"/><path d="M8 7h8"/>',
+  spark: '<path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8Z"/><path d="M18.5 16.5 19 18l1.5.5-1.5.5-.5 1.5-.5-1.5L16.5 18l1.5-.5Z"/>',
+  mountain: '<path d="m3 20 6.2-12 3.4 6.3L15 10l6 10Z"/><path d="m7.7 12.6 1.5-2.9 1.6 3M13 13l2-3"/>',
+  handshake: '<path d="m3 10 4-4 3 2 2-2 3 2 2-2 4 4"/><path d="m5 10 5 5a2 2 0 0 0 2.8 0l1.2-1.2"/><path d="m11 15-1.2 1.2a2 2 0 0 0 2.8 2.8l3.4-3.4"/><path d="M3 10v6M21 10v6"/>',
+  bowl: '<path d="M4 11h16a8 8 0 0 1-16 0Z"/><path d="M8 7.5c0-1.5 1-2 2-2M12 7.5c0-1.5 1-2 2-2"/><path d="M9 20h6"/>',
+  gift: '<rect x="4" y="9" width="16" height="11" rx="2"/><path d="M3 9h18v3H3zM12 9v11"/><path d="M12 9S10.5 4 8 4a2 2 0 0 0 0 5M12 9s1.5-5 4-5a2 2 0 0 1 0 5"/>',
+  temple: '<path d="M4 20h16M6 20V9h12v11"/><path d="M4 9h16L12 3 4 9Z"/><path d="M9 20v-5h6v5"/>',
+  market: '<path d="M4 10h16l-1.5 10h-13Z"/><path d="M3 10l2-5h14l2 5"/><path d="M8 10v10M16 10v10"/><path d="M4 10c0 1.4 1 2.5 2.5 2.5S9 11.4 9 10c0 1.4 1 2.5 2.5 2.5S14 11.4 14 10c0 1.4 1 2.5 2.5 2.5S19 11.4 20 10"/>',
+  camera: '<rect x="3.5" y="6.5" width="17" height="13" rx="2.5"/><path d="m8 6.5 1.4-2h5.2l1.4 2"/><circle cx="12" cy="13" r="3.2"/>',
+  close: '<path d="m6 6 12 12M18 6 6 18"/>',
+  reset: '<path d="M4 10a8 8 0 1 1 2.5 8.5"/><path d="M4 4v6h6"/>',
+  settings: '<circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.2M12 18.8V21M4.4 7.5l1.9 1.1M17.7 15.4l1.9 1.1M4.4 16.5l1.9-1.1M17.7 8.6l1.9-1.1"/>',
+  volume: '<path d="M4 10v4h4l5 4V6l-5 4Z"/><path d="M16.5 9a4.5 4.5 0 0 1 0 6M19 6.5a8 8 0 0 1 0 11"/>',
+  mute: '<path d="M4 10v4h4l5 4V6l-5 4Z"/><path d="m16.5 10 4 4M20.5 10l-4 4"/>',
+  info: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/>',
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  arrowLeft: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  check: '<path d="m5 12 4.5 4.5L19 6.5"/>',
+  lock: '<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+  star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9Z"/>',
+  arch: '<path d="M4 21V9l8-6 8 6v12"/><path d="M8 21v-6a4 4 0 0 1 8 0v6"/><path d="M2 21h20"/>',
+  food: '<path d="M4 11h16a8 8 0 0 1-16 0Z"/><path d="M8 7c0-1.5 1-2 2-2M12 7c0-1.5 1-2 2-2"/><path d="M9 20h6"/>',
+  festival: '<path d="M12 3v3M5 6l2 2M19 6l-2 2M3 13h3M18 13h3"/><path d="M7 21h10l-1-8H8Z"/><path d="M9 9h6"/>',
+  cloth: '<path d="m8 4-4 3 2 4 2-1v10h8V10l2 1 2-4-4-3-2 2h-4Z"/>',
+  craft: '<path d="m14 6 4 4M4 20l5.5-5.5M13.5 6.5l4 4-8 8H5v-4.5Z"/><path d="m16 4 4 4"/>',
+  music: '<path d="M9 18V6l11-2v11"/><circle cx="6.5" cy="18" r="2.6"/><circle cx="17.5" cy="15" r="2.6"/>',
+  landmark: '<path d="m3 20 6-11 3 5 2-3 7 9Z"/><path d="m9 9 1.5-3 1.5 3"/>',
+  tradition: '<path d="M7 12c0-2 1.5-3.5 3.5-3.5h3C15.5 8.5 17 10 17 12v5H7Z"/><path d="M5 17h14M9 8c0-2 1.3-3 3-3s3 1 3 3"/>',
+  cards: '<rect x="4" y="5" width="12" height="16" rx="2"/><path d="M8 2.5h9A2.5 2.5 0 0 1 19.5 5v13"/>',
+  closePanel: '<path d="M6 5h12v14H6zM10 5v14"/>',
+  eye: '<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.6"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  minus: '<path d="M5 12h14"/>',
+  layers: '<path d="m12 3 9 5-9 5-9-5Z"/><path d="m3 13 9 5 9-5M3 17l9 5 9-5"/>',
+  globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.2 2.3 3.3 5.2 3.3 8.5S14.2 18.2 12 20.5C9.8 18.2 8.7 15.3 8.7 12S9.8 5.8 12 3.5Z"/>',
+  leaf: '<path d="M20 4C12 4 5 8 5 15c0 2 1 4 2 5 4-8 8-9 13-16Z"/><path d="M4 21c2-5 5-8 10-11"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>',
+  moon: '<path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/>',
+  mountainSnow: '<path d="m2.5 19 6-11 4 7 2.5-4L22 19Z"/><path d="m6.6 11.3 1.9-3.3 1.8 3.1M13 13.5l2-3 2.5 4"/>',
+  flag: '<path d="M5 21V4M5 4c5-3 9 3 14 0v9c-5 3-9-3-14 0"/>',
+  quote: '<path d="M8 11H4a4 4 0 0 1 4-4v8a4 4 0 0 1-4 4M20 11h-4a4 4 0 0 1 4-4v8a4 4 0 0 1-4 4"/>',
+  play: '<path d="M7 5v14l11-7Z"/>',
+  pause: '<path d="M7 5h3.6v14H7ZM13.4 5H17v14h-3.6Z"/>',
+  film: '<rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M7.5 4v16M16.5 4v16M3.5 9h4M3.5 15h4M16.5 9h4M16.5 15h4"/>',
+};
+
+export function icon(name, className = "") {
+  const body = ICONS[name] || ICONS.spark;
+  return `<svg class="hc-icon ${className}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+}
+
+export function categoryIcon(category) {
+  const map = {
+    architecture: "arch",
+    food: "food",
+    festivals: "festival",
+    clothing: "cloth",
+    handicrafts: "craft",
+    music: "music",
+    landmarks: "landmark",
+    traditions: "tradition",
+  };
+  return icon(map[category] || "spark");
+}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static journal_extras %}
+
+{% block title %}Stories — Himalaya Connect{% endblock %}
+{% block meta_description %}Browse field notes, food stories, craft, heritage and landscape writing from Nepal, Pakistan and China.{% endblock %}
+{% block body_class %}page-stories has-overlay-header{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero-stories">
+  <div class="page-hero-pattern" aria-hidden="true"></div>
+  <div class="page-hero-orb" data-parallax="0.1" aria-hidden="true"></div>
+  <div class="container page-hero-inner">
+    <p class="eyebrow eyebrow-light" data-reveal><span></span> The journal</p>
+    <div class="page-hero-title-row">
+      <h1 data-reveal data-reveal-delay="1">Stories from<br><em>the high places.</em></h1>
+      <p class="page-hero-intro" data-reveal data-reveal-delay="2">Food, craft, architecture, landscape and the people who make a place feel alive. Read slowly. There is no hurry here.</p>
+    </div>
+    <div class="page-hero-meta" data-reveal data-reveal-delay="3">
+      <span>{{ result_count }} field note{{ result_count|pluralize }}</span>
+      <span>Updated weekly</span>
+      <span>Free to read</span>
+    </div>
+  </div>
+  <svg class="page-hero-ridge" viewBox="0 0 1600 200" preserveAspectRatio="none" aria-hidden="true"><path d="M0 145c190-26 280 26 452-2 168-28 240-91 407-75 151 15 215 95 371 82 145-12 220-66 370-59v109H0Z" fill="#f7f2e7"/></svg>
+</section>
+
+<section class="section section-list">
+  <div class="container">
+    <div class="filter-bar" id="search">
+      <form class="filter-search" action="{% url 'story_list' %}" method="get" role="search">
+        <div class="search-field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+          <label class="sr-only" for="story-search">Search stories</label>
+          <input id="story-search" type="search" name="q" value="{{ query }}" placeholder="Search stories, places, tags…">
+        </div>
+        {% if active_category %}<input type="hidden" name="category" value="{{ active_category.slug }}">{% endif %}
+        {% if active_destination %}<input type="hidden" name="destination" value="{{ active_destination.slug }}">{% endif %}
+        {% if tag %}<input type="hidden" name="tag" value="{{ tag }}">{% endif %}
+        {% if saved %}<input type="hidden" name="saved" value="1">{% endif %}
+        <select name="sort" class="filter-select" aria-label="Sort stories">
+          <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest first</option>
+          <option value="popular" {% if sort == 'popular' %}selected{% endif %}>Most loved</option>
+          <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>Oldest first</option>
+        </select>
+        <button class="button button-dark filter-submit" type="submit">Search</button>
+      </form>
+
+      <div class="filter-chips">
+        <a class="chip {% if not active_category and not tag and not saved %}is-active{% endif %}" href="{% url 'story_list' %}{% if active_destination %}?destination={{ active_destination.slug }}{% endif %}">All stories</a>
+        {% for category in categories %}
+          <a class="chip {% if active_category.pk == category.pk %}is-active{% endif %}" href="{% url 'story_list' %}?category={{ category.slug }}{% if query %}&q={{ query|urlencode }}{% endif %}">{{ category.icon }} {{ category.name }}</a>
+        {% endfor %}
+        {% if user.is_authenticated %}
+          <a class="chip chip-saved {% if saved %}is-active{% endif %}" href="{% url 'story_list' %}?saved=1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4V4Z"/></svg>
+            Reading list
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if active_category or active_destination or tag or query or saved %}
+      <div class="active-filters">
+        <p>
+          Showing
+          {% if query %}<strong>“{{ query }}”</strong>{% endif %}
+          {% if active_category %}<strong>{{ active_category.name }}</strong>{% endif %}
+          {% if active_destination %}<strong>{{ active_destination.name }}</strong>{% endif %}
+          {% if tag %}<strong>#{{ tag }}</strong>{% endif %}
+          {% if saved %}<strong>your reading list</strong>{% endif %}
+          <span>· {{ result_count }} result{{ result_count|pluralize }}</span>
+        </p>
+        <a href="{% url 'story_list' %}" class="clear-filters">Clear filters
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </a>
+      </div>
+    {% endif %}
+
+    {% if posts %}
+      <div class="story-grid story-grid-list">
+        {% for post in posts %}
+          {% include "partials/story_card.html" with post=post %}
+        {% endfor %}
+      </div>
+      {% include "partials/pagination.html" with page_obj=page_obj %}
+    {% else %}
+      <div class="empty-state empty-state-large">
+        <span class="empty-state-mark">✦</span>
+        <h2>No stories on this path yet.</h2>
+        <p>Try a wider search, or wander through another thread.</p>
+        <a class="button button-dark" href="{% url 'story_list' %}">Browse all stories</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

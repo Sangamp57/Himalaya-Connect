@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% load static journal_extras %}
+
+{% block title %}{{ post.title }} — Himalaya Connect{% endblock %}
+{% block meta_description %}{{ post.excerpt|truncatewords:34 }}{% endblock %}
+{% block og_title %}{{ post.title }}{% endblock %}
+{% block og_description %}{{ post.excerpt|truncatewords:34 }}{% endblock %}
+{% block og_image %}{{ post.cover_src }}{% endblock %}
+{% block body_class %}page-story has-overlay-header{% endblock %}
+
+{% block head_extra %}<link rel="preload" as="image" href="{{ post.cover_src }}" fetchpriority="high">{% endblock %}
+
+{% block content %}
+<article class="story-article">
+  <header class="story-hero">
+    <div class="story-hero-media" data-parallax="0.14">
+      <img src="{{ post.cover_src }}" alt="{{ post.cover_alt }}" fetchpriority="high">
+    </div>
+    <div class="story-hero-shade"></div>
+    <div class="container story-hero-inner">
+      <nav class="breadcrumb breadcrumb-light" aria-label="Breadcrumb">
+        <a href="{% url 'story_list' %}">Stories</a>
+        <span>/</span>
+        {% if post.category %}<a href="{% url 'story_list' %}?category={{ post.category.slug }}">{{ post.category.name }}</a>{% else %}<span>Field note</span>{% endif %}
+      </nav>
+      <div class="story-title-block">
+        {% if post.status == 'draft' %}<p class="draft-ribbon">Draft preview — only you and editors can see this page.</p>{% endif %}
+        <div class="story-labels">
+          {% if post.category %}<span class="story-label">{{ post.category.icon }} {{ post.category.name }}</span>{% endif %}
+          {% if post.destination %}<span class="story-label story-label-quiet">{{ post.destination.flag }} {{ post.destination.name }}</span>{% endif %}
+        </div>
+        <h1>{{ post.title }}</h1>
+        <p class="story-deck">{{ post.excerpt }}</p>
+        <div class="story-byline">
+          <a href="{% url 'author_profile' post.author.username %}" class="byline byline-light">
+            {% if post.author.profile.avatar_url %}
+              <img class="avatar" src="{{ post.author.profile.avatar_url }}" alt="">
+            {% else %}
+              <span class="avatar" style="{% avatar_style post.author.profile.name %}">{{ post.author.profile.initial }}</span>
+            {% endif %}
+            <span><strong>{{ post.author.profile.name|default:post.author.username }}</strong><small>{% if post.author.profile.location %}{{ post.author.profile.location }} · {% endif %}{{ post.published_at|date:"F j, Y" }}</small></span>
+          </a>
+          <span class="story-byline-divider"></span>
+          <span class="story-read-time">{{ post.read_minutes }} min read</span>
+          <span class="story-read-time">{{ post.views }} view{{ post.views|pluralize }}</span>
+        </div>
+      </div>
+    </div>
+    <a href="#story-body" class="story-scroll-cue" aria-label="Jump to story">
+      <span>Read the story</span>
+      <i></i>
+    </a>
+  </header>
+
+  <div class="container story-layout" id="story-body">
+    <div class="story-main">
+      <div class="prose prose-journal" data-dropcap>
+        {{ post.content|story_body }}
+      </div>
+
+      <div class="story-end-mark" aria-hidden="true"><span>✦</span></div>
+
+      {% if post.cover_credit %}
+        <p class="photo-credit">Cover photograph: {{ post.cover_credit }}{% if post.cover_credit_url %} · <a href="{{ post.cover_credit_url }}" target="_blank" rel="noopener noreferrer">source <span aria-hidden="true">↗</span></a>{% endif %}</p>
+      {% endif %}
+
+      <div class="story-taxonomy">
+        {% if post.tags %}
+          <div class="story-tags">
+            <span class="story-tags-label">Threads</span>
+            {% for tag in post.tag_list %}
+              <a class="chip" href="{% url 'story_list' %}?tag={{ tag|urlencode }}">#{{ tag }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <div class="story-share">
+          <span>Share</span>
+          <button class="icon-button icon-button-bordered" type="button" data-share-url="{{ request.build_absolute_uri }}" aria-label="Share this story">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.3 10.8 7.4-4.3M8.3 13.2l7.4 4.3"/></svg>
+          </button>
+          <a class="icon-button icon-button-bordered" href="mailto:?subject={{ post.title|urlencode }}&body={{ request.build_absolute_uri|urlencode }}" aria-label="Share by email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <section class="author-card author-card-large" aria-label="About the author">
+        {% if post.author.profile.avatar_url %}
+          <img class="avatar avatar-large" src="{{ post.author.profile.avatar_url }}" alt="">
+        {% else %}
+          <span class="avatar avatar-large" style="{% avatar_style post.author.profile.name %}">{{ post.author.profile.initial }}</span>
+        {% endif %}
+        <div>
+          <p class="eyebrow"><span></span> Words by</p>
+          <h2><a href="{% url 'author_profile' post.author.username %}">{{ post.author.profile.name|default:post.author.username }}</a></h2>
+          <p>{{ post.author.profile.bio|default:"A contributor to the Himalaya Connect journal." }}</p>
+          <a class="text-link" href="{% url 'author_profile' post.author.username %}">More from {{ post.author.profile.name|default:post.author.username }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </section>
+
+      <section class="comments-section" id="comments">
+        <div class="comments-head">
+          <div>
+            <p class="eyebrow"><span></span> Conversation</p>
+            <h2>{{ comments|length }} response{{ comments|length|pluralize }}</h2>
+          </div>
+          <p>Keep it generous, specific and kind.</p>
+        </div>
+
+        {% for comment in comments %}
+          <article class="comment" id="comment-{{ comment.pk }}">
+            {% if comment.author.profile.avatar_url %}
+              <img class="avatar" src="{{ comment.author.profile.avatar_url }}" alt="">
+            {% else %}
+              <span class="avatar" style="{% avatar_style comment.author.profile.name %}">{{ comment.author.profile.initial }}</span>
+            {% endif %}
+            <div class="comment-body">
+              <div class="comment-head">
+                <a href="{% url 'author_profile' comment.author.username %}">{{ comment.author.profile.name|default:comment.author.username }}</a>
+                <span>{{ comment.created_at|timesince }} ago</span>
+                {% if user == comment.author or user == post.author or user.is_staff %}
+                  <form method="post" action="{% url 'delete_comment' comment.pk %}" class="comment-delete">
+                    {% csrf_token %}
+                    <button type="submit" aria-label="Delete comment">Delete</button>
+                  </form>
+                {% endif %}
+              </div>
+              <p>{{ comment.body|linebreaksbr }}</p>
+            </div>
+          </article>
+        {% empty %}
+          <p class="comments-empty">No responses yet. Leave the first thoughtful note.</p>
+        {% endfor %}
+
+        {% if post.allow_comments %}
+          {% if user.is_authenticated %}
+            <form class="comment-form" method="post" action="{% url 'add_comment' post.slug %}">
+              {% csrf_token %}
+              <div class="comment-form-head">
+                {% if user.profile.avatar_url %}
+                  <img class="avatar" src="{{ user.profile.avatar_url }}" alt="">
+                {% else %}
+                  <span class="avatar" style="{% avatar_style user.profile.name %}">{{ user.profile.initial }}</span>
+                {% endif %}
+                <div><strong>Leave a response</strong><span>Signed in as @{{ user.username }}</span></div>
+              </div>
+              {{ comment_form.body }}
+              <div class="comment-form-foot">
+                <span>Be curious. Be specific. Be kind.</span>
+                <button class="button button-dark" type="submit">Post response</button>
+              </div>
+            </form>
+          {% else %}
+            <div class="comment-signin">
+              <p>Have something to add? Join the conversation as a member.</p>
+              <a class="button button-dark" href="{% url 'login' %}?next={{ request.path|urlencode }}">Sign in to respond</a>
+            </div>
+          {% endif %}
+        {% else %}
+          <p class="comments-closed">Comments are closed on this story.</p>
+        {% endif %}
+      </section>
+    </div>
+
+    <aside class="story-rail">
+      <div class="rail-actions">
+        {% if user.is_authenticated %}
+          <form method="post" action="{% url 'toggle_like' post.slug %}" class="js-toggle" data-kind="like">
+            {% csrf_token %}
+            <button type="submit" class="rail-button {% if liked %}is-active{% endif %}" data-toggle-button>
+              <svg viewBox="0 0 24 24" fill="{% if liked %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20.8 5.8a5.5 5.5 0 0 0-7.8 0L12 6.9l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 22l8.8-8.4a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+              <span data-toggle-label>{% if liked %}Loved{% else %}Love this{% endif %}</span>
+              <span class="rail-count" data-toggle-count>{{ post.like_count }}</span>
+            </button>
+          </form>
+          <form method="post" action="{% url 'toggle_bookmark' post.slug %}" class="js-toggle" data-kind="bookmark">
+            {% csrf_token %}
+            <button type="submit" class="rail-button {% if bookmarked %}is-active{% endif %}" data-toggle-button>
+              <svg viewBox="0 0 24 24" fill="{% if bookmarked %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4V4Z"/></svg>
+              <span data-toggle-label>{% if bookmarked %}Saved{% else %}Save for later{% endif %}</span>
+            </button>
+          </form>
+        {% else %}
+          <a class="rail-button" href="{% url 'login' %}?next={{ request.path|urlencode }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20.8 5.8a5.5 5.5 0 0 0-7.8 0L12 6.9l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 22l8.8-8.4a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+            <span>Sign in to love</span><span class="rail-count">{{ post.like_count }}</span>
+          </a>
+          <a class="rail-button" href="{% url 'login' %}?next={{ request.path|urlencode }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4V4Z"/></svg>
+            <span>Save for later</span>
+          </a>
+        {% endif %}
+        <button type="button" class="rail-button" data-share-url="{{ request.build_absolute_uri }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.3 10.8 7.4-4.3M8.3 13.2l7.4 4.3"/></svg>
+          <span>Share this story</span>
+        </button>
+      </div>
+
+      {% if post.destination %}
+        <a class="rail-destination" href="{{ post.destination.get_absolute_url }}">
+          <img src="{% static post.destination.image %}" alt="{{ post.destination.name }}" loading="lazy">
+          <div>
+            <span>{{ post.destination.country }}</span>
+            <strong>{{ post.destination.name }}</strong>
+            <small>Explore the destination <span aria-hidden="true">→</span></small>
+          </div>
+        </a>
+      {% endif %}
+
+      <div class="rail-note">
+        <span class="rail-note-mark">✦</span>
+        <p>Independent, member-supported field journalism. No sponsored detours.</p>
+      </div>
+    </aside>
+  </div>
+
+  {% if related %}
+    <section class="section section-related">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow"><span></span> Keep wandering</p>
+            <h2>More from this corner of the map</h2>
+          </div>
+          <a href="{% url 'story_list' %}" class="text-link">All stories
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <div class="story-grid">
+          {% for related_post in related %}
+            {% include "partials/story_card.html" with post=related_post %}
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  {% endif %}
+</article>
+{% endblock %}

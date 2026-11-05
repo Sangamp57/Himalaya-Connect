@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Page not found — Himalaya Connect{% endblock %}
+{% block body_class %}page-error{% endblock %}
+
+{% block content %}
+<section class="error-page">
+  <div class="error-contours" aria-hidden="true"></div>
+  <div class="container error-inner">
+    <p class="error-code">404</p>
+    <p class="eyebrow"><span></span> Off the marked trail</p>
+    <h1>This path doesn't<br><em>go anywhere.</em></h1>
+    <p>The page you were looking for may have moved, or the trail may never have existed. Either way, the view from here is still good.</p>
+    <div class="error-actions">
+      <a class="button button-dark" href="{% url 'home' %}">Back to the journal</a>
+      <a class="button button-quiet" href="{% url 'story_list' %}">Browse stories</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

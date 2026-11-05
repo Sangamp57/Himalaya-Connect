@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% load static journal_extras %}
+
+{% block title %}Himalaya Connect — Three countries. One journey of discovery.{% endblock %}
+{% block meta_description %}Explore Nepal, Pakistan and China through an interactive 3D cultural adventure, and read a slow travel journal of food, craft, heritage and everyday life from the Himalaya.{% endblock %}
+{% block og_title %}Himalaya Connect — Three countries. One journey of discovery.{% endblock %}
+{% block og_description %}An interactive 3D cultural journey through Nepal, Pakistan and China, with stories, etiquette, maps and collectible discoveries.{% endblock %}
+{% block body_class %}page-home has-overlay-header{% endblock %}
+
+{% block head_extra %}<link rel="preload" as="image" href="{% static 'images/hunza-valley.webp' %}" fetchpriority="high">{% endblock %}
+
+{% block content %}
+<section class="hero hero-home" data-parallax-scene>
+  <div class="hero-media" data-parallax="0.16">
+    <img src="{% static 'images/hunza-valley.webp' %}" alt="Snow-covered peaks above the green Hunza Valley" fetchpriority="high">
+  </div>
+  <div class="hero-tint"></div>
+  <div class="hero-grain" aria-hidden="true"></div>
+  <div class="hero-orb" data-mouse-depth="0.02" aria-hidden="true"></div>
+
+  <div class="container hero-home-inner">
+    <div class="hero-copy" data-reveal>
+      <p class="eyebrow eyebrow-light"><span></span> Nepal · Pakistan · China</p>
+      <h1>Three countries.<br><em>One journey of discovery.</em></h1>
+      <p class="hero-lede">Explore the traditions, stories, architecture and everyday life of Nepal, Pakistan and China through an interactive 3D cultural adventure.</p>
+      <div class="hero-actions">
+        <a class="button button-sand button-large" href="{% url 'explore' %}">
+          Start your journey
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m12 3 2.3 5.7L20 11l-5.7 2.3L12 19l-2.3-5.7L4 11l5.7-2.3Z"/><path d="M19 17.5v3M17.5 19h3"/></svg>
+        </a>
+        <a class="button button-ghost button-large" href="{% url 'story_list' %}">
+          Read the field journal
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+      </div>
+      <div class="hero-proof">
+        <div class="hero-avatars" aria-hidden="true">
+          {% for contributor in contributors|slice:":3" %}
+            {% if contributor.profile.avatar_url %}
+              <img src="{{ contributor.profile.avatar_url }}" alt="" class="avatar avatar-tiny">
+            {% else %}
+              <span class="avatar avatar-tiny" style="{% avatar_style contributor.profile.name %}">{{ contributor.profile.initial }}</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <p>Four 3D scenes · 32 cultural objects · {{ stats.contributors }} independent voices.</p>
+      </div>
+    </div>
+
+    <aside class="hero-note" data-reveal data-reveal-delay="2">
+      <div class="hero-note-top">
+        <span>Field note № 04</span>
+        <span class="hero-note-line"></span>
+        <span>36.3° N</span>
+      </div>
+      <p>“The valley is a garden when the apricots bloom — and a lesson in patience for the other eleven months.”</p>
+      <div class="hero-note-foot">
+        <span class="hero-note-dash"></span>
+        <span>Hunza Valley, spring</span>
+      </div>
+    </aside>
+  </div>
+
+  <div class="hero-scroll-hint" aria-hidden="true">
+    <span>Scroll to wander</span>
+    <i></i>
+  </div>
+
+  <svg class="hero-ridge" viewBox="0 0 1600 290" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 190C160 160 245 202 390 178c130-22 218-89 337-85 100 4 155 69 264 79 149 14 286-80 400-62 58 9 127 42 209 52v128H0Z" fill="#f7f2e7"/>
+    <path d="M0 232c208-27 315 14 471-4 164-19 277-74 404-58 107 14 207 62 336 57 138-5 249-58 389-32v95H0Z" fill="#f7f2e7" opacity=".55"/>
+  </svg>
+</section>
+
+<div class="place-ticker" aria-label="Places in this journal">
+  <div class="ticker-track">
+    <span>Kathmandu Valley</span><i>✦</i><span>Hunza</span><i>✦</i><span>Kashgar</span><i>✦</i><span>Karakoram</span><i>✦</i><span>Bhaktapur</span><i>✦</i><span>Attabad Lake</span><i>✦</i>
+    <span>Kathmandu Valley</span><i>✦</i><span>Hunza</span><i>✦</i><span>Kashgar</span><i>✦</i><span>Karakoram</span><i>✦</i><span>Bhaktapur</span><i>✦</i><span>Attabad Lake</span><i>✦</i>
+  </div>
+</div>
+
+<section class="section section-intro">
+  <div class="container intro-grid">
+    <div class="intro-heading" data-reveal>
+      <p class="eyebrow"><span></span> The editorial promise</p>
+      <h2>Travel is a way of paying attention.</h2>
+    </div>
+    <div class="intro-body" data-reveal data-reveal-delay="1">
+      <p class="intro-lead">We are not here to collect places. We are here to notice them — the carved window above a doorway, the shape of a folded dumpling, the conversation that begins when the bus stops for tea.</p>
+      <p>Himalaya Connect is a community journal across Nepal, Pakistan and China's mountain regions. Every story is rooted in a real place, written with care, and edited for accuracy rather than spectacle.</p>
+      <a href="{% url 'about' %}" class="text-link">How we work
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <div class="intro-stats" data-reveal data-reveal-delay="2">
+      <div><strong>{{ stats.stories|stringformat:"02d" }}</strong><span>Field stories</span></div>
+      <div><strong>{{ stats.destinations|stringformat:"02d" }}</strong><span>Destinations</span></div>
+      <div><strong>{{ stats.contributors|stringformat:"02d" }}</strong><span>Contributors</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-featured">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow"><span></span> Selected field notes</p>
+        <h2>Stories worth slowing down for</h2>
+      </div>
+      <a href="{% url 'story_list' %}" class="text-link">All stories
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    {% if featured %}
+      <div class="featured-grid">
+        {% for post in featured %}
+          {% if forloop.first %}
+            {% include "partials/story_card.html" with post=post card_class="story-card--feature" %}
+          {% else %}
+            {% include "partials/story_card.html" with post=post card_class="story-card--small" %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state"><p>The first stories are being written. Check back soon.</p></div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section section-destinations">
+  <div class="container">
+    <div class="section-heading section-heading-light">
+      <div>
+        <p class="eyebrow eyebrow-light"><span></span> Go deeper</p>
+        <h2>Four places, four ways in</h2>
+      </div>
+      <a href="{% url 'destination_list' %}" class="text-link text-link-light">All destinations
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <div class="destination-rail">
+      {% for destination in destinations %}
+        <a class="destination-card" href="{{ destination.get_absolute_url }}" data-reveal data-reveal-delay="{{ forloop.counter0 }}">
+          <div class="destination-card-media">
+            <img src="{% static destination.image %}" alt="{{ destination.name }}" loading="lazy" decoding="async">
+          </div>
+          <div class="destination-card-shade"></div>
+          <div class="destination-card-content">
+            <div class="destination-card-top">
+              <span class="destination-index">0{{ forloop.counter }}</span>
+              <span class="destination-country">{{ destination.flag }} {{ destination.country }}</span>
+            </div>
+            <div>
+              <h3>{{ destination.name }}</h3>
+              <p>{{ destination.tagline }}</p>
+              <span class="destination-card-cta">Enter the place
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </span>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="destination-contours" aria-hidden="true"></div>
+</section>
+
+<section class="section section-interlude">
+  <div class="container interlude-grid">
+    <div class="interlude-image-wrap" data-reveal>
+      <div class="interlude-image" data-parallax="0.06">
+        <img src="{% static 'images/lokta-paper.webp' %}" alt="A papermaker pulling a sheet of lokta paper in Nepal" loading="lazy" decoding="async">
+      </div>
+      <div class="interlude-caption">
+        <span>01</span>
+        <p>Handmade lokta paper, Kathmandu Valley. Made slowly, from bark, water and patience.</p>
+      </div>
+    </div>
+    <div class="interlude-copy" data-reveal data-reveal-delay="1">
+      <p class="eyebrow"><span></span> A note from the editors</p>
+      <blockquote>“The opposite of a tourist is not a local. It is someone who is paying attention.”</blockquote>
+      <p>We look for the specific detail rather than the sweeping claim. We name what we do not know. We credit the people who make things, and we leave room for a place to be more complicated than a postcard.</p>
+      <div class="interlude-values">
+        <span><i></i> Rooted in place</span>
+        <span><i></i> Edited with care</span>
+        <span><i></i> Free to read</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-latest">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow"><span></span> Fresh from the field</p>
+        <h2>Latest dispatches</h2>
+      </div>
+      <a href="{% url 'story_list' %}" class="text-link">Browse every story
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <div class="story-grid">
+      {% for post in latest %}
+        {% include "partials/story_card.html" with post=post %}
+      {% empty %}
+        <div class="empty-state"><p>No stories yet. The kettle is on.</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="newsletter-cta">
+  <div class="newsletter-cta-bg" data-parallax="0.1">
+    <img src="{% static 'images/karakoram-highway.webp' %}" alt="" loading="lazy" aria-hidden="true">
+  </div>
+  <div class="newsletter-cta-overlay"></div>
+  <div class="container newsletter-cta-inner" data-reveal>
+    <p class="eyebrow eyebrow-light"><span></span> The Sunday field note</p>
+    <h2>One story.<br><em>One quiet moment.</em></h2>
+    <p>A considered letter from the mountains, delivered once a week. Photographs, practical details and a thought worth keeping.</p>
+    <form class="newsletter-form newsletter-form-large" action="{% url 'newsletter_subscribe' %}" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.path }}">
+      <input class="hp-field" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <label class="sr-only" for="home-newsletter-email">Email address</label>
+      <input id="home-newsletter-email" type="email" name="email" placeholder="Your email address" autocomplete="email" required>
+      <button type="submit" class="button button-sand">Join the letter
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </form>
+    <p class="newsletter-small">No advertising. No noise. Unsubscribe any time.</p>
+  </div>
+</section>
+{% endblock %}

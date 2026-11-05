@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static journal_extras %}
+
+{% block title %}{{ destination.name }}, {{ destination.country }} — Himalaya Connect{% endblock %}
+{% block meta_description %}{{ destination.summary|truncatewords:32 }}{% endblock %}
+{% block og_image %}{% static destination.image %}{% endblock %}
+{% block body_class %}page-destination has-overlay-header{% endblock %}
+
+{% block head_extra %}<link rel="preload" as="image" href="{% static destination.image %}" fetchpriority="high">{% endblock %}
+
+{% block content %}
+<header class="destination-hero">
+  <div class="destination-hero-media" data-parallax="0.15">
+    <img src="{% static destination.image %}" alt="{{ destination.name }}" fetchpriority="high">
+  </div>
+  <div class="destination-hero-shade"></div>
+  <div class="container destination-hero-inner">
+    <nav class="breadcrumb breadcrumb-light" aria-label="Breadcrumb">
+      <a href="{% url 'destination_list' %}">Destinations</a><span>/</span><span>{{ destination.name }}</span>
+    </nav>
+    <div class="destination-hero-title">
+      <p class="eyebrow eyebrow-light" data-reveal><span></span> {{ destination.flag }} {{ destination.country }}</p>
+      <h1 data-reveal data-reveal-delay="1">{{ destination.name }}</h1>
+      <p data-reveal data-reveal-delay="2">{{ destination.tagline }}</p>
+    </div>
+    <div class="destination-hero-meta">
+      {% if destination.best_season %}<div><span>Best season</span><strong>{{ destination.best_season }}</strong></div>{% endif %}
+      {% if destination.altitude %}<div><span>Altitude</span><strong>{{ destination.altitude }}</strong></div>{% endif %}
+      <div><span>Field notes</span><strong>{{ posts|length }}</strong></div>
+    </div>
+  </div>
+</header>
+
+<section class="section section-destination-intro">
+  <div class="container destination-intro-grid">
+    <div class="destination-intro-copy" data-reveal>
+      <p class="eyebrow"><span></span> A way in</p>
+      <h2>{{ destination.summary }}</h2>
+      <div class="prose prose-intro">{{ destination.description|linebreaks }}</div>
+    </div>
+    <aside class="destination-highlights" data-reveal data-reveal-delay="1">
+      <p class="eyebrow"><span></span> Look closely</p>
+      <ul>
+        {% for highlight in destination.highlight_list %}
+          <li><span>0{{ forloop.counter }}</span>{{ highlight }}</li>
+        {% empty %}
+          <li><span>01</span>Food, craft, architecture and ordinary daily life.</li>
+        {% endfor %}
+      </ul>
+      <div class="destination-highlights-foot">
+        <span class="pulse-dot"></span>
+        Stories from local writers and careful visitors
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="section section-list section-destination-stories">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow"><span></span> Field notes from {{ destination.name }}</p>
+        <h2>Stories to begin with</h2>
+      </div>
+      <a href="{% url 'story_list' %}?destination={{ destination.slug }}" class="text-link">Every {{ destination.name }} story
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    {% if posts %}
+      <div class="story-grid">
+        {% for post in posts %}
+          {% include "partials/story_card.html" with post=post %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state"><p>The first dispatch from {{ destination.name }} is on its way.</p></div>
+    {% endif %}
+  </div>
+</section>
+
+{% if others %}
+  <section class="section section-other-places">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow"><span></span> Keep moving</p>
+          <h2>Other places on the map</h2>
+        </div>
+      </div>
+      <div class="other-places-grid">
+        {% for place in others %}
+          <a class="other-place" href="{{ place.get_absolute_url }}">
+            <img src="{% static place.image %}" alt="{{ place.name }}" loading="lazy">
+            <div><span>{{ place.country }}</span><strong>{{ place.name }}</strong><i aria-hidden="true">→</i></div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endif %}
+{% endblock %}

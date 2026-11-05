@@ -1,0 +1,479 @@
+{% load static %}<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0c1f2b">
+  <title>Explore · Himalaya Connect</title>
+  <meta name="description" content="Explore Nepal, Pakistan and China through interactive 3D worlds, cultural stories, quizzes, etiquette challenges and a collectible card gallery.">
+  <meta property="og:title" content="Himalaya Connect · Three countries. One journey of discovery.">
+  <meta property="og:description" content="An interactive 3D cultural journey through Nepal, Pakistan and China.">
+  <meta property="og:image" content="{% static 'images/hunza-valley.webp' %}">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <link rel="icon" href="{% static 'images/favicon.svg' %}" type="image/svg+xml">
+  <link rel="preload" href="{% static 'fonts/fraunces-normal-300-700.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{% static 'fonts/manrope-normal-400-800.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/leaflet/leaflet.css' %}">
+  <link rel="stylesheet" href="{% static 'css/explore.css' %}">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "{% static 'vendor/three/three.module.min.js' %}"
+      }
+    }
+  </script>
+</head>
+<body class="explore-body">
+  <div id="explore-app" data-ai-configured="{{ ai_configured|yesno:'true,false' }}" data-journal-url="{% url 'story_list' %}" data-home-url="{% url 'home' %}" data-guide-url="{% url 'cultural_guide' %}">
+    <a class="skip-link" href="#ex-main">Skip to the explorer</a>
+    <div class="ex-scene" id="ex-scene">
+      <canvas id="explore-canvas" tabindex="0" aria-label="Interactive 3D cultural world. Use drag to orbit, scroll to zoom, and click a golden beacon to open a story."></canvas>
+      <div class="ex-scene-vignette" aria-hidden="true"></div>
+      <div class="ex-scene-grain" aria-hidden="true"></div>
+      <div class="ex-scene-fallback" id="scene-fallback" hidden>
+        <div class="fallback-card">
+          <p class="ex-kicker">Himalaya Connect</p>
+          <h2 data-i18n="fallback.title">A quieter way in</h2>
+          <p data-i18n="fallback.body"></p>
+          <div class="fallback-actions">
+            <button class="ex-button ex-button--gold" data-view="collection" data-i18n="fallback.collection"></button>
+            <button class="ex-button ex-button--ghost" data-view="map" data-i18n="fallback.map"></button>
+            <button class="ex-button ex-button--text" id="retry-webgl" data-i18n="fallback.retry"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <header class="ex-topbar">
+      <a class="ex-brand" href="{% url 'home' %}" aria-label="Himalaya Connect home">
+        <span class="ex-brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none">
+            <path d="M4 38 16.5 15l7.2 12.4 5.6-8.4L44 38" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9 31.5c8.4-4.4 18.3-7 30-14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>
+            <circle cx="37.5" cy="11" r="3.2" fill="currentColor" opacity=".95"/>
+          </svg>
+        </span>
+        <span class="ex-brand-word">Himalaya<span>Connect</span></span>
+        <span class="ex-brand-badge">3D</span>
+      </a>
+
+      <nav class="ex-nav" aria-label="Explorer sections">
+        <button class="ex-navlink" type="button" data-view="home" data-i18n="nav.home">Home</button>
+        <button class="ex-navlink" type="button" data-view="world" data-i18n="nav.explore">Explore</button>
+        <button class="ex-navlink" type="button" data-view="today" data-i18n="nav.today">Today</button>
+        <button class="ex-navlink" type="button" data-view="map" data-i18n="nav.map">Map</button>
+        <button class="ex-navlink" type="button" data-view="etiquette" data-i18n="nav.etiquette">Etiquette</button>
+        <button class="ex-navlink" type="button" data-view="collection" data-i18n="nav.collection">Collection</button>
+        <button class="ex-navlink" type="button" data-view="bridge" data-i18n="nav.bridge">Bridge</button>
+        <button class="ex-navlink" type="button" data-view="game" data-i18n="nav.game">Game</button>
+        <button class="ex-navlink" type="button" data-view="films" data-i18n="nav.films">Films</button>
+        <button class="ex-navlink" type="button" data-view="guide" data-i18n="nav.guide">Guide</button>
+      </nav>
+
+      <div class="ex-actions">
+        <button class="ex-level-pill" type="button" data-view="collection" id="top-level-pill" aria-label="Open travel collection">
+          <span class="ex-level-dot" id="top-level">1</span>
+          <span class="ex-level-copy"><strong id="top-xp">0 XP</strong><small id="top-level-label">Curious traveller</small></span>
+        </button>
+        <label class="ex-language">
+          <span class="sr-only" data-i18n="common.language">Language</span>
+          <select id="language-select" aria-label="Language">
+            <option value="en">English</option>
+            <option value="zh">简体中文</option>
+            <option value="ne">नेपाली</option>
+            <option value="ur">اردو</option>
+          </select>
+        </label>
+        <button class="ex-icon-button" type="button" id="sound-toggle" aria-label="Toggle sound" data-i18n-aria="common.sound"></button>
+        <button class="ex-icon-button" type="button" id="settings-toggle" aria-label="Open settings" data-i18n-aria="common.settings"></button>
+        <a class="ex-journal-link" href="{% url 'story_list' %}" data-i18n="nav.journal">Field journal</a>
+      </div>
+    </header>
+
+    <div class="ex-translation-notice" id="translation-notice" role="status" hidden>
+      <span data-i18n="common.translationNotice"></span>
+      <button type="button" class="ex-notice-close" id="translation-close" aria-label="Dismiss">×</button>
+    </div>
+
+    <main class="ex-main" id="ex-main">
+      <section class="ex-view ex-view--home is-active" data-view-panel="home" aria-labelledby="home-title">
+        <div class="home-shell">
+          <div class="home-hero">
+            <div class="home-native" aria-hidden="true"><span class="ne">नेपाल</span><span class="zh">中国</span><span class="ur">پاکستان</span></div>
+            <p class="ex-kicker"><span class="ex-kicker-line"></span><span data-i18n="home.kicker">An interactive 3D cultural journey</span></p>
+            <h1 id="home-title"><span data-i18n="home.title1">Three countries.</span><em data-i18n="home.title2">One journey of discovery.</em></h1>
+            <p class="home-lede" data-i18n="home.lede">Explore the traditions, stories, architecture and everyday life of Nepal, Pakistan and China through an interactive 3D cultural adventure.</p>
+            <div class="home-actions">
+              <button class="ex-button ex-button--gold ex-button--large" type="button" id="home-start">
+                <span data-i18n="home.primary">Start your journey</span>
+                <span class="ex-button-icon" data-icon="arrow"></span>
+              </button>
+              <button class="ex-button ex-button--ghost ex-button--large" type="button" id="home-continue" hidden>
+                <span data-i18n="home.continue">Continue exploring</span>
+              </button>
+              <button class="ex-button ex-button--text" type="button" data-view="map">
+                <span data-i18n="home.secondary">Explore the culture map</span>
+                <span class="ex-button-icon" data-icon="arrow"></span>
+              </button>
+            </div>
+            <div class="home-proof">
+              <span class="home-proof-dot"></span>
+              <span id="home-proof-copy">Four explorable scenes · 32 cultural objects · local progress</span>
+            </div>
+            <p class="home-drag-hint home-drag-hint--desktop" data-i18n="home.miniHint">Drag to turn the miniature world · Click an island to enter</p>
+            <p class="home-drag-hint home-drag-hint--mobile" data-i18n="home.mobileHint">Choose a world below to begin · The 3D preview turns gently on its own</p>
+          </div>
+
+          <aside class="home-rail" aria-label="Your journey">
+            <div class="ex-panel home-progress-card">
+              <div class="home-progress-head">
+                <div>
+                  <p class="ex-kicker ex-kicker--small" data-i18n="home.progress">Your journey</p>
+                  <h2 class="home-progress-title" id="home-progress-title">Curious traveller</h2>
+                </div>
+                <div class="level-ring" id="home-level-ring" aria-hidden="true">
+                  <span id="home-level-number">1</span>
+                </div>
+              </div>
+              <div class="home-progress-meta">
+                <span><strong id="home-xp">0</strong> XP</span>
+                <span><strong id="home-streak">0</strong> <span data-i18n="common.streak">day streak</span></span>
+                <span><strong id="home-found">0</strong>/<span id="home-total">32</span> <span data-i18n="home.statDiscoveries">discoveries</span></span>
+              </div>
+              <div class="home-progress-bar" aria-hidden="true"><span id="home-progress-fill"></span></div>
+              <div class="home-collection-preview">
+                <div class="home-subhead">
+                  <span data-i18n="home.collection">Collection preview</span>
+                  <button type="button" class="ex-link-button" data-view="collection" data-i18n="common.all">All</button>
+                </div>
+                <div class="mini-card-row" id="home-mini-cards"></div>
+              </div>
+              <div class="home-recent">
+                <div class="home-subhead"><span data-i18n="home.recent">Recent discoveries</span></div>
+                <div id="home-recent-list" class="recent-list"></div>
+              </div>
+            </div>
+            <button class="ex-panel home-daily-card" type="button" data-view="today" id="home-daily-mini">
+              <span class="home-daily-eyebrow" data-i18n="home.daily">Today's cultural encounter</span>
+              <strong id="home-daily-title">A meal that changes with the season</strong>
+              <span id="home-daily-country" class="ex-chip">Nepal</span>
+              <span class="home-daily-arrow" data-icon="arrow"></span>
+            </button>
+          </aside>
+
+          <div class="home-worlds" id="home-worlds" aria-label="Choose a 3D world"></div>
+        </div>
+      </section>
+
+      <section class="ex-view ex-view--world" data-view-panel="world" aria-labelledby="world-title">
+        <div class="world-head ex-panel">
+          <div class="world-head-top">
+            <button class="ex-round-button" type="button" data-view="home" aria-label="Return home"><span data-icon="arrowLeft"></span></button>
+            <span class="ex-kicker ex-kicker--small" id="world-eyebrow">World 01 · Nepal</span>
+          </div>
+          <h1 id="world-title">Kathmandu</h1>
+          <p class="world-blurb" id="world-blurb"></p>
+          <p class="world-route-note" id="world-route-note" hidden data-i18n="world.routeNote"></p>
+          <div class="world-head-meta">
+            <span class="ex-chip" id="world-region">Kathmandu Valley</span>
+            <span class="world-progress" id="world-progress">0 / 8 discoveries</span>
+          </div>
+          <div class="world-actions">
+            <button type="button" class="ex-button ex-button--tiny ex-button--ghost" id="world-trail-toggle" aria-expanded="false">
+              <span data-icon="layers"></span><span data-i18n="world.trail">Discovery trail</span>
+            </button>
+            <a class="ex-button ex-button--tiny ex-button--text" id="world-journal-link" href="#" data-i18n="common.readMore">Read the field note</a>
+          </div>
+        </div>
+
+        <aside class="world-trail ex-panel" id="world-trail" hidden aria-label="Discovery trail">
+          <div class="world-trail-head">
+            <div>
+              <p class="ex-kicker ex-kicker--small" data-i18n="world.trail">Discovery trail</p>
+              <p class="world-trail-hint" data-i18n="world.trailHint"></p>
+            </div>
+            <button class="ex-icon-button" type="button" id="world-trail-close" aria-label="Close discovery trail"><span data-icon="close"></span></button>
+          </div>
+          <div class="world-trail-list" id="world-trail-list"></div>
+        </aside>
+
+        <div class="world-tools ex-panel">
+          <button class="ex-icon-button" type="button" id="zoom-in" aria-label="Zoom in"><span data-icon="plus"></span></button>
+          <button class="ex-icon-button" type="button" id="zoom-out" aria-label="Zoom out"><span data-icon="minus"></span></button>
+          <button class="ex-icon-button" type="button" id="reset-camera" aria-label="Reset camera" data-i18n-aria="world.reset"><span data-icon="reset"></span></button>
+          <button class="ex-icon-button" type="button" id="film-toggle" aria-label="Pause film" data-i18n-aria="film.pause" hidden><span data-icon="play"></span></button>
+          <button class="ex-icon-button" type="button" id="world-help" aria-label="How to explore" data-i18n-aria="common.help"><span data-icon="info"></span></button>
+        </div>
+
+        <div class="world-dock ex-panel" id="world-dock" aria-label="Choose another world"></div>
+        <p class="world-hint" id="world-hint"><span data-icon="globe"></span><span data-i18n="world.dragHint">Drag to orbit · Scroll or pinch to zoom</span></p>
+        <div class="world-fallback" id="world-fallback" hidden>
+          <p data-i18n="toast.webgl">3D could not start on this device. The cultural reading mode remains available.</p>
+        </div>
+      </section>
+
+      <section class="ex-view ex-view--panel" data-view-panel="today" aria-labelledby="today-title">
+        <div class="ex-panel ex-panel--wide today-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="ex-kicker" data-i18n="today.kicker"></p>
+              <h1 id="today-title" data-i18n="today.title"></h1>
+            </div>
+            <button class="ex-round-button" type="button" data-view="home" aria-label="Close"><span data-icon="close"></span></button>
+          </div>
+          <div id="today-content"></div>
+        </div>
+      </section>
+
+      <section class="ex-view ex-view--panel ex-view--map" data-view-panel="map" aria-labelledby="map-title">
+        <div class="ex-panel ex-panel--wide map-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="ex-kicker" data-i18n="map.kicker"></p>
+              <h1 id="map-title" data-i18n="map.title"></h1>
+              <p class="panel-lede" data-i18n="map.lede"></p>
+            </div>
+            <button class="ex-round-button" type="button" data-view="home" aria-label="Close"><span data-icon="close"></span></button>
+          </div>
+          <div class="map-note"><span data-icon="info"></span><span data-i18n="map.note"></span></div>
+          <div class="map-toolbar" id="map-filters" role="group" aria-label="Filter by country"></div>
+          <div class="map-layout">
+            <aside class="map-sidebar">
+              <div class="map-detail" id="map-detail"></div>
+              <p class="ex-kicker ex-kicker--small map-list-heading" data-i18n="map.listTitle"></p>
+              <div class="map-list" id="map-list"></div>
+            </aside>
+            <div class="map-frame">
+              <div id="culture-map" aria-label="Geographic map of cultural places"></div>
+              <div class="map-loading" id="map-loading"><span data-icon="compass"></span><span data-i18n="map.loading"></span></div>
+              <div class="map-tile-note" id="map-tile-note" hidden data-i18n="map.tileError"></div>
+            </div>
+          </div>
+          <p class="map-attribution" data-i18n="map.attribution"></p>
+        </div>
+      </section>
+
+      <section class="ex-view ex-view--panel" data-view-panel="etiquette" aria-labelledby="etiquette-title">
+        <div class="ex-panel ex-panel--wide etiquette-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="ex-kicker" data-i18n="etiquette.kicker"></p>
+              <h1 id="etiquette-title" data-i18n="etiquette.title"></h1>
+              <p class="panel-lede" data-i18n="etiquette.lede"></p>
+            </div>
+            <button class="ex-round-button" type="button" data-view="home" aria-label="Close"><span data-icon="close"></span></button>
+          </div>
+          <div class="etiquette-layout">
+            <aside class="etiquette-list" id="etiquette-list"></aside>
+            <article class="etiquette-detail" id="etiquette-detail"></article>
+          </div>
+          <p class="panel-footnote" data-i18n="etiquette.noUniversal"></p>
+        </div>
+      </section>
+
+      <section class="ex-view ex-view--panel" data-view-panel="collection" aria-labelledby="collection-title">
+        <div class="ex-panel ex-panel--wide collection-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="ex-kicker" data-i18n="collection.kicker"></p>
+              <h1 id="collection-title" data-i18n="collection.title"></h1>
+              <p class="panel-lede" data-i18n="collection.lede"></p>
+            </div>
+            <button class="ex-round-button" type="button" data-view="home" aria-label="Close"><span data-icon="close"></span></button>
+          </div>
+          <div class="collection-topline">
+            <div>
+              <p class="collection-progress-copy" id="collection-progress-copy"></p>
+              <div class="home-progress-bar"><span id="collection-progress-fill"></span></div>
+            </div>
+            <button class="ex-button ex-button--tiny ex-button--ghost" type="button" data-view="bridge">
+              <span data-icon="bridge"></span><span data-i18n="collection.openBridge"></span>
+            </button>
+          </div>
+          <div class="achievement-strip" id="achievement-strip"></div>
+          <div class="filter-row" id="collection-filters" aria-label="Filter collection"></div>
+          <div class="collection-grid" id="collection-grid"></div>
+          <p class="panel-footnote" data-i18n="collection.reviewNotice"></p>
+        </div>
+      </section>
+
+      <section class="ex-view ex-view--panel" data-view-panel="bridge" aria-labelledby="bridge-title">
+        <div class="ex-panel ex-panel--wide bridge-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="ex-kicker" data-i18n="bridge.kicker"></p>
+              <h1 id="bridge-title" data-i18n="bridge.title"></h1>
+              <p class="panel-lede" data-i18n="bridge.lede"></p>
+            </div>
+            <button class="ex-round-button" type="button" data-view="home" aria-label="Close"><span data-icon="close"></span></button>
+          </div>
+          <div class="bridge-layout">
+            <aside class="bridge-list" id="bridge-list"></aside>
+            <article class="bridge-detail" id="bridge-detail"></article>
+          </div>
+          <p class="panel-footnote" data-i18n="bridge.isolated"></p>
+        </div>
+      </section>
+
+      <section class="ex-view ex-view--panel" data-view-panel="game" aria-labelledby="game-title">
+        <div class="ex-panel ex-panel--wide game-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="ex-kicker" data-i18n="game.kicker"></p>
+              <h1 id="game-title" data-i18n="game.title"></h1>
+              <p class="panel-lede" data-i18n="game.lede"></p>
+            </div>
+            <button class="ex-round-button" type="button" data-view="home" aria-label="Close"><span data-icon="close"></span></button>
+          </div>
+          <div id="game-content" class="game-content"></div>
+          <p class="panel-footnote" data-i18n="game.footnote"></p>
+        </div>
+      </section>
+
+      <section class="ex-view ex-view--panel" data-view-panel="films" aria-labelledby="films-title">
+        <div class="ex-panel ex-panel--wide films-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="ex-kicker" data-i18n="films.kicker"></p>
+              <h1 id="films-title" data-i18n="films.title"></h1>
+              <p class="panel-lede" data-i18n="films.lede"></p>
+            </div>
+            <button class="ex-round-button" type="button" data-view="home" aria-label="Close"><span data-icon="close"></span></button>
+          </div>
+          <div class="films-list">
+            <figure class="films-player">
+              <video controls preload="metadata" playsinline
+                poster="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cc/The_Himalayan_-_Mt.Everest_Base_Camp_trek_HD_Time_Lapse.webm/960px--The_Himalayan_-_Mt.Everest_Base_Camp_trek_HD_Time_Lapse.webm.jpg">
+                <source src="https://upload.wikimedia.org/wikipedia/commons/transcoded/c/cc/The_Himalayan_-_Mt.Everest_Base_Camp_trek_HD_Time_Lapse.webm/The_Himalayan_-_Mt.Everest_Base_Camp_trek_HD_Time_Lapse.webm.480p.vp9.webm" type="video/webm">
+                <source src="https://upload.wikimedia.org/wikipedia/commons/transcoded/c/cc/The_Himalayan_-_Mt.Everest_Base_Camp_trek_HD_Time_Lapse.webm/The_Himalayan_-_Mt.Everest_Base_Camp_trek_HD_Time_Lapse.webm.360p.mpeg4.mov" type="video/quicktime">
+                <p data-i18n="films.unavailable">Your browser cannot play this video. Open it on Wikimedia Commons instead.</p>
+              </video>
+              <figcaption>
+                <span data-i18n="films.nepalCaption"></span>
+                <a href="https://commons.wikimedia.org/wiki/File:The_Himalayan_-_Mt.Everest_Base_Camp_trek_HD_Time_Lapse.webm" target="_blank" rel="noopener noreferrer" data-i18n="films.openSource"></a>
+              </figcaption>
+            </figure>
+
+            <figure class="films-player">
+              <video controls preload="metadata" playsinline
+                poster="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/Hunza_Valley_-_5th_position_-_Winners_of_Wiki_Loves_Earth_2018.webm/960px--Hunza_Valley_-_5th_position_-_Winners_of_Wiki_Loves_Earth_2018.webm.jpg">
+                <source src="https://upload.wikimedia.org/wikipedia/commons/transcoded/e/e8/Hunza_Valley_-_5th_position_-_Winners_of_Wiki_Loves_Earth_2018.webm/Hunza_Valley_-_5th_position_-_Winners_of_Wiki_Loves_Earth_2018.webm.480p.vp9.webm" type="video/webm">
+                <source src="https://upload.wikimedia.org/wikipedia/commons/transcoded/e/e8/Hunza_Valley_-_5th_position_-_Winners_of_Wiki_Loves_Earth_2018.webm/Hunza_Valley_-_5th_position_-_Winners_of_Wiki_Loves_Earth_2018.webm.360p.mpeg4.mov" type="video/quicktime">
+                <p data-i18n="films.unavailable">Your browser cannot play this video. Open it on Wikimedia Commons instead.</p>
+              </video>
+              <figcaption>
+                <span data-i18n="films.pakistanCaption"></span>
+                <a href="https://commons.wikimedia.org/wiki/File:Hunza_Valley_-_5th_position_-_Winners_of_Wiki_Loves_Earth_2018.webm" target="_blank" rel="noopener noreferrer" data-i18n="films.openSource"></a>
+              </figcaption>
+            </figure>
+
+            <figure class="films-player">
+              <video controls preload="metadata" playsinline
+                poster="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Scenery_along_a_road_inBayingol_Mongolian_Autonomous_Prefecture.webm/960px--Scenery_along_a_road_inBayingol_Mongolian_Autonomous_Prefecture.webm.jpg">
+                <source src="https://upload.wikimedia.org/wikipedia/commons/transcoded/5/53/Scenery_along_a_road_inBayingol_Mongolian_Autonomous_Prefecture.webm/Scenery_along_a_road_inBayingol_Mongolian_Autonomous_Prefecture.webm.480p.vp9.webm" type="video/webm">
+                <source src="https://upload.wikimedia.org/wikipedia/commons/transcoded/5/53/Scenery_along_a_road_inBayingol_Mongolian_Autonomous_Prefecture.webm/Scenery_along_a_road_inBayingol_Mongolian_Autonomous_Prefecture.webm.360p.mpeg4.mov" type="video/quicktime">
+                <p data-i18n="films.unavailable">Your browser cannot play this video. Open it on Wikimedia Commons instead.</p>
+              </video>
+              <figcaption>
+                <span data-i18n="films.chinaCaption"></span>
+                <a href="https://commons.wikimedia.org/wiki/File:Scenery_along_a_road_inBayingol_Mongolian_Autonomous_Prefecture.webm" target="_blank" rel="noopener noreferrer" data-i18n="films.openSource"></a>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="ex-view ex-view--guide" data-view-panel="guide" aria-labelledby="guide-title">
+        <div class="ex-panel guide-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="ex-kicker" data-i18n="guide.kicker"></p>
+              <h1 id="guide-title" data-i18n="guide.title"></h1>
+            </div>
+            <div class="guide-head-actions">
+              <span class="mode-chip" id="guide-mode-chip"><span class="mode-dot"></span><span data-i18n="guide.demo">Demo</span></span>
+              <button class="ex-round-button" type="button" id="guide-clear" aria-label="Clear conversation" data-i18n-aria="guide.clear"><span data-icon="reset"></span></button>
+              <button class="ex-round-button" type="button" data-view="home" aria-label="Close"><span data-icon="close"></span></button>
+            </div>
+          </div>
+          <div class="guide-notice" id="guide-notice" data-i18n="guide.demoNotice"></div>
+          <div class="guide-context" id="guide-context">
+            <span class="ex-kicker ex-kicker--small" data-i18n="guide.context">Current context</span>
+            <span id="guide-context-copy" data-i18n="guide.noContext"></span>
+          </div>
+          <div class="guide-log" id="guide-log" role="log" aria-live="polite"></div>
+          <div class="guide-suggestions" id="guide-suggestions"></div>
+          <form class="guide-form" id="guide-form">
+            <label class="sr-only" for="guide-input" data-i18n="guide.placeholder"></label>
+            <textarea id="guide-input" rows="2" maxlength="800" data-i18n-placeholder="guide.placeholder"></textarea>
+            <button class="ex-button ex-button--gold guide-send" type="submit" id="guide-send" aria-label="Send message" data-i18n-aria="guide.send">
+              <span data-icon="arrow"></span>
+            </button>
+          </form>
+          <p class="guide-disclaimer" data-i18n="guide.disclaimer">Cultural advice is a starting point, not a substitute for asking local people. Sources are linked in every object panel.</p>
+        </div>
+      </section>
+    </main>
+
+    <aside class="ex-object-drawer" id="object-drawer" hidden aria-labelledby="object-drawer-title">
+      <button class="ex-drawer-close" type="button" id="object-drawer-close" aria-label="Close object panel"><span data-icon="close"></span></button>
+      <div id="object-drawer-content"></div>
+    </aside>
+
+    <div class="ex-popover" id="settings-popover" hidden role="dialog" aria-label="Explorer settings">
+      <div class="ex-popover-head">
+        <h2 data-i18n="settings.title">Explorer settings</h2>
+        <button class="ex-icon-button" type="button" id="settings-close" aria-label="Close settings"><span data-icon="close"></span></button>
+      </div>
+      <div class="settings-group">
+        <p class="settings-label" data-i18n="settings.visual">Visual quality</p>
+        <div class="segmented" id="quality-choice">
+          <button type="button" data-quality="auto" data-i18n="settings.auto">Automatic</button>
+          <button type="button" data-quality="low" data-i18n="settings.low">Lighter</button>
+          <button type="button" data-quality="high" data-i18n="settings.high">Full</button>
+        </div>
+        <p class="settings-hint" data-i18n="settings.autoHint"></p>
+      </div>
+      <label class="settings-toggle-row">
+        <span><strong data-i18n="settings.reducedMotion">Reduce motion</strong><small data-i18n="settings.reducedMotionHint"></small></span>
+        <input type="checkbox" id="reduced-motion-toggle">
+      </label>
+      <label class="settings-toggle-row">
+        <span><strong data-i18n="settings.sound">Interface sound</strong><small data-i18n="settings.soundHint"></small></span>
+        <input type="checkbox" id="sound-setting-toggle">
+      </label>
+      <button class="ex-button ex-button--tiny ex-button--ghost settings-sources" type="button" data-sources-open data-i18n="sources.title">Sources, ethics &amp; notes</button>
+    </div>
+
+    <div class="ex-toast-stack" id="toast-stack" aria-live="polite" aria-atomic="false"></div>
+    <div class="ex-scene-tooltip" id="scene-tooltip" hidden></div>
+
+    <div class="ex-loader" id="ex-loader" role="status" aria-live="polite">
+      <div class="loader-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M4 38 16.5 15l7.2 12.4 5.6-8.4L44 38" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="37.5" cy="11" r="3.2" fill="currentColor"/>
+        </svg>
+      </div>
+      <p class="loader-brand">Himalaya Connect</p>
+      <p class="loader-copy" data-i18n="common.loading">Gathering the mountain light…</p>
+      <div class="loader-bar"><span id="loader-progress"></span></div>
+    </div>
+
+    <dialog class="ex-dialog" id="ex-dialog">
+      <div class="ex-dialog-inner" id="ex-dialog-inner"></div>
+    </dialog>
+  </div>
+
+  <noscript>
+    <div class="noscript-panel">
+      <h1>Himalaya Connect</h1>
+      <p>The interactive explorer needs JavaScript for its 3D worlds and local progress. You can still read the field journal at <a href="{% url 'story_list' %}">/stories/</a>.</p>
+    </div>
+  </noscript>
+
+  <script src="{% static 'vendor/leaflet/leaflet.js' %}" defer></script>
+  <script type="module" src="{% static 'js/explore/main.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load static journal_extras %}
+
+{% block title %}Your dashboard — Himalaya Connect{% endblock %}
+{% block body_class %}page-dashboard{% endblock %}
+{% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+
+{% block content %}
+<section class="dashboard-hero">
+  <div class="dashboard-hero-pattern" aria-hidden="true"></div>
+  <div class="container dashboard-hero-inner">
+    <div>
+      <p class="eyebrow eyebrow-light"><span></span> Your writing room</p>
+      <h1>Good to see you,<br><em>{{ profile.name }}.</em></h1>
+      <p>What have you noticed lately? The journal is ready when you are.</p>
+    </div>
+    <div class="dashboard-hero-actions">
+      <a class="button button-sand" href="{% url 'post_create' %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        Write a story
+      </a>
+      <a class="button button-ghost" href="{% url 'author_profile' user.username %}">View public profile</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section-dashboard">
+  <div class="container">
+    <div class="dashboard-stats">
+      <article class="dashboard-stat" data-reveal>
+        <span class="stat-icon">✎</span>
+        <div><strong>{{ published_count }}</strong><span>Published stories</span></div>
+      </article>
+      <article class="dashboard-stat" data-reveal data-reveal-delay="1">
+        <span class="stat-icon">◐</span>
+        <div><strong>{{ draft_count }}</strong><span>Drafts in progress</span></div>
+      </article>
+      <article class="dashboard-stat" data-reveal data-reveal-delay="2">
+        <span class="stat-icon">◉</span>
+        <div><strong>{{ total_views|compact_number }}</strong><span>Total reads</span></div>
+      </article>
+      <article class="dashboard-stat" data-reveal data-reveal-delay="3">
+        <span class="stat-icon">♥</span>
+        <div><strong>{{ total_likes }}</strong><span>Reader love</span></div>
+      </article>
+    </div>
+
+    <div class="dashboard-layout">
+      <div class="dashboard-main">
+        <section class="dashboard-panel" id="stories">
+          <div class="dashboard-panel-head">
+            <div><p class="eyebrow"><span></span> Your field notes</p><h2>Stories</h2></div>
+            <a class="button button-quiet" href="{% url 'post_create' %}">+ New story</a>
+          </div>
+
+          {% if posts %}
+            <div class="dashboard-story-list">
+              {% for post in posts %}
+                <article class="dashboard-story">
+                  <a class="dashboard-story-thumb" href="{{ post.get_absolute_url }}">
+                    <img src="{{ post.cover_src }}" alt="" loading="lazy">
+                  </a>
+                  <div class="dashboard-story-main">
+                    <div class="dashboard-story-kicker">
+                      <span class="status-badge status-{{ post.status }}">{{ post.get_status_display }}</span>
+                      {% if post.category %}<span>{{ post.category.name }}</span>{% endif %}
+                      <span>Updated {{ post.updated_at|timesince }} ago</span>
+                    </div>
+                    <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+                    <div class="dashboard-story-metrics">
+                      <span>{{ post.views }} view{{ post.views|pluralize }}</span>
+                      <span>{{ post.like_count }} love{{ post.like_count|pluralize }}</span>
+                      <span>{{ post.comment_count }} response{{ post.comment_count|pluralize }}</span>
+                    </div>
+                  </div>
+                  <div class="dashboard-story-actions">
+                    <a class="icon-button icon-button-bordered" href="{{ post.get_absolute_url }}" aria-label="View story" title="View">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </a>
+                    <a class="icon-button icon-button-bordered" href="{% url 'post_edit' post.slug %}" aria-label="Edit story" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                    </a>
+                    <a class="icon-button icon-button-bordered icon-button-danger" href="{% url 'post_delete' post.slug %}" aria-label="Delete story" title="Delete">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/></svg>
+                    </a>
+                  </div>
+                </article>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="dashboard-empty">
+              <span class="empty-state-mark">✎</span>
+              <h3>Your first field note is waiting.</h3>
+              <p>Begin with something small and specific — a meal, a doorway, a conversation on a bus.</p>
+              <a class="button button-dark" href="{% url 'post_create' %}">Write your first story</a>
+            </div>
+          {% endif %}
+        </section>
+
+        <section class="dashboard-panel" id="reading-list">
+          <div class="dashboard-panel-head">
+            <div><p class="eyebrow"><span></span> Saved for later</p><h2>Reading list</h2></div>
+            {% if bookmarks %}<a class="text-link" href="{% url 'story_list' %}?saved=1">See all</a>{% endif %}
+          </div>
+          {% if bookmarks %}
+            <div class="mini-story-grid">
+              {% for post in bookmarks %}
+                {% include "partials/story_card.html" with post=post %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="dashboard-empty dashboard-empty-small">
+              <p>No saved stories yet. Look for the bookmark on any story you want to return to.</p>
+              <a class="text-link" href="{% url 'story_list' %}">Wander the journal
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          {% endif %}
+        </section>
+      </div>
+
+      <aside class="dashboard-side">
+        <div class="side-profile-card">
+          {% if profile.avatar_url %}
+            <img class="avatar avatar-xl" src="{{ profile.avatar_url }}" alt="">
+          {% else %}
+            <span class="avatar avatar-xl" style="{% avatar_style profile.name %}">{{ profile.initial }}</span>
+          {% endif %}
+          <h3>{{ profile.name }}</h3>
+          <p>@{{ user.username }}{% if profile.location %} · {{ profile.location }}{% endif %}</p>
+          <p class="side-profile-bio">{{ profile.bio|default:"Add a short bio so readers know who is writing."|truncatewords:24 }}</p>
+          <a class="button button-quiet button-block" href="{% url 'profile_edit' %}">Edit profile</a>
+          <div class="side-profile-stats">
+            <div><strong>{{ published_count }}</strong><span>Stories</span></div>
+            <div><strong>{{ profile.follower_count }}</strong><span>Followers</span></div>
+            <div><strong>{{ profile.following_count }}</strong><span>Following</span></div>
+          </div>
+        </div>
+
+        <div class="side-note-card">
+          <p class="eyebrow"><span></span> A small prompt</p>
+          <blockquote>“What did you notice today that a guidebook would have missed?”</blockquote>
+          <a class="text-link text-link-small" href="{% url 'post_create' %}">Start with that
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+
+        {% if recent_comments %}
+          <div class="side-comments-card">
+            <div class="dashboard-panel-head dashboard-panel-head-compact">
+              <div><p class="eyebrow"><span></span> On your stories</p><h2>Recent responses</h2></div>
+            </div>
+            {% for comment in recent_comments %}
+              <a class="side-comment" href="{{ comment.post.get_absolute_url }}#comment-{{ comment.pk }}">
+                <span class="avatar avatar-tiny" style="{% avatar_style comment.author.profile.name %}">{{ comment.author.profile.initial }}</span>
+                <span><strong>{{ comment.author.profile.name|default:comment.author.username }}</strong><small>{{ comment.body|truncatewords:10 }}</small></span>
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="side-links-card">
+          <a href="{% url 'account_settings' %}">Account settings <span>→</span></a>
+          <a href="{% url 'password_change' %}">Change password <span>→</span></a>
+          <a href="{% url 'contact' %}">Get editorial help <span>→</span></a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+{% endblock %}

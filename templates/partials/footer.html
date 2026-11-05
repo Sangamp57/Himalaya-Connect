@@ -1,0 +1,70 @@
+{% load static journal_extras %}
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-brand-column">
+      <a class="brand brand-footer" href="{% url 'home' %}">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none"><path d="M4 38 16.5 15l7.2 12.4 5.6-8.4L44 38" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="37.5" cy="11" r="3.2" fill="currentColor"/></svg>
+        </span>
+        <span class="brand-word">Himalaya<span>Connect</span></span>
+      </a>
+      <p class="footer-lede">A field journal and interactive 3D cultural explorer for people who travel slowly, ask better questions, and listen for the story between the peaks.</p>
+      <a class="footer-explore-cta" href="{% url 'explore' %}">Start the 3D journey <span>↗</span></a>
+      <div class="footer-location">
+        <span class="pulse-dot"></span>
+        Written from Kathmandu · Hunza · Kashgar
+      </div>
+    </div>
+
+    <div class="footer-nav-columns">
+      <div>
+        <p class="footer-heading">Read</p>
+        <a href="{% url 'explore' %}">3D cultural explorer</a>
+        <a href="{% url 'story_list' %}">All stories</a>
+        <a href="{% url 'story_list' %}?sort=popular">Most loved</a>
+        <a href="{% url 'destination_list' %}">Destinations</a>
+        <a href="{% url 'about' %}">About the journal</a>
+      </div>
+      <div>
+        <p class="footer-heading">Threads</p>
+        {% for category in nav_categories|slice:":4" %}
+          <a href="{% url 'story_list' %}?category={{ category.slug }}">{{ category.name }}</a>
+        {% empty %}
+          <a href="{% url 'story_list' %}">Field notes</a>
+        {% endfor %}
+      </div>
+      <div>
+        <p class="footer-heading">Community</p>
+        <a href="{% url 'signup' %}">Become a writer</a>
+        <a href="{% url 'contact' %}">Say hello</a>
+        <a href="{% url 'login' %}">Member sign in</a>
+        <a href="{% url 'account_settings' %}">Account settings</a>
+      </div>
+    </div>
+
+    <div class="footer-newsletter">
+      <p class="footer-heading">The Sunday field note</p>
+      <p>One considered story, a photograph and a practical detail. No noise, once a week.</p>
+      <form class="newsletter-form" action="{% url 'newsletter_subscribe' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <input class="hp-field" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="sr-only" for="footer-newsletter-email">Email address</label>
+        <input id="footer-newsletter-email" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+        <button type="submit" aria-label="Subscribe">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </form>
+      <p class="footer-small">By joining you agree to receive our weekly letter. Unsubscribe any time.</p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© {{ current_year }} Himalaya Connect. Made with curiosity, Django and good tea.</p>
+    <div class="footer-legal">
+      <a href="{% url 'about' %}">Editorial ethics</a>
+      <a href="{% url 'contact' %}">Corrections</a>
+      <span>Photography via Wikimedia Commons · <a href="{% url 'about' %}#credits">credits</a></span>
+    </div>
+  </div>
+</footer>

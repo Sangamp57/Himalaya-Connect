@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static journal_extras %}
+
+{% block title %}Contact — Himalaya Connect{% endblock %}
+{% block meta_description %}Pitch a story, send a correction or simply say hello to the Himalaya Connect editorial team.{% endblock %}
+{% block body_class %}page-contact{% endblock %}
+
+{% block content %}
+<section class="contact-hero">
+  <div class="container contact-hero-grid">
+    <div class="contact-copy" data-reveal>
+      <p class="eyebrow"><span></span> Start a conversation</p>
+      <h1>Say hello.<br><em>We read everything.</em></h1>
+      <p class="contact-lede">A story idea, a correction, a photograph, a question about a place — the best things often begin with a short note.</p>
+
+      <div class="contact-details">
+        <a href="mailto:hello@himalayaconnect.com">
+          <span class="contact-icon">✉</span>
+          <span><small>Email</small><strong>hello@himalayaconnect.com</strong></span>
+        </a>
+        <div>
+          <span class="contact-icon">⌖</span>
+          <span><small>Based between</small><strong>Kathmandu · Hunza · Kashgar</strong></span>
+        </div>
+        <div>
+          <span class="contact-icon">◷</span>
+          <span><small>Response time</small><strong>Usually within two working days</strong></span>
+        </div>
+      </div>
+
+      <div class="contact-note">
+        <span>✦</span>
+        <p>Please read our <a href="{% url 'about' %}#ethics">editorial approach</a> before pitching. Thoughtful, specific and unhurried notes tend to win.</p>
+      </div>
+    </div>
+
+    <div class="contact-form-card" data-reveal data-reveal-delay="1">
+      <div class="contact-form-head">
+        <p class="eyebrow"><span></span> Write to the editors</p>
+        <h2>What is on your mind?</h2>
+      </div>
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="form-alert">{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+        {% endif %}
+        {{ form.company }}
+        <div class="form-grid">
+          <div class="form-field {% if form.name.errors %}has-error{% endif %}">
+            <label for="{{ form.name.id_for_label }}">Your name</label>
+            {{ form.name }}
+            {% for error in form.name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          </div>
+          <div class="form-field {% if form.email.errors %}has-error{% endif %}">
+            <label for="{{ form.email.id_for_label }}">Email</label>
+            {{ form.email }}
+            {% for error in form.email.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          </div>
+        </div>
+        <div class="form-field {% if form.subject.errors %}has-error{% endif %}">
+          <label for="{{ form.subject.id_for_label }}">Subject</label>
+          {{ form.subject }}
+          {% for error in form.subject.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        </div>
+        <div class="form-field {% if form.message.errors %}has-error{% endif %}">
+          <label for="{{ form.message.id_for_label }}">Your message</label>
+          {{ form.message }}
+          {% for error in form.message.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        </div>
+        <div class="form-submit-row">
+          <p>By sending this note you agree to our friendly, human inbox policy. No newsletters unless you ask.</p>
+          <button class="button button-dark" type="submit">Send the note
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="section section-faq">
+  <div class="container faq-grid">
+    <div data-reveal>
+      <p class="eyebrow"><span></span> Before you write</p>
+      <h2>A few useful answers</h2>
+    </div>
+    <div class="faq-list" data-reveal data-reveal-delay="1">
+      <details>
+        <summary>Do you accept story pitches?</summary>
+        <p>Yes. Send a two-paragraph pitch with the place, the specific angle and what you can report first-hand. Please mention any local collaborators who should be credited.</p>
+      </details>
+      <details>
+        <summary>Can I republish a story?</summary>
+        <p>Write to us with the story URL and where it would appear. We consider requests case by case and ask for a visible link back to the original.</p>
+      </details>
+      <details>
+        <summary>I spotted a factual error.</summary>
+        <p>Thank you for telling us. Include the sentence and the source for the correction. Corrections are reviewed and, when confirmed, published transparently.</p>
+      </details>
+      <details>
+        <summary>How are photographs credited?</summary>
+        <p>Each cover credit names the photographer and links to the source. If you believe an image is misattributed, contact us and we will investigate promptly.</p>
+      </details>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

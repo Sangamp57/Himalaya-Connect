@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static journal_extras %}
+
+{% block title %}Destinations — Himalaya Connect{% endblock %}
+{% block meta_description %}Explore Kathmandu Valley, Hunza, Kashgar and the Karakoram through stories, photographs and field notes.{% endblock %}
+{% block body_class %}page-destinations has-overlay-header{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero-destinations">
+  <div class="page-hero-pattern" aria-hidden="true"></div>
+  <div class="page-hero-orb page-hero-orb-warm" data-parallax="0.12" aria-hidden="true"></div>
+  <div class="container page-hero-inner">
+    <p class="eyebrow eyebrow-light" data-reveal><span></span> The map</p>
+    <div class="page-hero-title-row">
+      <h1 data-reveal data-reveal-delay="1">Places to<br><em>linger in.</em></h1>
+      <p class="page-hero-intro" data-reveal data-reveal-delay="2">Not a checklist. Four distinct regions, each with its own food, craft, architecture and way of moving through the day. Begin with curiosity.</p>
+    </div>
+    <div class="page-hero-meta" data-reveal data-reveal-delay="3">
+      <span>{{ destinations|length }} destinations</span>
+      <span>Nepal · Pakistan · China</span>
+      <span>Local voices, credited</span>
+    </div>
+  </div>
+  <svg class="page-hero-ridge" viewBox="0 0 1600 200" preserveAspectRatio="none" aria-hidden="true"><path d="M0 145c190-26 280 26 452-2 168-28 240-91 407-75 151 15 215 95 371 82 145-12 220-66 370-59v109H0Z" fill="#f7f2e7"/></svg>
+</section>
+
+<section class="section section-destination-list">
+  <div class="container destination-rows">
+    {% for destination in destinations %}
+      <article class="destination-row {% if forloop.counter|divisibleby:2 %}is-reversed{% endif %}" data-reveal>
+        <a class="destination-row-media" href="{{ destination.get_absolute_url }}">
+          <img src="{% static destination.image %}" alt="{{ destination.name }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+          <span class="destination-row-index">0{{ forloop.counter }}</span>
+        </a>
+        <div class="destination-row-copy">
+          <p class="eyebrow"><span></span> {{ destination.flag }} {{ destination.country }}</p>
+          <h2><a href="{{ destination.get_absolute_url }}">{{ destination.name }}</a></h2>
+          <p class="destination-row-tagline">{{ destination.tagline }}</p>
+          <p>{{ destination.summary }}</p>
+          <dl class="destination-facts">
+            {% if destination.best_season %}<div><dt>Best season</dt><dd>{{ destination.best_season }}</dd></div>{% endif %}
+            {% if destination.altitude %}<div><dt>Altitude</dt><dd>{{ destination.altitude }}</dd></div>{% endif %}
+            <div><dt>Field notes</dt><dd>{{ destination.story_total }}</dd></div>
+          </dl>
+          <a class="text-link" href="{{ destination.get_absolute_url }}">Explore {{ destination.name }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </article>
+    {% empty %}
+      <div class="empty-state"><h2>Destinations are being mapped.</h2><p>Come back soon.</p></div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section section-cta-band">
+  <div class="container cta-band-inner" data-reveal>
+    <div>
+      <p class="eyebrow eyebrow-light"><span></span> Travel with care</p>
+      <h2>A place is not a backdrop.</h2>
+      <p>Read our field notes on visiting with respect: asking before photographing, paying local guides fairly, and leaving room for ordinary life to happen around you.</p>
+    </div>
+    <a class="button button-sand" href="{% url 'about' %}#ethics">Read our approach
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
+{% endblock %}

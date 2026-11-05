@@ -1,0 +1,13 @@
+<div class="form-field {% if field.errors %}has-error{% endif %} {% if field.field.widget.input_type == 'checkbox' %}form-field-check{% endif %}">
+  <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="required-mark" aria-hidden="true">*</span>{% endif %}</label>
+  {% if 'password' in field.name %}
+    <div class="password-wrap">
+      {{ field }}
+      <button class="password-toggle" type="button" data-password-toggle aria-label="Show password">Show</button>
+    </div>
+  {% else %}
+    {{ field }}
+  {% endif %}
+  {% if field.help_text %}<div class="field-help">{{ field.help_text|safe }}</div>{% endif %}
+  {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+</div>

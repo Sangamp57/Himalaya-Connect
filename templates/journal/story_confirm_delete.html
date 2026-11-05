@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Delete “{{ post.title }}” — Himalaya Connect{% endblock %}
+{% block body_class %}page-account{% endblock %}
+{% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+
+{% block content %}
+<section class="section account-danger-section">
+  <div class="container danger-layout">
+    <div class="danger-card" data-reveal>
+      <p class="eyebrow"><span></span> Delete story</p>
+      <h1>Remove<br><em>this field note?</em></h1>
+      <p class="danger-lede">“{{ post.title }}” will be permanently removed, along with its responses, likes and reading-list saves.</p>
+      <div class="delete-preview">
+        <img src="{{ post.cover_src }}" alt="">
+        <div><span>{{ post.get_status_display }} · {{ post.published_at|date:"M j, Y" }}</span><strong>{{ post.title }}</strong></div>
+      </div>
+      <form method="post" class="danger-form">
+        {% csrf_token %}
+        <div class="danger-actions">
+          <button class="button button-danger" type="submit">Yes, delete this story</button>
+          <a class="button button-quiet" href="{{ post.get_absolute_url }}">Keep the story</a>
+        </div>
+      </form>
+    </div>
+    <aside class="danger-aside">
+      <div class="danger-aside-image">
+        <img src="{% static 'images/khunjerab-pass.webp' %}" alt="A road disappearing into the Karakoram mountains" loading="lazy">
+      </div>
+      <blockquote>Not every draft needs to become a story. But every story deserves a considered ending.</blockquote>
+      <p>— The editors</p>
+    </aside>
+  </div>
+</section>
+{% endblock %}

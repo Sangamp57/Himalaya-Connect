@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% load static journal_extras %}
+
+{% block title %}{% if post %}Edit “{{ post.title }}”{% else %}Write a new field note{% endif %} — Himalaya Connect{% endblock %}
+{% block body_class %}page-write{% endblock %}
+{% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+
+{% block content %}
+<section class="write-hero">
+  <div class="container write-hero-inner">
+    <div>
+      <p class="eyebrow"><span></span> {% if post %}Editing a field note{% else %}The writing room{% endif %}</p>
+      <h1>{% if post %}Shape the story.<br><em>Keep the detail.</em>{% else %}Begin with<br><em>something small.</em>{% endif %}</h1>
+      <p>{% if post %}Return to what you noticed. A good edit removes noise, not curiosity.{% else %}A doorway. A meal. A conversation on a bus. Start close, then let the story widen.{% endif %}</p>
+    </div>
+    <div class="write-hero-actions">
+      {% if post %}
+        <a class="button button-quiet" href="{{ post.get_absolute_url }}">View story</a>
+        <a class="button button-danger-outline" href="{% url 'post_delete' post.slug %}">Delete</a>
+      {% else %}
+        <a class="button button-quiet" href="{% url 'dashboard' %}">Back to dashboard</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-write">
+  <div class="container">
+    {% if form.errors %}
+      <div class="form-alert form-alert-wide" role="alert">
+        <strong>A few things need attention.</strong>
+        <p>Please check the fields marked below before saving.</p>
+      </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="write-form" novalidate>
+      {% csrf_token %}
+      <div class="write-layout">
+        <div class="write-main">
+          <div class="write-card">
+            <div class="form-field form-field-title {% if form.title.errors %}has-error{% endif %}">
+              <label for="{{ form.title.id_for_label }}">Story title</label>
+              {{ form.title }}
+              {% for error in form.title.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="form-field {% if form.excerpt.errors %}has-error{% endif %}">
+              <label for="{{ form.excerpt.id_for_label }}">Short introduction</label>
+              {{ form.excerpt }}
+              <div class="field-help">{{ form.excerpt.help_text }} Keep it to two or three sentences.</div>
+              {% for error in form.excerpt.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="form-field {% if form.content.errors %}has-error{% endif %}">
+              <div class="editor-label-row">
+                <label for="{{ form.content.id_for_label }}">The story</label>
+                <span class="editor-stats"><span data-word-count>0</span> words · <span data-read-time>1</span> min read</span>
+              </div>
+              <div class="editor-toolbar" aria-label="Formatting help">
+                <button type="button" data-format="## " title="Heading">H2</button>
+                <button type="button" data-format="**bold**" title="Bold"><strong>B</strong></button>
+                <button type="button" data-format="*italic*" title="Italic"><em>I</em></button>
+                <button type="button" data-format="> " title="Quote">❝</button>
+                <button type="button" data-format="- " title="List">☰</button>
+                <span>Plain text with light formatting</span>
+              </div>
+              {{ form.content }}
+              <div class="field-help">Blank lines start new paragraphs. Use <code>##</code> for a heading, <code>&gt;</code> for a quote, <code>-</code> for a list, <code>**bold**</code> for emphasis.</div>
+              {% for error in form.content.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+          </div>
+
+          <div class="write-card">
+            <div class="write-card-heading">
+              <p class="eyebrow"><span></span> The photograph</p>
+              <h2>Give the story a face</h2>
+              <p>A strong cover draws readers in. If you leave this empty, we will use the journal's editorial artwork.</p>
+            </div>
+            <div class="cover-picker">
+              <div class="cover-preview" data-cover-preview>
+                {% if post %}
+                  <img src="{{ post.cover_src }}" alt="">
+                {% else %}
+                  <div class="cover-placeholder"><span>✦</span><p>Your cover will appear here</p></div>
+                {% endif %}
+              </div>
+              <div class="cover-picker-fields">
+                <div class="form-field {% if form.cover_image.errors %}has-error{% endif %}">
+                  <label for="{{ form.cover_image.id_for_label }}">Upload a cover</label>
+                  {{ form.cover_image }}
+                  <div class="field-help">{{ form.cover_image.help_text }}</div>
+                  {% for error in form.cover_image.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+                <div class="form-field {% if form.cover_alt.errors %}has-error{% endif %}">
+                  <label for="{{ form.cover_alt.id_for_label }}">Image description</label>
+                  {{ form.cover_alt }}
+                  <div class="field-help">Describe what is in the photograph for screen readers.</div>
+                  {% for error in form.cover_alt.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+                <div class="form-grid">
+                  <div class="form-field {% if form.cover_credit.errors %}has-error{% endif %}">
+                    <label for="{{ form.cover_credit.id_for_label }}">Photo credit</label>
+                    {{ form.cover_credit }}
+                    {% for error in form.cover_credit.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                  </div>
+                  <div class="form-field {% if form.cover_credit_url.errors %}has-error{% endif %}">
+                    <label for="{{ form.cover_credit_url.id_for_label }}">Source link</label>
+                    {{ form.cover_credit_url }}
+                    {% for error in form.cover_credit_url.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="write-side">
+          <div class="write-side-card">
+            <p class="eyebrow"><span></span> Publishing</p>
+            <div class="form-field">
+              <label for="{{ form.status.id_for_label }}">Visibility</label>
+              {{ form.status }}
+              <div class="field-help">Drafts are only visible to you and editors.</div>
+              {% for error in form.status.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+            <div class="form-field {% if form.category.errors %}has-error{% endif %}">
+              <label for="{{ form.category.id_for_label }}">Thread</label>
+              {{ form.category }}
+              {% for error in form.category.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+            <div class="form-field {% if form.destination.errors %}has-error{% endif %}">
+              <label for="{{ form.destination.id_for_label }}">Destination</label>
+              {{ form.destination }}
+              {% for error in form.destination.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+            <div class="form-field {% if form.tags.errors %}has-error{% endif %}">
+              <label for="{{ form.tags.id_for_label }}">Tags</label>
+              {{ form.tags }}
+              <div class="field-help">Comma-separated. Lowercase and short works best.</div>
+              {% for error in form.tags.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+            <label class="check-field" for="{{ form.allow_comments.id_for_label }}">
+              {{ form.allow_comments }}
+              <span><strong>Allow responses</strong><small>Let readers join the conversation.</small></span>
+            </label>
+          </div>
+
+          <div class="write-side-card write-side-submit">
+            <p class="eyebrow"><span></span> Ready?</p>
+            <button class="button button-dark button-block" type="submit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+              {% if post %}Save changes{% else %}Publish or save draft{% endif %}
+            </button>
+            <p class="write-side-note">You can change anything later. Stories are saved only when you press this button.</p>
+          </div>
+
+          <div class="write-side-card write-side-guidance">
+            <span class="write-guidance-mark">✦</span>
+            <h3>A small checklist</h3>
+            <ul>
+              <li>Is there one specific place or detail?</li>
+              <li>Have you named the people and makers?</li>
+              <li>Are your claims sourced or first-hand?</li>
+              <li>Would a local reader recognise this place?</li>
+            </ul>
+            <a class="text-link text-link-small" href="{% url 'about' %}#ethics">Our editorial approach
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </aside>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

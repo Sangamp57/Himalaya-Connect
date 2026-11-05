@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static journal_extras %}
+
+{% block body_class %}page-auth{% endblock %}
+
+{% block head_extra %}<link rel="preload" as="image" href="{% static 'images/hunza-valley.webp' %}" fetchpriority="high">{% endblock %}
+{% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+  <div class="auth-visual">
+    <img src="{% static 'images/hunza-valley.webp' %}" alt="Snow peaks above the green Hunza Valley" fetchpriority="high">
+    <div class="auth-visual-shade"></div>
+    <div class="auth-visual-content">
+      <p class="eyebrow eyebrow-light"><span></span> Himalaya Connect</p>
+      <blockquote>“The mountains are not a destination. They are a lesson in scale.”</blockquote>
+      <p class="auth-visual-caption">A journal of slow travel, close observation and the small details that make a place feel like itself.</p>
+      <div class="auth-visual-meta">
+        <span class="pulse-dot"></span>
+        <span>Nepal · Pakistan · China</span>
+      </div>
+    </div>
+    <span class="auth-visual-number" aria-hidden="true">36°N</span>
+  </div>
+  <div class="auth-panel">
+    <div class="auth-panel-inner">
+      {% block auth_content %}{% endblock %}
+    </div>
+    <p class="auth-panel-foot">Member-supported field journalism · Free to read</p>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "accounts/_auth_base.html" %}
+
+{% block title %}Join the journal — Himalaya Connect{% endblock %}
+{% block meta_description %}Create a free Himalaya Connect account to save stories, respond to writers and publish field notes.{% endblock %}
+
+{% block auth_content %}
+<div class="auth-form-head">
+  <p class="eyebrow"><span></span> Join the community</p>
+  <h1>Make a little<br><em>room for wonder.</em></h1>
+  <p>Save the stories you want to return to, join thoughtful conversations, and publish field notes of your own.</p>
+</div>
+
+{% if form.non_field_errors %}
+  <div class="form-alert">
+    {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+  </div>
+{% endif %}
+
+<form method="post" class="auth-form" novalidate>
+  {% csrf_token %}
+  {% for field in form %}
+    {% if field.name != 'terms' %}
+      {% include "partials/form_field.html" with field=field %}
+    {% endif %}
+  {% endfor %}
+  <label class="auth-consent">
+    {{ form.terms }}
+    <span>I agree to the <a href="{% url 'about' %}">journal's approach</a> and will keep conversation generous and respectful.</span>
+  </label>
+  {% for error in form.terms.errors %}<p class="field-error auth-consent-error">{{ error }}</p>{% endfor %}
+  <button class="button button-dark button-block auth-submit" type="submit">Create my account
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </button>
+</form>
+
+<p class="auth-switch">Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
+
+<div class="auth-footnote">
+  <span class="auth-footnote-mark">✦</span>
+  <p>Creating an account is free. You can delete it, and everything attached to it, at any time.</p>
+</div>
+{% endblock %}

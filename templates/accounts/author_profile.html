@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static journal_extras %}
+
+{% block title %}{{ profile.name }} — Himalaya Connect{% endblock %}
+{% block meta_description %}{{ profile.bio|default:"Read field notes by "|add:profile.name|truncatewords:30 }}{% endblock %}
+{% block body_class %}page-author{% endblock %}
+
+{% block content %}
+<section class="author-hero">
+  <div class="author-hero-pattern" aria-hidden="true"></div>
+  <div class="container author-hero-inner">
+    <div class="author-identity">
+      {% if profile.avatar_url %}
+        <img class="avatar avatar-xxl" src="{{ profile.avatar_url }}" alt="{{ profile.name }}">
+      {% else %}
+        <span class="avatar avatar-xxl" style="{% avatar_style profile.name %}">{{ profile.initial }}</span>
+      {% endif %}
+      <div>
+        <p class="eyebrow eyebrow-light"><span></span> Contributor</p>
+        <h1>{{ profile.name }}</h1>
+        <p class="author-handle">@{{ profile.user.username }}{% if profile.location %} · {{ profile.location }}{% endif %}</p>
+      </div>
+    </div>
+
+    <div class="author-bio-block">
+      <p class="author-bio">{{ profile.bio|default:"A writer in the Himalaya Connect community, looking closely at the places between the peaks." }}</p>
+      {% if profile.website %}
+        <a class="author-website" href="{{ profile.website }}" target="_blank" rel="noopener noreferrer">{{ profile.website|cut:"https://"|cut:"http://" }} <span aria-hidden="true">↗</span></a>
+      {% endif %}
+    </div>
+
+    <div class="author-hero-foot">
+      <div class="author-stats">
+        <div><strong>{{ posts|length }}</strong><span>Field notes</span></div>
+        <div><strong>{{ profile.follower_count }}</strong><span>Followers</span></div>
+        <div><strong>{{ profile.following_count }}</strong><span>Following</span></div>
+        <div><strong>{{ profile.joined_at|date:"Y" }}</strong><span>Joined</span></div>
+      </div>
+      <div class="author-actions">
+        {% if is_own_profile %}
+          <a class="button button-sand" href="{% url 'profile_edit' %}">Edit profile</a>
+          <a class="button button-ghost" href="{% url 'dashboard' %}">Dashboard</a>
+        {% else %}
+          {% if user.is_authenticated %}
+            <form method="post" action="{% url 'toggle_follow' profile.user.username %}" class="js-toggle" data-kind="follow">
+              {% csrf_token %}
+              <button class="button {% if is_following %}button-ghost{% else %}button-sand{% endif %}" type="submit" data-toggle-button>
+                <span data-toggle-label data-name="{{ profile.name }}">{% if is_following %}Following{% else %}Follow {{ profile.name }}{% endif %}</span>
+              </button>
+            </form>
+          {% else %}
+            <a class="button button-sand" href="{% url 'login' %}?next={{ request.path|urlencode }}">Follow {{ profile.name }}</a>
+          {% endif %}
+          <button class="button button-ghost" type="button" data-share-url="{{ request.build_absolute_uri }}">Share profile</button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-author-stories">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow"><span></span> Words by {{ profile.name }}</p>
+        <h2>Field notes & stories</h2>
+      </div>
+      {% if is_own_profile %}
+        <a href="{% url 'post_create' %}" class="button button-dark">Write a new story</a>
+      {% endif %}
+    </div>
+
+    {% if posts %}
+      <div class="story-grid">
+        {% for post in posts %}
+          {% include "partials/story_card.html" with post=post %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state empty-state-large">
+        <span class="empty-state-mark">✦</span>
+        <h2>No published stories yet.</h2>
+        <p>{% if is_own_profile %}The first one is always the hardest. Begin with a detail.{% else %}{{ profile.name }} is working on something worth waiting for.{% endif %}</p>
+        {% if is_own_profile %}<a class="button button-dark" href="{% url 'post_create' %}">Start writing</a>{% endif %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

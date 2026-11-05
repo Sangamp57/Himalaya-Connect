@@ -1,0 +1,26 @@
+{% load journal_extras %}
+<div class="search-overlay" data-search-overlay aria-hidden="true">
+  <div class="search-overlay-backdrop" data-search-close></div>
+  <section class="search-overlay-panel" role="dialog" aria-modal="true" aria-label="Search the journal">
+    <button class="icon-button search-overlay-close" type="button" data-search-close aria-label="Close search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+    <p class="eyebrow"><span></span> Search the journal</p>
+    <form action="{% url 'story_list' %}" method="get" class="search-overlay-form">
+      <label class="sr-only" for="global-search">Search stories, places and tags</label>
+      <input id="global-search" type="search" name="q" placeholder="Try “momo”, “fort”, “Kashgar”…" autocomplete="off" data-search-input>
+      <button type="submit" class="button button-accent" aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+      </button>
+    </form>
+    <div class="search-suggestions">
+      <p>Popular threads</p>
+      <div class="chip-row">
+        {% for category in nav_categories %}
+          <a class="chip chip-light" href="{% url 'story_list' %}?category={{ category.slug }}">{{ category.icon }} {{ category.name }}</a>
+        {% endfor %}
+      </div>
+    </div>
+    <p class="search-overlay-foot">Every story is written by a member of the journal community.</p>
+  </section>
+</div>
