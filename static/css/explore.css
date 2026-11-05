@@ -1409,6 +1409,58 @@ svg.hc-icon {
   white-space: nowrap;
 }
 
+.world-head.is-expanded {
+  display: block;
+  width: min(370px, calc(100% - 28px));
+  max-width: 370px;
+  padding: 18px 20px;
+}
+
+.world-head.is-expanded .world-head-top {
+  margin-bottom: 16px;
+}
+
+.world-head.is-expanded .world-head-top .ex-kicker {
+  display: block;
+}
+
+.world-head.is-expanded .world-head-top svg {
+  transform: rotate(180deg);
+}
+
+.world-head.is-expanded h1 {
+  overflow: visible;
+  margin-bottom: 8px;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.world-head.is-expanded .world-blurb,
+.world-head.is-expanded .world-route-note:not([hidden]) {
+  display: block;
+}
+
+.world-head.is-expanded .world-head-meta {
+  display: flex;
+  margin-inline-start: 0;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.world-head.is-expanded #world-region {
+  display: inline-flex;
+}
+
+.world-head.is-expanded .world-actions {
+  display: flex;
+}
+
+.world-head.is-expanded .world-progress {
+  margin-inline-start: auto;
+}
+
 .ex-round-button {
   display: inline-grid;
   place-items: center;
@@ -4445,31 +4497,16 @@ body.reduce-motion *::after {
     padding-inline: 9px;
     font-size: 8px;
   }
-  .world-head.is-collapsed {
-    width: 220px;
+  .world-head.is-expanded {
+    width: min(320px, calc(100% - 82px));
     max-width: calc(100% - 82px);
-    padding: 8px 10px;
+    padding: 14px 16px;
   }
-  .world-head.is-collapsed .world-head-top {
-    margin-bottom: 0;
+  .world-head.is-expanded h1 {
+    font-size: 1.8rem;
   }
-  .world-head.is-collapsed .world-head-top .ex-kicker {
-    display: none;
-  }
-  .world-head.is-collapsed .world-head-top svg {
-    transform: rotate(180deg);
-  }
-  .world-head.is-collapsed h1 {
-    margin: 0;
-    overflow: hidden;
-    font-size: 1.05rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .world-head.is-collapsed .world-actions,
-  .world-head.is-collapsed .world-blurb,
-  .world-head.is-collapsed .world-route-note {
-    display: none;
+  .world-head.is-expanded .world-actions .ex-button--text {
+    display: inline-flex;
   }
   .world-tools {
     inset-inline-end: 10px;
