@@ -350,16 +350,26 @@ export function createWalker(opts) {
   .ktm-hud>*{pointer-events:auto}
   .ktm-place{padding:8px 14px;border-radius:14px;background:var(--ex-panel,rgba(8,26,34,.78));border:1px solid var(--ex-border,rgba(232,205,151,.22));text-align:end;backdrop-filter:blur(8px)}
   .ktm-place b{display:block;font-family:var(--ex-serif,Georgia,serif);font-weight:600;font-size:15px;color:var(--ex-ink,#f8f0df)}
-  .ktm-place span{font-size:12px;color:var(--ex-muted,#cfc6b3)}
+  .ktm-place span{display:block;margin-top:2px;font-family:"Manrope","Noto Nastaliq Urdu","Noto Sans Devanagari","Nirmala UI",sans-serif;font-size:12px;line-height:1.55;color:var(--ex-muted,#cfc6b3);unicode-bidi:plaintext}
   .ktm-map{display:block;width:176px;height:176px;border-radius:14px;border:1px solid var(--ex-border,rgba(232,205,151,.22));cursor:pointer}
   .ktm-row{display:flex;gap:6px}
   .ktm-btn{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--ex-border-strong,rgba(232,205,151,.42));background:var(--ex-panel,rgba(8,26,34,.78));color:var(--ex-ink,#f8f0df);font:600 12px var(--ex-sans,system-ui);cursor:pointer;backdrop-filter:blur(8px)}
   .ktm-btn:hover{border-color:var(--ex-gold,#e6bc6a)}
   .ktm-btn--gold{background:var(--ex-gold,#e6bc6a);color:#1d1406;border-color:var(--ex-gold,#e6bc6a)}
-  .ktm-menu{width:270px;max-height:min(60vh,440px);overflow:auto;padding:6px;border-radius:16px;background:var(--ex-panel-solid,#0c2530);border:1px solid var(--ex-border,rgba(232,205,151,.22))}
-  .ktm-menu button{display:block;width:100%;text-align:start;padding:9px 12px;border:0;border-radius:10px;background:none;color:var(--ex-ink,#f8f0df);font:600 13px var(--ex-sans,system-ui);cursor:pointer}
+  .ktm-menu{width:288px;max-height:min(62vh,460px);overflow:auto;padding:7px;border-radius:18px;background:linear-gradient(180deg,rgba(10,31,39,.98),rgba(7,22,29,.98));border:1px solid rgba(230,188,106,.28);box-shadow:0 24px 60px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(16px);scrollbar-width:thin;scrollbar-color:rgba(230,188,106,.35) transparent}
+  .ktm-menu::-webkit-scrollbar{width:8px}
+  .ktm-menu::-webkit-scrollbar-thumb{background:rgba(230,188,106,.28);border-radius:99px}
+  .ktm-menu-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:8px 12px 9px;margin:0 0 5px;border-bottom:1px solid rgba(230,188,106,.18)}
+  .ktm-menu-head span{font:600 16px var(--ex-serif,Georgia,serif);color:var(--ex-ink,#f8f0df)}
+  .ktm-menu .ktm-menu-head small{font:700 9px/1 var(--ex-sans,system-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--ex-gold,#e6bc6a)}
+  .ktm-menu button{display:grid;grid-template-columns:1fr;gap:1px;width:100%;text-align:start;padding:9px 12px 9px 14px;border:0;border-radius:11px;background:none;color:var(--ex-ink,#f8f0df);font:600 13.5px/1.3 var(--ex-serif,Georgia,serif);cursor:pointer;position:relative}
   .ktm-menu button:hover,.ktm-menu button:focus-visible{background:var(--ex-gold-soft,rgba(230,188,106,.16))}
-  .ktm-menu small{display:block;font-weight:400;font-size:11px;color:var(--ex-muted,#cfc6b3)}
+  .ktm-menu button.is-here{background:rgba(230,188,106,.09)}
+  .ktm-menu button.is-here::before{content:"";position:absolute;inset-inline-start:4px;top:14px;bottom:14px;width:3px;border-radius:99px;background:var(--ex-gold,#e6bc6a)}
+  .ktm-menu small{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px;font-family:"Manrope","Noto Nastaliq Urdu","Noto Sans Devanagari","Nirmala UI",sans-serif;font-weight:400;font-size:11px;line-height:1.65;color:var(--ex-muted,#cfc6b3)}
+  .ktm-menu .ktm-local{unicode-bidi:plaintext;font-family:"Noto Nastaliq Urdu","Noto Sans Devanagari","Manrope","Nirmala UI",sans-serif;color:var(--ex-ink,#f8f0df);opacity:.86}
+  .ktm-menu .ktm-sep{opacity:.4}
+  .ktm-menu .ktm-dist{font-family:var(--ex-sans,system-ui);color:var(--ex-muted,#cfc6b3)}
   .ktm-prompt{position:absolute;left:50%;bottom:132px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:7px 8px 7px 16px;border-radius:999px;border:1px solid var(--ex-gold,#e6bc6a);background:var(--ex-panel,rgba(8,26,34,.86));color:var(--ex-ink,#f8f0df);font:600 13px var(--ex-sans,system-ui);white-space:nowrap;pointer-events:auto;z-index:3;cursor:pointer}
   .ktm-prompt kbd{font:700 11px ui-monospace,monospace;padding:3px 8px;border-radius:7px;background:var(--ex-gold,#e6bc6a);color:#1d1406}
   .ktm-joy{position:absolute;left:clamp(14px,3vw,44px);bottom:96px;width:124px;height:124px;border-radius:50%;border:1.5px solid rgba(248,240,223,.35);background:rgba(8,26,34,.35);pointer-events:auto;touch-action:none;z-index:3}
@@ -375,7 +385,7 @@ export function createWalker(opts) {
   document.head.appendChild(css);
   const hud = document.createElement("div");
   hud.className = "ktm-hud";
-  hud.innerHTML = `<div class="ktm-place" aria-live="polite"><b data-k="pen"></b><span data-k="psub"></span></div>
+  hud.innerHTML = `<div class="ktm-place" aria-live="polite"><b data-k="pen"></b><span data-k="psub" dir="auto"></span></div>
     <canvas class="ktm-map" data-k="map" width="352" height="352"></canvas>
     <div class="ktm-row"><button type="button" class="ktm-btn" data-k="lang"></button><button type="button" class="ktm-btn" data-k="time"></button><button type="button" class="ktm-btn ktm-btn--gold" data-k="travel" aria-expanded="false"></button></div>
     <div class="ktm-menu" data-k="menu" hidden></div>`;
@@ -403,13 +413,36 @@ export function createWalker(opts) {
   const kmPer = opts.kmPerUnit || 0.035;
   function renderMenu() {
     menu.innerHTML = "";
+    const head = document.createElement("div");
+    head.className = "ktm-menu-head";
+    const headTitle = document.createElement("span");
+    headTitle.textContent = tr().travel;
+    const headSub = document.createElement("small");
+    headSub.textContent = lang === "zh" ? opts.worldName.zh : opts.worldName.en;
+    head.append(headTitle, headSub);
+    menu.appendChild(head);
     Object.keys(PL).forEach((k) => {
       const p = PL[k], b = document.createElement("button");
       b.type = "button";
       const d = Math.hypot(st.x - p.x, st.z - p.z);
-      b.innerHTML = "<span></span><small></small>";
-      b.firstChild.textContent = placeName(p);
-      b.lastChild.textContent = (placeSub(p) ? placeSub(p) + " · " : "") + (d < p.r + 10 ? tr().here : "≈ " + Math.round(d * kmPer) + " " + tr().km);
+      const here = d < p.r + 10;
+      b.classList.toggle("is-here", here);
+      const name = document.createElement("span");
+      name.className = "ktm-name";
+      name.textContent = placeName(p);
+      const small = document.createElement("small");
+      const local = document.createElement("span");
+      local.className = "ktm-local";
+      local.dir = "auto";
+      local.textContent = placeSub(p);
+      const sep = document.createElement("span");
+      sep.className = "ktm-sep";
+      sep.textContent = placeSub(p) ? "·" : "";
+      const dist = document.createElement("span");
+      dist.className = "ktm-dist";
+      dist.textContent = here ? tr().here : "≈ " + Math.round(d * kmPer) + " " + tr().km;
+      small.append(local, sep, dist);
+      b.append(name, small);
       b.addEventListener("click", () => travelTo(k));
       menu.appendChild(b);
     });

@@ -1,4 +1,4 @@
-﻿import * as THREE from "three";
+import * as THREE from "three";
 import {
   bird,
   cloud,
@@ -473,8 +473,8 @@ export default function buildHunzaValley({ scene, stage, manager }) {
   const PL = {
     karimabad: {
       n: "Karimabad Bazaar",
-      zh: "å¡é‡Œé©¬å·´å¾·é›†å¸‚",
-      sub: "Ú©Ø±ÛŒÙ… Ø¢Ø¨Ø§Ø¯",
+      zh: "卡里马巴德集市",
+      sub: "کریم آباد",
       x: -45,
       z: 0,
       r: 38,
@@ -485,8 +485,8 @@ export default function buildHunzaValley({ scene, stage, manager }) {
     },
     baltit: {
       n: "Baltit Fort",
-      zh: "å·´å°”è’‚ç‰¹å ¡",
-      sub: "Ø¨Ù„ØªØª Ù‚Ù„Ø¹Û",
+      zh: "巴尔蒂特堡",
+      sub: "بلتت قلعہ",
       x: -92,
       z: -62,
       r: 26,
@@ -497,8 +497,8 @@ export default function buildHunzaValley({ scene, stage, manager }) {
     },
     altit: {
       n: "Altit Fort",
-      zh: "é˜¿å°”æç‰¹å ¡",
-      sub: "Ø§Ù„ØªÛŒØª Ù‚Ù„Ø¹Û",
+      zh: "阿尔提特堡",
+      sub: "التیت قلعہ",
       x: -58,
       z: 142,
       r: 26,
@@ -509,8 +509,8 @@ export default function buildHunzaValley({ scene, stage, manager }) {
     },
     terraces: {
       n: "Apricot Terraces",
-      zh: "ææ ‘æ¢¯ç”°",
-      sub: "Ø®ÙˆØ¨Ø§Ù†ÛŒ Ú©Û’ Ø¨Ø§ØºØ§Øª",
+      zh: "杏树梯田",
+      sub: "خوبانی کے باغات",
       x: -125,
       z: 44,
       r: 30,
@@ -521,8 +521,8 @@ export default function buildHunzaValley({ scene, stage, manager }) {
     },
     ganish: {
       n: "Ganish Village",
-      zh: "åŠ å°¼ä»€æ‘",
-      sub: "Ú¯Ù†Ø´",
+      zh: "加尼什村",
+      sub: "گنش",
       x: 100,
       z: 95,
       r: 28,
@@ -533,8 +533,8 @@ export default function buildHunzaValley({ scene, stage, manager }) {
     },
     duikar: {
       n: "Duikar Viewpoint",
-      zh: "æœä¼Šå¡å°”è§‚æ™¯ç‚¹",
-      sub: "Ø¯ÙˆØ¦ÛŒÚ©Ø§Ø±",
+      zh: "杜伊卡尔观景点",
+      sub: "دوئیکار",
       x: -198,
       z: 95,
       r: 24,
@@ -545,8 +545,8 @@ export default function buildHunzaValley({ scene, stage, manager }) {
     },
     hussaini: {
       n: "Hussaini Bridge",
-      zh: "ä¾¯èµ›å°¼åŠæ¡¥",
-      sub: "Ø­Ø³ÛŒÙ†ÛŒ Ù¾Ù„",
+      zh: "侯赛尼吊桥",
+      sub: "حسینی پل",
       x: -6,
       z: 250,
       r: 24,
@@ -557,8 +557,8 @@ export default function buildHunzaValley({ scene, stage, manager }) {
     },
     attabad: {
       n: "Attabad Lake",
-      zh: "é˜¿å¡”å·´å¾·æ¹–",
-      sub: "Ø¹Ø·Ø§ Ø¢Ø¨Ø§Ø¯ Ø¬Ú¾ÛŒÙ„",
+      zh: "阿塔巴德湖",
+      sub: "عطا آباد جھیل",
       x: -20,
       z: 430,
       r: 70,
@@ -568,7 +568,6 @@ export default function buildHunzaValley({ scene, stage, manager }) {
       dist: 18,
     },
   };
-
   const riverLine = [];
   for (let z = -180; z <= 620; z += 20) riverLine.push([RIVER(z), z]);
   const mainLine = mainPath.map((p) => [p[0], p[1]]);
@@ -581,7 +580,7 @@ export default function buildHunzaValley({ scene, stage, manager }) {
     kit,
     places: PL,
     startPlace: "karimabad",
-    worldName: { en: "Hunza Valley", zh: "ç½•è¨å±±è°·", sub: "ÛÙ†Ø²Û ÙˆØ§Ø¯ÛŒ" },
+    worldName: { en: "Hunza Valley", zh: "罕萨山谷", sub: "ہنزہ وادی" },
     hgt,
     groundY,
     canStand,
