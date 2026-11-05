@@ -8,7 +8,7 @@ The journal is fully functional, not a static mock-up. Members can sign up, sign
 
 Open **`/explore/`** (also linked as “3D Explorer” in the main navigation).
 
-- Nine procedural, walkable 3D worlds: Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, Dunhuang, the Karakoram Highway, and the winding "Great Journey" high trail.
+- Eleven procedural, walkable 3D worlds: Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, Dunhuang, Pu'er, Xishuangbanna, the Karakoram Highway, and the winding "Great Journey" high trail.
 - Orbit, pan, zoom and walk controls, object raycasting, camera fly-to, highlighting, reset and mobile touch support.
 - A growing collection of cultural objects with stories, facts, source links, quizzes and collectible cards.
 - A scavenger-hunt **Game** section: three themed hunts that track your beacon discoveries and award XP and bonus cards.
@@ -62,7 +62,7 @@ Or set `SEED_ADMIN_PASSWORD` and `SEED_WRITER_PASSWORD` in `.env` before the fir
 
 ### Public site
 
-- Interactive 3D explorer with nine walkable worlds, including the Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, Dunhuang, the Karakoram Highway and the Great Journey, with Google, WeChat, Facebook and phone sign-in, speaking beacons, object stories, quizzes, etiquette scenarios, comparison challenges, achievements, local progress and a collectible card gallery.
+- Interactive 3D explorer with eleven walkable worlds, including the Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, Dunhuang, Pu'er, Xishuangbanna, the Karakoram Highway and the Great Journey, with Google, WeChat, Facebook and phone sign-in, speaking beacons, object stories, quizzes, etiquette scenarios, comparison challenges, achievements, local progress and a collectible card gallery.
 - A real geographic culture map with OpenStreetMap tiles, verified coordinates and world launch links.
 - A daily encounter that rotates deterministically from a curated set, with save, share and quiz actions.
 - Full-screen parallax home page with layered mountain photography, scroll depth, floating notes and scroll-reveal sections.

@@ -30,6 +30,7 @@ export function buildWalkableTown({
   nightMats = [],
   build,
   people,
+  walker = {},
 }) {
   const kit = createKit(stage, manager.renderer, seed);
   const { M } = kit;
@@ -41,6 +42,8 @@ export function buildWalkableTown({
   const hcache = new Map();
 
   function hgt(x, z) {
+    /* outside the cached grid (e.g. boats on a river that runs off the map) */
+    if (x < HC.x0 + 2 || z < HC.z0 + 2 || x > x1 + 38 || z > z1 + 38) return (terrain.farHeightFn || terrain.heightFn)(x, z);
     const gx = (x - HC.x0) / HC.c;
     const gz = (z - HC.z0) / HC.c;
     const i = Math.floor(gx);
@@ -101,14 +104,17 @@ export function buildWalkableTown({
     }
     geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
     stage.trackGeometry(geometry);
-    const mesh = new THREE.Mesh(geometry, M({ vertexColors: true, roughness: 0.98 }));
+    /* terrain.material(M) lets a world supply a detailed ground material (optional) */
+    const mesh = new THREE.Mesh(geometry, terrain.material ? terrain.material(M) : M({ vertexColors: true, roughness: 0.98 }));
     mesh.receiveShadow = true;
     stage.add(mesh);
   })();
 
   /* Water ribbons. */
   water.forEach((body, index) => {
-    const points = body.points.map(([x, z]) => new THREE.Vector3(x, 0, z));
+    const points = body.curve
+      ? new THREE.CatmullRomCurve3(body.points.map(([x, z]) => new THREE.Vector3(x, 0, z))).getSpacedPoints(body.curve)
+      : body.points.map(([x, z]) => new THREE.Vector3(x, 0, z));
     const width = body.width;
     const y = body.y;
     kit.ribbon(
@@ -168,6 +174,8 @@ export function buildWalkableTown({
     mapBounds,
     mapLines,
     mapColor,
+    /* extra createWalker options, e.g. { collision: "slide", skyKeys, onTime, runSpeed } */
+    ...walker,
   });
 
   function makePath(points, width = 3.2, material = null) {
@@ -187,8 +195,9 @@ export function buildWalkableTown({
     return pts;
   }
 
-  build({ kit, W, stage, hgt, groundY, makePath, addBridge, M });
+  const built = build({ kit, W, stage, hgt, groundY, makePath, addBridge, M, canStand });
   if (people) people(W);
   W.start();
+  if (built && typeof built.afterStart === "function") built.afterStart(W);
   return W;
 }

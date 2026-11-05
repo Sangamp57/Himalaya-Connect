@@ -145,6 +145,116 @@ export const DESIGNS = [
     hair: "braids", hairColor: "#2a1a12", hat: "kulta", robe: "#b3241d", robeTo: 0.1,
     extras: [[0.6, 0.7, 0.05, 0, 1.38, -0.22, "#f4efe6"], [0.5, 0.08, 0.05, 0, 0.6, 0.19, "#e8b82a"]],
   },
+  /* ---- Yunnan: Pu'er tea mountains and Xishuangbanna (appended so existing indices stay stable) ---- */
+  {
+    id: "tea-picker",
+    label: "Tea picker with a bamboo back basket",
+    skin: "#b5835c", shirt: "#3d5f8a", sleeve: "#3d5f8a", pants: "#2c3442", shoes: "#3a2c20",
+    hair: "bun", hairColor: "#16110e", hat: "straw", robe: "#2c3442", robeTo: 0.2,
+    extras: [
+      [0.5, 0.42, 0.05, 0, 0.98, 0.17, "#d9cdb0"],
+      [0.48, 0.5, 0.36, 0, 1.06, -0.36, "#b48d4e"],
+      [0.52, 0.05, 0.4, 0, 1.31, -0.36, "#8c6a35"],
+      [0.52, 0.05, 0.4, 0, 1.06, -0.36, "#8c6a35"],
+      [0.42, 0.14, 0.3, 0, 1.36, -0.36, "#5f8d3e"],
+      [0.06, 0.6, 0.04, -0.17, 1.2, -0.17, "#7a5a30", 0.35],
+      [0.06, 0.6, 0.04, 0.17, 1.2, -0.17, "#7a5a30", 0.35],
+    ],
+  },
+  {
+    id: "tea-master",
+    label: "Tea master in a long changshan robe",
+    skin: "#b07c58", shirt: "#4b3a2c", sleeve: "#4b3a2c", pants: "#2a2420", shoes: "#1c1814",
+    hair: "short", hairColor: "#6d6a66", robe: "#4b3a2c", robeTo: 0.16,
+    extras: [
+      [0.08, 0.58, 0.04, 0.13, 1.06, 0.165, "#d9c79a"],
+      [0.14, 0.05, 0.03, 0.06, 1.28, 0.17, "#d9c79a"],
+      [0.14, 0.05, 0.03, 0.06, 1.12, 0.17, "#d9c79a"],
+      [0.14, 0.05, 0.03, 0.06, 0.96, 0.17, "#d9c79a"],
+    ],
+  },
+  {
+    id: "mule-driver",
+    label: "Tea Horse Road mule driver (mabang)",
+    skin: "#94603f", shirt: "#2d3a52", sleeve: "#2d3a52", pants: "#3a332a", shoes: "#2a1d14",
+    hair: "short", hairColor: "#1b1410", hat: "brim", hatColor: "#4a3a28", mustache: "#1b1410",
+    extras: [
+      [0.6, 0.56, 0.36, 0, 1.06, 0, "#c9b48e"],
+      [0.6, 0.06, 0.37, 0, 0.8, 0, "#6b4a2a"],
+      [0.08, 0.9, 0.05, 0.14, 1.06, -0.19, "#6b4a2a", 0, 0, 0.6],
+      [0.22, 0.2, 0.12, -0.24, 0.72, 0.14, "#7a5a36"],
+    ],
+    stick: true,
+  },
+  {
+    id: "bulang-woman",
+    label: "Bulang (Blang) woman with a tasselled head cloth",
+    skin: "#a8724d", shirt: "#1e1c22", sleeve: "#1e1c22", pants: "#1e1c22", shoes: "#2a1f18",
+    hair: "bun", hairColor: "#141010", hat: "wrap", hatColor: "#1e1c22", robe: "#22252c", robeTo: 0.08, robeHem: "#c8304e",
+    extras: [
+      [0.5, 0.05, 0.04, 0, 1.3, 0.165, "#d9dde2"],
+      [0.5, 0.05, 0.04, 0, 1.22, 0.165, "#d9dde2"],
+      [0.08, 0.08, 0.04, -0.12, 1.14, 0.17, "#d9dde2"],
+      [0.08, 0.08, 0.04, 0.12, 1.14, 0.17, "#d9dde2"],
+      [0.6, 0.06, 0.38, 0, 0.44, 0, "#e0a52e"],
+      [0.6, 0.06, 0.38, 0, 0.34, 0, "#2f8f6a"],
+    ],
+  },
+  {
+    id: "dai-woman",
+    label: "Dai woman in a fitted top and long tube skirt",
+    skin: "#c08d66", shirt: "#e6a9b8", sleeve: "#e6a9b8", sleeveR: "#e6a9b8", pants: "#c08d66", shoes: "#c08d66",
+    hair: "bun", hairColor: "#120d0b", hat: "flower", robe: "#2d6e74", robeTo: 0.04, robeHem: "#e0b041",
+    extras: [
+      [0.58, 0.07, 0.34, 0, 0.84, 0, "#d9dde2"],
+      [0.64, 0.05, 0.38, 0, 0.5, 0, "#e0b041"],
+      [0.64, 0.04, 0.38, 0, 0.3, 0, "#8a2f4a"],
+    ],
+  },
+  {
+    id: "dai-man",
+    label: "Dai man in a collarless jacket and head wrap",
+    skin: "#b07c56", shirt: "#ede6d6", sleeve: "#ede6d6", pants: "#2f3440", shoes: "#2a2320",
+    hair: "short", hairColor: "#141010", hat: "turban", hatColor: "#e2a5b8",
+    extras: [
+      [0.08, 0.58, 0.04, 0, 1.06, 0.165, "#cfc6b1"],
+      [0.06, 0.06, 0.03, 0, 1.24, 0.19, "#d6a73c"],
+      [0.06, 0.06, 0.03, 0, 1.06, 0.19, "#d6a73c"],
+      [0.6, 0.12, 0.34, 0, 0.82, 0, "#7a3b52"],
+    ],
+  },
+  {
+    id: "novice-monk",
+    label: "Novice monk in a saffron robe",
+    skin: "#b07a54", shirt: "#e07a1c", sleeve: "#e07a1c", sleeveR: "#b07a54", pants: "#e07a1c", shoes: "#8a5a3a",
+    hair: "bald", robe: "#e07a1c", robeTo: 0.12,
+    extras: [
+      [0.62, 0.14, 0.35, 0, 1.18, 0, "#c9611a", 0, 0, 0.7],
+      [0.62, 0.14, 0.35, 0, 0.92, 0, "#c9611a", 0, 0, 0.7],
+      [0.3, 0.12, 0.26, 0.42, 0.88, 0.0, "#2b2420"],
+    ],
+  },
+  {
+    id: "peacock-dancer",
+    label: "Peacock dancer",
+    skin: "#c99a74", shirt: "#1f7f78", sleeve: "#2b8f5f", sleeveR: "#2b8f5f", pants: "#c99a74", shoes: "#c99a74",
+    hair: "bun", hairColor: "#120d0b", hat: "crown", robe: "#1a6a6e", robeTo: 0.03, robeHem: "#d9b13c",
+    extras: [
+      [0.7, 0.06, 0.44, 0, 0.58, 0, "#d9b13c"],
+      [0.6, 0.07, 0.34, 0, 1.24, 0, "#d9b13c"],
+      [0.18, 1.1, 0.04, 0, 0.75, -0.3, "#1f6f62", -0.35, 0, 0],
+      [0.18, 1.0, 0.04, -0.2, 0.78, -0.28, "#2b8f5f", -0.35, 0, 0.32],
+      [0.18, 1.0, 0.04, 0.2, 0.78, -0.28, "#2b8f5f", -0.35, 0, -0.32],
+      [0.16, 0.9, 0.04, -0.38, 0.84, -0.24, "#1f6f62", -0.3, 0, 0.62],
+      [0.16, 0.9, 0.04, 0.38, 0.84, -0.24, "#1f6f62", -0.3, 0, -0.62],
+      [0.1, 0.1, 0.03, 0, 1.18, -0.5, "#e6c64a"],
+      [0.1, 0.1, 0.03, -0.32, 1.12, -0.46, "#e6c64a"],
+      [0.1, 0.1, 0.03, 0.32, 1.12, -0.46, "#e6c64a"],
+      [0.06, 0.06, 0.035, 0, 1.18, -0.52, "#1e3c8a"],
+      [0.06, 0.06, 0.035, -0.32, 1.12, -0.48, "#1e3c8a"],
+      [0.06, 0.06, 0.035, 0.32, 1.12, -0.48, "#1e3c8a"],
+    ],
+  },
 ];
 
 export const PLAYER_DESIGN = {
@@ -227,6 +337,41 @@ function buildDesign(d) {
     body.push([0.42, 0.34, 0.42, 0, hy + 0.36, 0, "#a0201a"]);
     body.push([0.44, 0.06, 0.44, 0, hy + 0.22, 0, "#e8b82a"]);
     body.push([0.44, 0.04, 0.44, 0, hy + 0.42, 0, "#e8b82a"]);
+  } else if (d.hat === "straw") {
+    /* conical bamboo-and-straw hat (douli) */
+    const c = d.hatColor || "#d6bb78";
+    body.push([0.94, 0.035, 0.94, 0, hy + 0.25, 0, c]);
+    body.push([0.7, 0.05, 0.7, 0, hy + 0.29, 0, c]);
+    body.push([0.46, 0.07, 0.46, 0, hy + 0.34, 0, "#c9ab66"]);
+    body.push([0.24, 0.07, 0.24, 0, hy + 0.4, 0, c]);
+    body.push([0.08, 0.05, 0.08, 0, hy + 0.45, 0, "#9c7f45"]);
+  } else if (d.hat === "brim") {
+    const c = d.hatColor || "#4a3a28";
+    body.push([0.78, 0.04, 0.78, 0, hy + 0.23, 0, c]);
+    body.push([0.44, 0.2, 0.44, 0, hy + 0.34, 0, c]);
+    body.push([0.45, 0.05, 0.45, 0, hy + 0.27, 0, "#2a1d14"]);
+  } else if (d.hat === "turban") {
+    const c = d.hatColor || "#e2a5b8";
+    body.push([0.48, 0.12, 0.48, 0, hy + 0.24, 0, c]);
+    body.push([0.46, 0.1, 0.46, 0, hy + 0.33, -0.01, "#f2e8ec"]);
+    body.push([0.16, 0.16, 0.1, 0.17, hy + 0.36, 0.16, c, 0, 0, 0.4]);
+  } else if (d.hat === "wrap") {
+    const c = d.hatColor || "#1e1c22";
+    body.push([0.47, 0.18, 0.47, 0, hy + 0.27, 0, c]);
+    body.push([0.48, 0.04, 0.48, 0, hy + 0.2, 0, "#e23a5e"]);
+    body.push([0.48, 0.03, 0.48, 0, hy + 0.36, 0, "#e0a52e"]);
+    body.push([0.05, 0.22, 0.05, -0.25, hy + 0.05, 0.06, "#e23a5e"]);
+    body.push([0.05, 0.22, 0.05, 0.25, hy + 0.05, 0.06, "#2f8f6a"]);
+  } else if (d.hat === "flower") {
+    body.push([0.2, 0.05, 0.05, 0, hy + 0.36, -0.06, "#e3bd4a"]);
+    body.push([0.12, 0.12, 0.08, 0.15, hy + 0.3, -0.12, "#f26b8a"]);
+    body.push([0.06, 0.06, 0.09, 0.15, hy + 0.3, -0.12, "#ffe58a"]);
+  } else if (d.hat === "crown") {
+    body.push([0.46, 0.08, 0.46, 0, hy + 0.24, 0, "#d9b13c"]);
+    body.push([0.34, 0.14, 0.34, 0, hy + 0.34, 0, "#d9b13c"]);
+    body.push([0.08, 0.34, 0.05, 0, hy + 0.55, 0.1, "#e6c64a"]);
+    body.push([0.05, 0.24, 0.05, -0.12, hy + 0.5, 0.06, "#1f7f78"]);
+    body.push([0.05, 0.24, 0.05, 0.12, hy + 0.5, 0.06, "#1f7f78"]);
   } else if (d.hat === "chef") {
     body.push([0.44, 0.24, 0.44, 0, hy + 0.32, 0, "#f6f3ec"]);
   }
@@ -278,6 +423,13 @@ export function makeFigure(design, material) {
       armL.rotation.x = -swing * 0.8;
       armR.rotation.x = swing * 0.8;
     },
+    /* seated (riding an elephant or a boat) */
+    sit() {
+      legL.rotation.x = -1.35;
+      legR.rotation.x = -1.35;
+      armL.rotation.x = -0.6;
+      armR.rotation.x = -0.6;
+    },
   };
 }
 
@@ -312,12 +464,24 @@ export function makeCrowd(material, people) {
   const up = new THREE.Vector3(0, 1, 0);
   const pos = new THREE.Vector3();
   const one = new THREE.Vector3(1, 1, 1);
-  const place = (mesh, i, px, py, pz, angle) => {
+  const rotZ = new THREE.Matrix4();
+  const place = (mesh, i, px, py, pz, angle, zAngle = 0) => {
     part.makeTranslation(px, py, pz);
     rot.makeRotationX(angle);
-    out.copy(base).multiply(part).multiply(rot);
+    out.copy(base).multiply(part);
+    if (zAngle) out.multiply(rotZ.makeRotationZ(zAngle));
+    out.multiply(rot);
     mesh.setMatrixAt(i, out);
   };
+  /* optional per-person tint (p.tint): instance colour multiplies the vertex colours */
+  groups.forEach((grp) => {
+    if (!grp.list.some((p) => p.tint)) return;
+    const white = new THREE.Color(1, 1, 1), c = new THREE.Color();
+    grp.list.forEach((p, i) => {
+      const v = p.tint ? c.set(p.tint) : white;
+      ["body", "legL", "legR", "armL", "armR"].forEach((k) => grp[k].setColorAt(i, v));
+    });
+  });
   return {
     meshes,
     geometries,
@@ -331,8 +495,8 @@ export function makeCrowd(material, people) {
           const s = p.swing || 0;
           place(grp.legL, i, -LEG_X, HIP_Y, 0, s);
           place(grp.legR, i, LEG_X, HIP_Y, 0, -s);
-          place(grp.armL, i, -SHOULDER_X, SHOULDER_Y, 0, -s * 0.8 + (p.wave || 0));
-          place(grp.armR, i, SHOULDER_X, SHOULDER_Y, 0, s * 0.8);
+          place(grp.armL, i, -SHOULDER_X, SHOULDER_Y, 0, -s * 0.8 + (p.wave || 0), -(p.armZ || 0));
+          place(grp.armR, i, SHOULDER_X, SHOULDER_Y, 0, s * 0.8 + (p.waveR || 0), p.armZ || 0);
         });
         ["body", "legL", "legR", "armL", "armR"].forEach((k) => {
           grp[k].instanceMatrix.needsUpdate = true;

@@ -240,6 +240,50 @@ function miniTurpan(stage, x, y, z) {
   return group;
 }
 
+/* Yunnan: terraced tea hill with a pavilion (Pu'er) */
+function miniPuer(stage, x, y, z) {
+  const group = new THREE.Group();
+  group.position.set(x, y, z);
+  const soil = stage.material("#8d5a3a", { roughness: 1 });
+  const tea = stage.material("#4f7f2c", { roughness: 0.9 });
+  for (let i = 0; i < 5; i += 1) {
+    const r = 2.1 - i * 0.38;
+    group.add(cylinder(stage, r, r, 0.22, 20, soil, 0, 0.11 + i * 0.22, 0));
+    const ring = mesh(stage, new THREE.TorusGeometry(r - 0.12, 0.09, 5, 24), tea, 0, 0.26 + i * 0.22, 0);
+    ring.rotation.x = -Math.PI / 2;
+    group.add(ring);
+  }
+  const red = stage.material("#9e2a20", { roughness: 0.7 });
+  [[-0.2, -0.2], [0.2, -0.2], [0.2, 0.2], [-0.2, 0.2]].forEach(([a, b]) => group.add(cylinder(stage, 0.03, 0.03, 0.4, 5, red, a, 1.3, b)));
+  group.add(mesh(stage, new THREE.ConeGeometry(0.42, 0.3, 4), stage.material("#5f6366", { roughness: 0.8 }), 0, 1.62, 0));
+  return group;
+}
+
+/* Yunnan: white pagoda, palm and stilt house (Xishuangbanna) */
+function miniBanna(stage, x, y, z) {
+  const group = new THREE.Group();
+  group.position.set(x, y, z);
+  const white = stage.material("#f2eee4", { roughness: 0.8 });
+  const gold = stage.material("#d9a93c", { metalness: 0.6, roughness: 0.35 });
+  group.add(cylinder(stage, 0.9, 1.0, 0.25, 8, white, -0.6, 0.12, -0.3));
+  group.add(mesh(stage, new THREE.LatheGeometry([[0.5, 0], [0.5, 0.3], [0.42, 0.6], [0.24, 1.0], [0.1, 1.3], [0.0, 1.7]].map(([r, h]) => new THREE.Vector2(r, h)), 16), white, -0.6, 0.25, -0.3));
+  group.add(mesh(stage, new THREE.ConeGeometry(0.05, 0.4, 6), gold, -0.6, 2.1, -0.3));
+  const wood = stage.material("#5a3a24", { roughness: 0.9 });
+  [[0.6, 0.4], [1.4, 0.4], [0.6, 1.0], [1.4, 1.0]].forEach(([a, b]) => group.add(cylinder(stage, 0.04, 0.04, 0.45, 5, wood, a, 0.22, b)));
+  group.add(box(stage, 1.0, 0.35, 0.8, stage.material("#cdb27a", { roughness: 0.9 }), 1.0, 0.62, 0.7));
+  group.add(mesh(stage, new THREE.ConeGeometry(0.85, 0.6, 4), stage.material("#b5532c", { roughness: 0.8 }), 1.0, 1.08, 0.7));
+  group.add(cylinder(stage, 0.05, 0.07, 1.6, 6, stage.material("#8f8576", { roughness: 0.9 }), -1.3, 0.8, 0.9));
+  for (let i = 0; i < 6; i += 1) {
+    const leaf = box(stage, 0.12, 0.03, 0.9, stage.material("#4d7a30", { roughness: 0.8 }), -1.3, 1.6, 0.9);
+    leaf.rotation.y = (i / 6) * Math.PI * 2;
+    leaf.rotation.x = 0.35;
+    group.add(leaf);
+  }
+  const river = box(stage, 0.5, 0.04, 2.6, stage.material("#5d7a6c", { roughness: 0.2, metalness: 0.1 }), 2.0, 0.04, -0.2);
+  group.add(river);
+  return group;
+}
+
 export default function buildOverview({ scene, stage }) {
   const detail = stage.quality !== "low";
   createSky(scene, {
@@ -262,7 +306,9 @@ export default function buildOverview({ scene, stage }) {
   const skardu = island(stage, -12.6, -7.6, 2.8, "#8b7f5c");
   const turpan = island(stage, 13.4, -0.6, 2.8, "#9a8552");
   const dunhuang = island(stage, 13.8, 6.2, 2.8, "#b08a56");
-  const islandWorlds = [nepal, pakistan, china, karakoram, journey, pokhara, skardu, turpan, dunhuang];
+  const puer = island(stage, 12.6, -8.6, 2.8, "#6f8a50");
+  const xishuangbanna = island(stage, 2.0, -11.8, 2.8, "#5f8a4a");
+  const islandWorlds = [nepal, pakistan, china, karakoram, journey, pokhara, skardu, turpan, dunhuang, puer, xishuangbanna];
   islandWorlds.forEach((item) => stage.add(item));
   nepal.add(miniPagoda(stage, 0, 0.42, 0));
   pakistan.add(miniFort(stage, 0, 0.42, 0));
@@ -273,6 +319,8 @@ export default function buildOverview({ scene, stage }) {
   skardu.add(miniSkardu(stage, 0, 0.42, 0));
   turpan.add(miniTurpan(stage, 0, 0.42, 0));
   dunhuang.add(miniDunhuang(stage, 0, 0.42, 0));
+  puer.add(miniPuer(stage, 0, 0.42, 0));
+  xishuangbanna.add(miniBanna(stage, 0, 0.42, 0));
 
   stage.animate((time) => {
     if (stage.reducedMotion) return;
@@ -364,6 +412,26 @@ export default function buildOverview({ scene, stage }) {
     beaconPosition: [13.8, 0.7, 9.0],
     labelOffset: 1.0,
   });
+
+  stage.addInteractive("overview:puer", puer, {
+    label: "Pu'er",
+    hideLabel: true,
+    accent: "#e6bc6a",
+    focus: [12.6, 0.8, -8.6],
+    radius: 9.2,
+    beaconPosition: [12.6, 0.7, -5.8],
+    labelOffset: 1.0,
+  });
+  stage.addInteractive("overview:xishuangbanna", xishuangbanna, {
+    label: "Xishuangbanna",
+    hideLabel: true,
+    accent: "#e6bc6a",
+    focus: [2.0, 0.8, -11.8],
+    radius: 9.2,
+    beaconPosition: [2.0, 0.7, -9.0],
+    labelOffset: 1.0,
+  });
+
 
   const clouds = [];
   for (let index = 0; index < (detail ? 10 : 4); index += 1) {
