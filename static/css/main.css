@@ -4549,6 +4549,84 @@ body:not(.has-overlay-header) .user-menu summary,
   line-height: 1.7;
 }
 
+.auth-provider-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.auth-provider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 43px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.36);
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.auth-provider:hover,
+.auth-provider:focus-visible {
+  border-color: var(--terracotta);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.auth-provider-mark {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.auth-provider--google .auth-provider-mark {
+  background: #fff;
+  color: #4285f4;
+  border: 1px solid #dadce0;
+}
+
+.auth-provider--wechat .auth-provider-mark {
+  background: #07c160;
+  color: #fff;
+}
+
+.auth-provider--phone .auth-provider-mark {
+  background: var(--terracotta);
+  color: #fff;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
 .auth-form .form-field {
   margin-bottom: 14px;
 }

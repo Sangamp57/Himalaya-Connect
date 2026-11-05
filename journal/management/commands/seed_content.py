@@ -154,6 +154,28 @@ DESTINATIONS = [
         "order": 4,
         "highlights": "Khunjerab Pass and the high plateau\nAttabad Lake and the Hunza River\nRoadside tea stops\nShared histories of trade and mobility",
     },
+    {
+        "name": "Dunhuang",
+        "country": "China",
+        "flag": "🇨🇳",
+        "tagline": "Painted caves, singing dunes and a Silk Road oasis.",
+        "summary": "An oasis at the western edge of the Hexi Corridor, where the Gobi, the Mingsha dunes and the Mogao Caves meet.",
+        "description": (
+            "Dunhuang sits where the Hexi Corridor opens toward the Tarim Basin. For centuries it was a stop for "
+            "travellers, monks, merchants and officials moving across the Silk Road; the painted caves at Mogao "
+            "preserve one of the densest records of that traffic.\n\n"
+            "The town is also a contemporary place of hotels, markets, farms and families. Crescent Lake and the "
+            "dunes are managed landscapes, not empty scenery. Visit the caves through the official route, respect "
+            "photography and conservation rules, and give the oasis enough time to be more than a stop between "
+            "two photographs."
+        ),
+        "best_season": "May–June; September–October",
+        "altitude": "1,140 m",
+        "image": "images/objects/cn-crescent.webp",
+        "accent": "#c08a3e",
+        "order": 5,
+        "highlights": "Mogao Caves and their painted grottoes\nCrescent Lake among the Mingsha dunes\nDunhuang night market\nThe oasis edge where the Gobi begins",
+    },
 ]
 
 USERS = [
@@ -555,6 +577,37 @@ POSTS = [
             Attabad is not a tragedy to be consumed, nor a miracle to be celebrated without context. It is a place in the middle of change. The most respectful thing a traveller can do is arrive with curiosity rather than certainty, and leave some of the beauty unclaimed.
         """,
     },
+    {
+        "slug": "dunhuang-where-the-desert-keeps-the-silk-road",
+        "title": "Where the desert keeps the Silk Road",
+        "author": "sana",
+        "category": "Heritage",
+        "destination": "Dunhuang",
+        "cover": "images/objects/cn-mogao.webp",
+        "tags": "dunhuang, silk road, caves, desert, heritage",
+        "featured": False,
+        "days_ago": 7,
+        "views": 642,
+        "excerpt": "At Dunhuang, the Silk Road is not only a route on a map. It is a cliff of painted caves, a crescent of water and a market that still runs after dark.",
+        "alt": "The painted cave façades of Mogao near Dunhuang",
+        "content": """
+            The first thing that strikes you at Mogao is the scale of the cliff. The caves are cut into a long rock face above the desert, their entrances linked by walkways and shaded terraces. From a distance they look almost like a village built into the stone. Up close, each opening is a small world of painted plaster, sculpture and centuries of accumulated devotion.
+
+            Dunhuang was not an isolated curiosity. It was an oasis where routes met, where travellers changed animals and supplies, and where people with different languages and beliefs passed through. The caves preserve that traffic in images: musicians, donors, merchants, deities and ordinary objects. The paintings are not a single style or a single century. They are a record of a place continually remade.
+
+            ## Conservation is part of the visit
+
+            Many caves are closed to protect the paint from light, humidity, dust and the breath of crowds. Some visitors see replicas instead. That can feel disappointing if you came for the famous image, but it is also the honest condition of a fragile site. The alternative — unrestricted access — would destroy the thing you came to see.
+
+            Follow the route your guide sets. Do not touch the walls. Do not use a flash. Ask before photographing people and respect signs even when nobody is watching. The caves are a museum, a sacred site and a conservation project at once, and those roles do not always sit comfortably together.
+
+            ## The lake and the dunes
+
+            Crescent Lake lies in a hollow among the Mingsha dunes. Its shape changes with wind and water, and its survival depends on groundwater and careful management. The surrounding dunes are crossed by walkers and camel trains, but they are also a fragile dryland system. Carry water, stay on the marked path and avoid climbing where the site asks you not to.
+
+            At the end of the day, Dunhuang's night market fills with lights, noodles, dried fruit and the sound of a town relaxing. It is easy to romanticise the word 'Silk Road' here. The more interesting experience is to notice how the oasis works now: who is cooking, who is selling, who is cleaning up, and how a place that has been a crossroads for centuries keeps making room for the next traveller.
+        """,
+    },
 ]
 
 COMMENTS = [
@@ -578,6 +631,7 @@ COMMENTS = [
         "author": "arjun",
         "body": "The early hour is always the best one. Thank you for writing about the preparations and not only the display.",
     },
+
 ]
 
 LIKE_MAP = {
@@ -614,7 +668,7 @@ def load_credits() -> dict:
 
 
 class Command(BaseCommand):
-    help = "Create the editor and writer accounts, destinations, threads and ten field notes."
+    help = "Create the editor and writer accounts, destinations, threads and field notes."
 
     def add_arguments(self, parser):
         parser.add_argument(

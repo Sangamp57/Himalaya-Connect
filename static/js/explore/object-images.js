@@ -385,5 +385,29 @@ export const OBJECT_IMAGES = {
     "alt": "Namaste",
     "credit": "Saptarshi Biswas / CC BY 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:An_Oberoi_Hotel_employee_doing_Namaste,_New_Delhi.jpg"
+  },
+  "cn-mogao": {
+    "src": "/static/images/objects/cn-mogao.webp",
+    "alt": "Mogao Caves",
+    "credit": "Wikimedia Commons contributor / CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Jiucenglou_of_Mogao_Caves.jpg"
+  },
+  "cn-crescent": {
+    "src": "/static/images/objects/cn-crescent.webp",
+    "alt": "Crescent Lake",
+    "credit": "N509FZ / CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Crescent_Lake_from_the_Singing_Sand_Dunes_(20230918101214).jpg"
+  },
+  "cn-silkroad": {
+    "src": "/static/images/objects/cn-silkroad.webp",
+    "alt": "Dunhuang Night Market",
+    "credit": "xiquinhosilva / CC BY 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Dunhuang_(54532845195).jpg"
+  },
+  "jo-dunhuang": {
+    "src": "/static/images/objects/jo-dunhuang.webp",
+    "alt": "Dunhuang Gate",
+    "credit": "Sigismund von Dobschütz / CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Dunhuang-06.JPG"
   }
 };

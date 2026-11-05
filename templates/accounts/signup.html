@@ -16,6 +16,13 @@
   </div>
 {% endif %}
 
+<div class="auth-provider-grid">
+  <a class="auth-provider auth-provider--google" href="{% url 'google_login' %}"><span class="auth-provider-mark">G</span> Google</a>
+  <a class="auth-provider auth-provider--wechat" href="{% url 'wechat_login' %}"><span class="auth-provider-mark">W</span> WeChat</a>
+  <a class="auth-provider auth-provider--phone" href="{% url 'phone_login' %}"><span class="auth-provider-mark">☎</span> Phone number</a>
+</div>
+<div class="auth-divider"><span>or create an account with email</span></div>
+
 <form method="post" class="auth-form" novalidate>
   {% csrf_token %}
   {% for field in form %}

@@ -137,7 +137,7 @@ export const WORLDS = {
   },
   karakoram: {
     id: "karakoram",
-    order: 7,
+    order: 8,
     countryId: "pakistan",
     names: { en: "Karakoram Route", zh: "喀喇昆仑文化之路", ne: "कराकोरम सांस्कृतिक मार्ग", ur: "قراقرم ثقافتی راستہ" },
     region: { en: "Pakistan–China high route", zh: "巴中高山路线", ne: "पाकिस्तान–चीन उच्च मार्ग", ur: "پاکستان–چین بلند راستہ" },
@@ -161,7 +161,7 @@ export const WORLDS = {
   },
   journey: {
     id: "journey",
-    order: 8,
+    order: 9,
     countryId: "pakistan",
     flag: "🛤️",
     route: true,
@@ -248,6 +248,24 @@ export const WORLDS = {
     mountain: true,
     journalUrl: "/stories/",
   },
+  dunhuang: {
+    id: "dunhuang",
+    order: 7,
+    countryId: "china",
+    names: { en: "Dunhuang", zh: "敦煌", ne: "दुनहुआङ", ur: "دونہوانگ" },
+    region: { en: "Gansu, China", zh: "中国甘肃", ne: "गान्सु, चीन", ur: "گانسو، چین" },
+    accent: "#c08a3e",
+    secondary: "#3f7a76",
+    blurb: {
+      en: "Desert dunes, painted caves and a Silk Road oasis where the Gobi meets the night market.",
+    },
+    long: {
+      en: "Dunhuang is an oasis at the western edge of the Hexi Corridor, where the Gobi desert, the Mingsha dunes and the painted caves of Mogao meet. The walkable scene gathers Crescent Lake, the cave cliff, a night-market lane and the surrounding dunes into one place. It is a composite of a real oasis town and its wider landscape, not a survey map.",
+    },
+    camera: { position: [0, 24, 44], target: [0, 4, 0], min: 14, max: 70 },
+    mountain: true,
+    journalUrl: "/stories/dunhuang-where-the-desert-keeps-the-silk-road/",
+  },
 };
 
 const SRC = {
@@ -267,6 +285,9 @@ const SRC = {
   kashgarOld: { label: "China Highlights · Kashgar Old Town", url: "https://www.chinahighlights.com/kashgar/attraction/kashgar-old-town.htm" },
   silkRoad: { label: "UNESCO · Silk Roads programme", url: "https://en.unesco.org/silkroad/" },
   truckArt: { label: "Atlas Obscura · Pakistani truck art", url: "https://www.atlasobscura.com/articles/pakistan-truck-art-phool-patti" },
+  mogao: { label: "UNESCO - Mogao Caves", url: "https://whc.unesco.org/en/list/440/" },
+  dunhuang: { label: "Britannica - Dunhuang", url: "https://www.britannica.com/place/Dunhuang" },
+  crescent: { label: "Travel China Guide - Crescent Lake", url: "https://www.travelchinaguide.com/attraction/gansu/dunhuang/crescent-lake.htm" },
   kathmanduPost: { label: "Kathmandu Post · heritage and reconstruction", url: "https://kathmandupost.com/" },
 };
 
@@ -1875,6 +1896,98 @@ export const OBJECTS = [
     },
   },
 
+  {
+    id: "cn-mogao",
+    worldId: "dunhuang",
+    countryId: "china",
+    category: "landmarks",
+    rarity: "legendary",
+    names: { en: "Mogao Caves", zh: "莫高窟", ne: "मोगाओ गुफाहरू", ur: "موگاؤ غار" },
+    localName: "莫高窟 · Mògāo kū",
+    summary: {
+      en: "Painted caves at the edge of the Gobi, where Silk Road travellers left a thousand years of art.",
+    },
+    story: {
+      en: "The Mogao Caves are a cliffside complex of hundreds of painted and sculpted grottoes southeast of Dunhuang. Travellers, monks and donors funded the work over many centuries; the paintings and manuscripts record Buddhist practice, trade, music, dress and daily life across the Silk Road.\n\nThe site is a conservation landscape as much as an art collection. Humidity, light, dust and visitor numbers all affect the caves, and many are closed or shown only through replicas. Follow the visitor route, do not touch the walls, and leave photography where the site asks you to.",
+    },
+    fact: "The Library Cave at Mogao held tens of thousands of manuscripts before its contents were dispersed in the early twentieth century.",
+    sources: [SRC.mogao, SRC.silkRoad],
+    quiz: {
+      q: "Why are many Mogao caves protected from uncontrolled visitor access?",
+      options: ["Painted surfaces are vulnerable to light, humidity and touch", "The caves are used as warehouses", "They are all modern replicas", "The cliff is too cold for visitors"],
+      answer: 0,
+      explain: "The painted plaster and sculpture are extremely sensitive. Conservation depends on controlling light, moisture, dust and the number of people inside.",
+    },
+  },
+  {
+    id: "cn-crescent",
+    worldId: "dunhuang",
+    countryId: "china",
+    category: "landmarks",
+    rarity: "epic",
+    names: { en: "Crescent Lake", zh: "月牙泉", ne: "क्रेसेन्ट ताल", ur: "ہلال جھیل" },
+    localName: "月牙泉 · Yuèyá quán",
+    summary: {
+      en: "A crescent of water in the singing dunes, kept alive by careful management.",
+    },
+    story: {
+      en: "Crescent Lake sits in a hollow between the Mingsha dunes, its shape changing with wind and water. The spring has long been a stop for travellers and a subject for poets; today it is also a carefully managed landscape with paths, pumps and visitor controls.\n\nThe dunes are not empty scenery. They move, they are crossed by walkers and camels, and they are part of a fragile oasis system. Stay on the marked route, carry water, avoid climbing dunes where signs ask you not to, and treat the lake as a living water source rather than a photo prop.",
+    },
+    fact: "The lake's survival depends on groundwater and management; its famous crescent shape is not permanent.",
+    sources: [SRC.crescent, SRC.dunhuang],
+    quiz: {
+      q: "What makes Crescent Lake a fragile landmark?",
+      options: ["It depends on groundwater and careful management in moving dunes", "It is made of painted concrete", "It is fed only by direct rainfall", "It has no visitors"],
+      answer: 0,
+      explain: "The lake sits in an arid dune system. Water levels, wind and visitor pressure all require active management.",
+    },
+  },
+  {
+    id: "cn-silkroad",
+    worldId: "dunhuang",
+    countryId: "china",
+    category: "traditions",
+    rarity: "rare",
+    names: { en: "Dunhuang Night Market", zh: "敦煌夜市", ne: "दुनहुआङ रात्री बजार", ur: "دونہوانگ نائٹ مارکیٹ" },
+    localName: "沙州夜市 · Shāzhōu yèshì",
+    summary: {
+      en: "Lights, noodles, apricots and the working exchange of a Silk Road town.",
+    },
+    story: {
+      en: "Dunhuang's night market is a place to eat, buy dried fruit and watch a town relax after the desert heat. The market's Silk Road branding is real, but it is also a contemporary tourism economy: stalls, restaurants, craft sellers and performers depend on visitors.\n\nAsk before photographing people at work, buy from the stall you actually want to support, and do not treat every object as a souvenir of 'the Silk Road'. The most interesting details are often ordinary: how noodles are pulled, how apricots are dried, how a family divides the evening shift.",
+    },
+    fact: "Dunhuang's oasis economy has always depended on movement, trade and water, not on isolation.",
+    sources: [SRC.dunhuang, SRC.silkRoad],
+    quiz: {
+      q: "What is a respectful way to approach a busy night-market stall?",
+      options: ["Ask before photographing, buy if you can, and treat it as a workplace", "Move goods to make a better photograph", "Bargain until the seller gives up", "Assume every object is antique"],
+      answer: 0,
+      explain: "The market is a working place. Ask first, buy fairly and do not turn a stall into a free stage.",
+    },
+  },
+  {
+    id: "jo-dunhuang",
+    worldId: "journey",
+    countryId: "china",
+    category: "landmarks",
+    rarity: "rare",
+    names: { en: "Dunhuang Gate", zh: "敦煌之门", ne: "दुनहुआङ ढोका", ur: "دونہوانگ دروازہ" },
+    localName: "敦煌 · Dunhuang",
+    summary: {
+      en: "A gate on the Great Journey where the Himalayan trail meets the Silk Road oasis.",
+    },
+    story: {
+      en: "This gate is an imagined threshold, not a reconstruction of a specific monument. It marks the point in the Great Journey where the high mountain route turns toward Dunhuang, an oasis that connected the Hexi Corridor with the Tarim Basin and the wider Silk Road.\n\nThe real Dunhuang is a town with a long and complicated history, not a single gate. Its caves, dunes, markets and water systems are living places with conservation needs and local communities. Treat the gate as an invitation to read further, not as a substitute for the place.",
+    },
+    fact: "Dunhuang sits at a historic junction of routes around the Gobi, connecting the Hexi Corridor with the Tarim Basin.",
+    sources: [SRC.mogao, SRC.silkRoad],
+    quiz: {
+      q: "What does the Dunhuang Gate represent in the Great Journey?",
+      options: ["An imagined threshold toward the Silk Road oasis", "A surviving Han city gate", "A modern shopping centre", "A border checkpoint"],
+      answer: 0,
+      explain: "The gate is a thematic landmark in the composite Great Journey, pointing toward the real oasis and its wider history.",
+    },
+  },
 ];
 
 /* Chinese story, fact and quiz text for the Kathmandu discoveries. */
@@ -1919,6 +2032,7 @@ const KATHMANDU_ZH = {
     fact: "帕坦的芒嘎希蒂有三个鳄鱼头形的出水口，是谷地现存最古老、仍在运作的供水系统之一。",
     quiz: { q: "加德满都谷地传统的石砌水口叫什么？", options: ["希蒂（石水口）", "库尔水渠（kuhl）", "坎儿井（qanat）", "阶梯井"], answer: 0, explain: "希蒂是由传统渠道供水的石砌水口。库尔是巴基斯坦山区的水渠术语，坎儿井和阶梯井是不同的供水系统。" },
   },
+
 };
 OBJECTS.forEach((object) => {
   const zh = KATHMANDU_ZH[object.id];
@@ -2586,7 +2700,27 @@ export const SCAVENGER_HUNTS = [
       ne: "महान यात्रामा ट्रेलहेड, उच्च दराको ढुङ्गाको थुप्रो र प्रार्थना झन्डाको शिखर खोज्नुहोस्।",
       ur: "عظیم سفر میں ٹریل ہیڈ، اونچے درے کا پتھر کا ڈھیر اور دعا کے پرچم کی چوٹی تلاش کریں۔",
     },
-    targets: ["jo-trailhead", "jo-cairn", "jo-flag"],
+    targets: ["jo-trailhead", "jo-cairn", "jo-flag", "jo-dunhuang"],
+  },
+  {
+    id: "hunt-dunhuang",
+    icon: "compass",
+    worldId: "dunhuang",
+    xp: 40,
+    rewardCard: "extra-tea",
+    title: {
+      en: "The Desert Library",
+      zh: "沙漠图书馆",
+      ne: "मरुभूमिको पुस्तकालय",
+      ur: "صحرائی کتب خانہ",
+    },
+    blurb: {
+      en: "Find the painted caves, the crescent lake and the night-market lane of Dunhuang.",
+      zh: "在敦煌寻找石窟、月牙泉和夜市街巷。",
+      ne: "दुनहुआङका चित्रित गुफा, हल्का ताल र रात्री बजारको गल्ली खोज्नुहोस्।",
+      ur: "دونہوانگ کے رنگے ہوئے غار، ہلال جھیل اور نائٹ مارکیٹ کی گلی تلاش کریں۔",
+    },
+    targets: ["cn-mogao", "cn-crescent", "cn-silkroad"],
   },
 ];
 
@@ -2606,6 +2740,7 @@ export const MAP_LOCATIONS = [
   { id: "xian", countryId: "china", worldId: null, lat: 34.3416, lng: 108.9398, category: "landmark", title: { en: "Xi'an", zh: "西安", ne: "सियान", ur: "شیان" }, detail: "An eastern terminus of Silk Road trade and home to the Terracotta Army and historic city walls." },
   { id: "lhasa", countryId: "china", worldId: null, lat: 29.652, lng: 91.1721, category: "community", title: { en: "Lhasa", zh: "拉萨", ne: "ल्हासा", ur: "لہاسا" }, detail: "A major centre of Tibetan culture and Buddhist heritage at high altitude. Access and travel rules require current official information." },
   { id: "beijing", countryId: "china", worldId: null, lat: 39.9042, lng: 116.4074, category: "landmark", title: { en: "Beijing", zh: "北京", ne: "बेइजिङ", ur: "بیجنگ" }, detail: "Imperial architecture including the Forbidden City, and a centre of regional and national cultural institutions." },
+  { id: "dunhuang", countryId: "china", worldId: "dunhuang", lat: 40.1421, lng: 94.6618, category: "world", title: { en: "Dunhuang", zh: "敦煌", ne: "दुनहुआङ", ur: "دونہوانگ" }, detail: "Mogao Caves, Crescent Lake and the Silk Road night market. Enter the 3D Dunhuang world." },
 ];
 
 export const TRANSLATION_STATUS = {

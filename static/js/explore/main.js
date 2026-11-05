@@ -71,6 +71,7 @@ const WORLD_BUILDERS = {
   skardu: () => import("./three/worlds/skardu.js").then((module) => module.default),
   kashgar: () => import("./three/worlds/kashgar.js").then((module) => module.default),
   turpan: () => import("./three/worlds/turpan.js").then((module) => module.default),
+  dunhuang: () => import("./three/worlds/dunhuang.js").then((module) => module.default),
   karakoram: () => import("./three/worlds/karakoram.js").then((module) => module.default),
   journey: () => import("./three/worlds/journey.js").then((module) => module.default),
   overview: () => import("./three/worlds/overview.js").then((module) => module.default),
@@ -391,6 +392,7 @@ function refreshSceneLabels() {
     texts["overview:kathmandu"] = localize(nepal?.names, store.language);
     texts["overview:hunza"] = localize(pakistan?.names, store.language);
     texts["overview:kashgar"] = localize(china?.names, store.language);
+    texts["overview:dunhuang"] = localize(WORLDS.dunhuang.names, store.language);
     texts["overview:karakoram"] = localize(WORLDS.karakoram.names, store.language);
     texts["overview:journey"] = localize(WORLDS.journey.names, store.language);
   } else {

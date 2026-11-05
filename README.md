@@ -8,7 +8,7 @@ The journal is fully functional, not a static mock-up. Members can sign up, sign
 
 Open **`/explore/`** (also linked as “3D Explorer” in the main navigation).
 
-- Eight procedural, walkable 3D worlds: Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, the Karakoram Highway, and the winding "Great Journey" high trail.
+- Nine procedural, walkable 3D worlds: Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, Dunhuang, the Karakoram Highway, and the winding "Great Journey" high trail.
 - Orbit, pan, zoom and walk controls, object raycasting, camera fly-to, highlighting, reset and mobile touch support.
 - A growing collection of cultural objects with stories, facts, source links, quizzes and collectible cards.
 - A scavenger-hunt **Game** section: three themed hunts that track your beacon discoveries and award XP and bonus cards.
@@ -62,7 +62,7 @@ Or set `SEED_ADMIN_PASSWORD` and `SEED_WRITER_PASSWORD` in `.env` before the fir
 
 ### Public site
 
-- Interactive 3D explorer with eight walkable worlds, including the Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, the Karakoram Highway and the Great Journey, with speaking beacons, object stories, quizzes, etiquette scenarios, comparison challenges, achievements, local progress and a collectible card gallery.
+- Interactive 3D explorer with nine walkable worlds, including the Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, Dunhuang, the Karakoram Highway and the Great Journey, with Google, WeChat and phone sign-in, speaking beacons, object stories, quizzes, etiquette scenarios, comparison challenges, achievements, local progress and a collectible card gallery.
 - A real geographic culture map with OpenStreetMap tiles, verified coordinates and world launch links.
 - A daily encounter that rotates deterministically from a curated set, with save, share and quiz actions.
 - Full-screen parallax home page with layered mountain photography, scroll depth, floating notes and scroll-reveal sections.
@@ -147,6 +147,7 @@ static/
 static/js/explore/
   data.js                Curated objects, worlds, cards, quizzes, etiquette, map data
   object-images.js       Real photographs and credits for every discovery card
+  social_auth.py         Google, WeChat and phone identity helpers
   i18n.js                Four-language interface dictionaries
   store.js               localStorage progress, XP, achievements, streaks
   ui.js                  Home, world HUD, cards, scenarios, dialogs and toasts
@@ -168,6 +169,11 @@ Copy `.env.example` to `.env` and set:
 - `OPENAI_API_KEY` is optional. Leave it blank for the explorer's curated offline guide. If set, set `OPENAI_MODEL` (default `gpt-4o-mini`) and optionally `OPENAI_BASE_URL`. The key is read only by `journal.views.cultural_guide`; it is never returned to the browser.
 - Seed passwords if you are re-seeding a fresh database.
 
+- Google sign-in: set `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET` and the exact `GOOGLE_OAUTH_REDIRECT_URI` (`/accounts/google/callback/`) in `.env`.
+- WeChat sign-in: set `WECHAT_APP_ID`, `WECHAT_APP_SECRET` and `WECHAT_REDIRECT_URI` (`/accounts/wechat/callback/`). WeChat requires a verified web-app domain.
+- Phone sign-in: `SMS_BACKEND=console` prints codes to the server console in development. For production set `SMS_BACKEND=twilio` with `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` and `TWILIO_FROM_NUMBER`, or `SMS_BACKEND=webhook` with `SMS_WEBHOOK_URL` and optional `SMS_WEBHOOK_TOKEN`.
+- Google and WeChat need credentials from their developer consoles; without them the buttons show a clear configuration message and email/password or phone sign-in remains available.
+
 ### Production checklist
 
 1. Set `DJANGO_DEBUG=0`, a real `DJANGO_SECRET_KEY`, correct `DJANGO_ALLOWED_HOSTS` and HTTPS origins.
@@ -184,7 +190,7 @@ Copy `.env.example` to `.env` and set:
 python manage.py test
 ```
 
-The suite covers public rendering, the explorer page and guide endpoint, search and filters, signup, email-or-username login, draft privacy, story CRUD, author permissions, likes, bookmarks, comments, follows, profile editing, contact, newsletter, sitemap and robots.
+The suite covers public rendering, the explorer page and guide endpoint, search and filters, signup, email-or-username login, phone-code signup and verification, unconfigured social providers, draft privacy, story CRUD, author permissions, likes, bookmarks, comments, follows, profile editing, contact, newsletter, sitemap and robots.
 
 Browser checks used headless Chromium at desktop and phone widths. They covered the 3D canvas and world loading, touch-sized controls, object raycasting, camera focus, collection and quiz rewards, daily save, achievements, map markers, language persistence and RTL, WebGL fallback reading mode, and the production static manifest.
 
@@ -207,6 +213,9 @@ The photographs are served locally from `static/images/` as optimised WebP files
 | Khunjerab Pass road | Shaguftakarim | CC BY-SA 4.0 |
 | Kashgar Old City | Radosław Botev | CC BY 3.0 pl |
 | Kashgar Grand Bazaar | David Stanley | CC BY 2.0 |
+| Mogao Caves, Dunhuang | Wikimedia Commons contributor | CC BY-SA 3.0 |
+| Crescent Lake, Dunhuang | N509FZ | CC BY-SA 4.0 |
+| Dunhuang night market | xiquinhosilva | CC BY 2.0 |
 
 The Journey world's 3D cinema plays *"The Himalayan — Mt. Everest Base Camp trek HD Time Lapse"* by Amit Haware, sourced from Wikimedia Commons under CC BY 3.0. The Films section adds two more: *"Hunza Valley"* (Nabin K. Sapkota & Nasr Rahman, CC BY-SA 4.0) for Pakistan and *"Scenery along a road in Bayingol, Xinjiang"* (Karl Osj. G, CC BY-SA 4.0) for China. All are streamed, not bundled, and are credited on-screen and in the explorer's source notes.
 

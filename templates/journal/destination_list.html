@@ -2,7 +2,7 @@
 {% load static journal_extras %}
 
 {% block title %}Destinations — Himalaya Connect{% endblock %}
-{% block meta_description %}Explore Kathmandu Valley, Hunza, Kashgar and the Karakoram through stories, photographs and field notes.{% endblock %}
+{% block meta_description %}Explore Kathmandu Valley, Pokhara, Hunza, Skardu, Kashgar, Turpan, Dunhuang and the Karakoram through stories, photographs and field notes.{% endblock %}
 {% block body_class %}page-destinations has-overlay-header{% endblock %}
 
 {% block content %}
@@ -13,7 +13,7 @@
     <p class="eyebrow eyebrow-light" data-reveal><span></span> The map</p>
     <div class="page-hero-title-row">
       <h1 data-reveal data-reveal-delay="1">Places to<br><em>linger in.</em></h1>
-      <p class="page-hero-intro" data-reveal data-reveal-delay="2">Not a checklist. Four distinct regions, each with its own food, craft, architecture and way of moving through the day. Begin with curiosity.</p>
+      <p class="page-hero-intro" data-reveal data-reveal-delay="2">Not a checklist. {{ destinations|length }} distinct regions, each with its own food, craft, architecture and way of moving through the day. Begin with curiosity.</p>
     </div>
     <div class="page-hero-meta" data-reveal data-reveal-delay="3">
       <span>{{ destinations|length }} destinations</span>

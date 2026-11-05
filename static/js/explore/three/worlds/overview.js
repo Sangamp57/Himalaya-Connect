@@ -27,6 +27,10 @@ function cylinder(stage, rt, rb, h, segments, material, x, y, z) {
   return mesh(stage, new THREE.CylinderGeometry(rt, rb, h, segments), material, x, y, z);
 }
 
+function sphere(stage, radius, material, x, y, z, detail = 1) {
+  return mesh(stage, new THREE.IcosahedronGeometry(radius, detail), material, x, y, z);
+}
+
 function island(stage, x, z, radius, topColor) {
   const group = new THREE.Group();
   group.position.set(x, 0, z);
@@ -142,6 +146,29 @@ function miniKarakoram(stage, x, y, z) {
   return group;
 }
 
+function miniDunhuang(stage, x, y, z) {
+  const group = new THREE.Group();
+  group.position.set(x, y, z);
+  const water = stage.material("#2f8fa3", { roughness: 0.16, metalness: 0.18, transparent: true, opacity: 0.95 });
+  const lake = mesh(stage, new THREE.CircleGeometry(0.9, 20), water, -1.0, 0.06, 0.5);
+  lake.rotation.x = -Math.PI / 2;
+  lake.scale.set(1.5, 1, 0.8);
+  group.add(lake);
+  for (let i = 0; i < 4; i += 1) {
+    const dune = sphere(stage, 0.75, stage.material("#cfb07c", { roughness: 1 }), 0.8 + (i % 2) * 0.8, 0.2, -0.9 + Math.floor(i / 2) * 1.2, 0);
+    dune.scale.set(1.5, 0.3, 0.9);
+    group.add(dune);
+  }
+  const cliff = box(stage, 2.2, 2.2, 1.0, stage.material("#9b6847", { roughness: 1 }), 0.8, 1.1, -1.2);
+  group.add(cliff);
+  for (let i = 0; i < 3; i += 1) {
+    group.add(box(stage, 0.36, 0.55, 0.1, stage.material("#2a1c15", { roughness: 0.95 }), 0.2 + i * 0.62, 1.25, -0.68));
+  }
+  group.add(box(stage, 0.12, 1.0, 0.12, stage.material("#6a4a31", { roughness: 0.9 }), -0.8, 0.5, 1.3));
+  group.add(box(stage, 0.8, 0.3, 0.05, stage.material("#a83e32", { roughness: 0.9 }), -0.5, 0.85, 1.3));
+  return group;
+}
+
 function miniJourney(stage, x, y, z) {
   const group = new THREE.Group();
   group.position.set(x, y, z);
@@ -221,7 +248,8 @@ export default function buildOverview({ scene, stage }) {
   const pokhara = island(stage, -13.4, 5.4, 2.8, "#6f8a70");
   const skardu = island(stage, -12.6, -7.6, 2.8, "#8b7f5c");
   const turpan = island(stage, 13.4, -0.6, 2.8, "#9a8552");
-  [nepal, pakistan, china, karakoram, journey, pokhara, skardu, turpan].forEach((item) => stage.add(item));
+  const dunhuang = island(stage, 13.8, 6.2, 2.8, "#b08a56");
+  [nepal, pakistan, china, karakoram, journey, pokhara, skardu, turpan, dunhuang].forEach((item) => stage.add(item));
   nepal.add(miniPagoda(stage, 0, 0.42, 0));
   pakistan.add(miniFort(stage, 0, 0.42, 0));
   china.add(miniMarket(stage, 0, 0.42, 0));
@@ -230,6 +258,7 @@ export default function buildOverview({ scene, stage }) {
   pokhara.add(miniPokhara(stage, 0, 0.42, 0));
   skardu.add(miniSkardu(stage, 0, 0.42, 0));
   turpan.add(miniTurpan(stage, 0, 0.42, 0));
+  dunhuang.add(miniDunhuang(stage, 0, 0.42, 0));
 
   stage.addInteractive("overview:kathmandu", nepal, {
     label: "Nepal",
@@ -301,6 +330,15 @@ export default function buildOverview({ scene, stage }) {
     focus: [13.4, 0.8, -0.6],
     radius: 9.2,
     beaconPosition: [13.4, 0.7, 2.2],
+    labelOffset: 1.0,
+  });
+  stage.addInteractive("overview:dunhuang", dunhuang, {
+    label: "Dunhuang",
+    hideLabel: true,
+    accent: "#e6bc6a",
+    focus: [13.8, 0.8, 6.2],
+    radius: 9.2,
+    beaconPosition: [13.8, 0.7, 9.0],
     labelOffset: 1.0,
   });
 
