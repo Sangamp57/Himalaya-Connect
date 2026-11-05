@@ -78,12 +78,12 @@ export const WORLDS = {
       ur: "اینٹوں کی گلیاں، کھدی ہوئی لکڑی، مندر کی گھنٹیاں اور زندہ نیوار شہر۔",
     },
     long: {
-      en: "A stylised neighbourhood in the Kathmandu Valley: Newar brick houses, carved windows and a pagoda temple. The valley holds seven monument zones on the UNESCO World Heritage List, and heritage here is part of everyday life rather than a museum set.",
-      zh: "加德满都谷地的一处风格化街区：纽瓦丽砖房、雕花木窗与塔庙。谷地拥有七处联合国教科文组织世界遗产纪念区，这里的遗产仍是日常生活的一部分，而非博物馆布景。",
-      ne: "काठमाडौं उपत्यकाको शैलीकृत टोल: नेवार इँटाका घर, कुँदिएका झ्याल र प्यागोडा मन्दिर। उपत्यकाका सात सम्पदा क्षेत्र युनेस्को विश्व सम्पदा सूचीमा छन्। यहाँको सम्पदा संग्रहालय होइन, दैनिक जीवनको हिस्सा हो।",
-      ur: "کٹھمنڈو وادی کا ایک اسٹائلائزڈ محلہ: نیوار اینٹوں کے گھر، کھدی ہوئی کھڑکیاں اور پگوڈا مندر۔ وادی کے سات یادگار علاقے یونیسکو عالمی ورثہ فہرست میں شامل ہیں، اور یہاں کا ورثہ میوزیم نہیں بلکہ روزمرہ زندگی کا حصہ ہے۔",
+      en: "A walkable Kathmandu Valley: Durbar Square, Swayambhunath, Pashupatinath, Boudhanath, Patan, Bhaktapur and the Nagarkot rim, with the Himalaya to the north. Distances are compressed so you can walk between sites. The valley holds seven monument zones on the UNESCO World Heritage List, and heritage here is part of everyday life rather than a museum set.",
+      zh: "一个可以步行游览的加德满都谷地：杜巴广场、斯瓦扬布纳特、帕舒帕蒂纳特、博达哈、帕坦、巴克塔普尔和谷地边缘的纳加阔特，北方是喜马拉雅山脉。各地之间的距离经过压缩，方便步行往来。谷地有七处纪念区列入联合国教科文组织世界遗产名录，这里的遗产仍是日常生活的一部分，而非博物馆布景。",
+      ne: "हिँडेर घुम्न सकिने काठमाडौं उपत्यका: दरबार क्षेत्र, स्वयम्भू, पशुपतिनाथ, बौद्ध, पाटन, भक्तपुर र नगरकोट, उत्तरमा हिमाल। ठाउँहरूबीचको दूरी छोट्याइएको छ। उपत्यकाका सात सम्पदा क्षेत्र युनेस्को विश्व सम्पदा सूचीमा छन्।",
+      ur: "پیدل گھومنے کے قابل کٹھمنڈو وادی: دربار اسکوائر، سویمبھوناتھ، پشوپتی ناتھ، بودھناتھ، پاٹن، بھکتاپور اور نگرکوٹ، شمال میں ہمالیہ۔ مقامات کے درمیان فاصلے کم کیے گئے ہیں۔ وادی کے سات یادگار علاقے یونیسکو عالمی ورثہ فہرست میں شامل ہیں۔",
     },
-    camera: { position: [26, 30, 32], target: [0, 3, 0], min: 12, max: 58 },
+    camera: { position: [6, 7.5, 53], target: [6, 2, 40], min: 4, max: 40 },
     mountain: false,
     journalUrl: "/stories/the-window-that-learned-to-hold-a-city/",
   },
@@ -150,12 +150,12 @@ export const WORLDS = {
       ur: "بلند درے، سڑک کنارے بستیاں اور جدید قراقرم ہائی وے۔",
     },
     long: {
-      en: "A thematic cultural route inspired by the Karakoram Highway, not one continuous geographic itinerary. The highway links Pakistan and China through Khunjerab Pass. Nepal is not on this road; it appears here as related Himalayan context. The route is a place of work, trade, engineering and fragile high-altitude ecology.",
-      zh: "一条受喀喇昆仑公路启发的主题文化路线，并非一条连续的地理行程。公路经红其拉甫山口连接巴基斯坦与中国。尼泊尔不在这条公路上，此处仅作为相关的喜马拉雅背景。这里也是劳作、贸易、工程与脆弱高海拔生态并存之地。",
-      ne: "कराकोरम राजमार्गबाट प्रेरित एक विषयगत सांस्कृतिक मार्ग, एकै निरन्तर भौगोलिक यात्रा होइन। राजमार्गले खुन्जेराब भन्ज्याङ हुँदै पाकिस्तान र चीनलाई जोड्छ। नेपाल यो सडकमा पर्दैन; यहाँ सम्बन्धित हिमाली सन्दर्भका रूपमा देखाइएको छ। यो बाटो काम, व्यापार, इन्जिनियरिङ र नाजुक उच्च-उचाइ पारिस्थितिकीको ठाउँ हो।",
-      ur: "قراقرم ہائی وے سے متاثر ایک موضوعی ثقافتی راستہ، نہ کہ ایک مسلسل جغرافیائی سفرنامہ۔ یہ شاہراہ خنجراب درے کے ذریعے پاکستان اور چین کو ملاتی ہے۔ نیپال اس سڑک پر نہیں؛ یہاں اسے متعلقہ ہمالیائی پس منظر کے طور پر دکھایا گیا ہے۔ یہ راستہ محنت، تجارت، انجینئرنگ اور نازک بلند پہاڑی ماحول کی جگہ ہے۔",
+      en: "A walkable Karakoram Highway, from the rock carvings of Chilas past Nanga Parbat, the meeting of three mountain ranges, Hunza, Attabad Lake, the Hussaini bridge, Passu and Sost, over Khunjerab Pass to Tashkurgan in China. Distances are compressed so you can walk the route. The highway is a place of work, trade, engineering and fragile high-altitude ecology. Nepal is not on this road.",
+      zh: "一条可以步行的喀喇昆仑公路：从奇拉斯岩画出发，经过南迦帕尔巴特峰、三大山脉交汇点、罕萨、阿塔巴德湖、侯赛尼吊桥、帕苏和苏斯特，翻越红其拉甫山口，抵达中国的塔什库尔干。距离经过压缩，方便步行走完全程。这条公路也是劳作、贸易、工程与脆弱高海拔生态并存之地。尼泊尔不在这条公路上。",
+      ne: "हिँडेर यात्रा गर्न सकिने काराकोरम राजमार्ग: चिलासका शिलाचित्रदेखि नाङ्गा पर्वत, तीन पर्वतशृङ्खलाको सङ्गम, हुन्जा, अटाबाद ताल, हुसैनी पुल, पासु र सोस्ट हुँदै खुन्जेराब भन्ज्याङ पार गरी चीनको ताशकुर्गनसम्म। दूरी छोट्याइएको छ। नेपाल यो सडकमा पर्दैन।",
+      ur: "پیدل چلنے کے قابل شاہراہ قراقرم: چلاس کے چٹانی نقوش سے نانگا پربت، تین پہاڑی سلسلوں کے سنگم، ہنزہ، عطا آباد جھیل، حسینی پل، پاسو اور سوست سے ہوتے ہوئے خنجراب درّے کے پار چین میں تاشقرغان تک۔ فاصلے کم کیے گئے ہیں۔ نیپال اس سڑک پر نہیں ہے۔",
     },
-    camera: { position: [32, 26, 42], target: [0, 6, 0], min: 18, max: 75 },
+    camera: { position: [0, 7.5, 13], target: [0, 2, 0], min: 4, max: 40 },
     mountain: true,
     journalUrl: "/stories/the-road-that-made-neighbours/",
   },
@@ -416,6 +416,211 @@ export const OBJECTS = [
       answer: 0,
       explain: "Hiti (dhunge dhara) are stone waterspouts fed by traditional channels. Kuhl is a canal term used in mountain Pakistan; a qanat and stepwell are different water systems.",
     },
+  },
+
+  /* Kathmandu Valley landmarks for the walkable valley world */
+  {
+    id: "ne-kasthamandap",
+    worldId: "kathmandu",
+    countryId: "nepal",
+    category: "architecture",
+    rarity: "epic",
+    names: { en: "Kasthamandap", zh: "加斯达满达木亭", ne: "काष्ठमण्डप", ur: "کاشٹھ منڈپ" },
+    localName: "काष्ठमण्डप · Kāṣṭhamaṇḍapa",
+    summary: {
+      en: "The wooden pavilion that gave Kathmandu its name.",
+      zh: "为加德满都命名的木结构凉亭。",
+      ne: "काठमाडौंलाई नाम दिने काठको मण्डप।",
+      ur: "وہ لکڑی کا منڈپ جس سے کٹھمنڈو کا نام پڑا۔",
+    },
+    story: {
+      en: "Kasthamandap is a three-roofed wooden pavilion in Kathmandu Durbar Square. For centuries it served as a public rest house where travellers and traders on the route between India and Tibet could stop, and it holds a shrine to Gorakhnath. Its name means \"wooden pavilion\" (kāṣṭha + maṇḍapa), and the city of Kathmandu takes its name from it.\n\nLegend says the whole building was made from the timber of a single sal tree. It collapsed in the April 2015 earthquake. Local communities rebuilt it with traditional materials and craft, and it reopened in 2021. This 3D version is a simplified homage.",
+      zh: "加斯达满达是加德满都杜巴广场上一座三层屋顶的木结构凉亭。几百年来，它是公共歇脚处，往来于印度与西藏之间商路上的旅人和商人都会在此停留，亭内还供奉着戈拉克纳特（Gorakhnath）。它的名字意为“木头凉亭”（kāṣṭha + maṇḍapa），加德满都这座城市的名字就来源于它。\n\n传说整座建筑用一棵娑罗树的木材建成。它在2015年4月的地震中倒塌，当地社区用传统材料和工艺重建，并于2021年重新开放。这里的三维版本是简化的致敬再现。",
+    },
+    fact: "The name Kathmandu comes from Kasthamandap: kāṣṭha means wood and maṇḍapa means pavilion.",
+    factI18n: { zh: "“加德满都”一名来自加斯达满达：kāṣṭha意为木头，maṇḍapa意为凉亭。" },
+    sources: [SRC.unescoKathmandu, SRC.kathmanduPost],
+    quiz: {
+      q: "What does the name Kasthamandap mean?",
+      options: ["Wooden pavilion", "Golden gate", "Lake of lotuses", "House of the goddess"],
+      answer: 0,
+      explain: "Kāṣṭha means wood and maṇḍapa means pavilion. The city of Kathmandu takes its name from this building.",
+    },
+    quizI18n: { zh: { q: "“加斯达满达”这个名字是什么意思？", options: ["木头凉亭", "金色大门", "莲花之湖", "女神之家"], answer: 0, explain: "kāṣṭha意为木头，maṇḍapa意为凉亭。加德满都的城名就来自这座建筑。" } },
+  },
+  {
+    id: "ne-kumari",
+    worldId: "kathmandu",
+    countryId: "nepal",
+    category: "traditions",
+    rarity: "epic",
+    names: { en: "Kumari Ghar", zh: "库玛丽女神庙", ne: "कुमारी घर", ur: "کماری گھر" },
+    localName: "कुमारी घर · Kumari Ghar",
+    summary: {
+      en: "Home of the Kumari, a girl revered as a living goddess.",
+      zh: "被尊为活女神的库玛丽的居所。",
+      ne: "जीवित देवीका रूपमा पुजिने कुमारीको निवास।",
+      ur: "کماری کا گھر، جسے زندہ دیوی مانا جاتا ہے۔",
+    },
+    story: {
+      en: "Kumari Ghar is the home of the Kumari, a young girl from the Newar Shakya community who is worshipped as a living goddess, an embodiment of the goddess Taleju. She lives here until she reaches puberty, when a new Kumari is chosen. During festivals such as Indra Jatra she is carried through the city in a chariot.\n\nThe building was completed in 1757 under King Jaya Prakash Malla. Its courtyard is lined with some of the finest carved wooden windows in the valley. The Kumari sometimes appears at an upper window; photographing her is not allowed, and the tradition deserves quiet respect.",
+      zh: "库玛丽女神庙是库玛丽的居所。库玛丽是来自纽瓦尔释迦（Shakya）社群的女孩，被视为女神塔莱珠（Taleju）的化身，作为活女神受人崇拜。她在这里生活到青春期，之后会选出新的库玛丽。在因陀罗节（Indra Jatra）等节日里，她会乘坐花车巡游全城。\n\n这座建筑于1757年在贾亚·普拉卡什·马拉国王时期建成，庭院四周是谷地最精美的雕花木窗之一。库玛丽有时会出现在楼上的窗口；不允许给她拍照，这一传统值得安静的尊重。",
+    },
+    fact: "By tradition the Kumari's feet should not touch the ground outside her home, so during processions she is carried or rides in a chariot.",
+    factI18n: { zh: "按照传统，库玛丽在家外时双脚不应触地，所以巡游时她由人抬着或乘坐花车。" },
+    sources: [SRC.unescoKathmandu, SRC.kathmanduPost],
+    quiz: {
+      q: "The Kumari is worshipped as an embodiment of which goddess?",
+      options: ["Taleju", "Saraswati", "Lakshmi", "Guanyin"],
+      answer: 0,
+      explain: "The Royal Kumari of Kathmandu is regarded as an embodiment of the goddess Taleju.",
+    },
+    quizI18n: { zh: { q: "库玛丽被视为哪位女神的化身？", options: ["塔莱珠", "萨拉斯瓦蒂", "拉克希米", "观音"], answer: 0, explain: "加德满都的皇家库玛丽被视为女神塔莱珠的化身。" } },
+  },
+  {
+    id: "ne-swayambhu",
+    worldId: "kathmandu",
+    countryId: "nepal",
+    category: "landmarks",
+    rarity: "legendary",
+    names: { en: "Swayambhunath Stupa", zh: "斯瓦扬布纳特佛塔（猴庙）", ne: "स्वयम्भू महाचैत्य", ur: "سویمبھوناتھ استوپا" },
+    localName: "स्वयम्भू · Swayambhu",
+    summary: {
+      en: "A hilltop stupa watched over by the eyes of the Buddha, and by its monkeys.",
+      zh: "山顶上的佛塔，佛眼俯瞰谷地，还有成群的猴子。",
+      ne: "बुद्धका आँखाले हेरिरहेको डाँडामाथिको स्तूप, र त्यहाँका बाँदर।",
+      ur: "پہاڑی پر استوپا جسے بدھ کی آنکھیں اور بندر دیکھتے ہیں۔",
+    },
+    story: {
+      en: "Swayambhu means \"self-existent\". Legend says the Kathmandu Valley was once a lake, and a lotus that shone with light grew in it. When the bodhisattva Manjushri cut a gorge to drain the lake, this hill appeared, and the stupa was built over the lotus. Geologists agree the valley was once a lake.\n\nIt is one of the oldest religious sites in the valley, with inscriptions from the 5th century, and Buddhists and Hindus both worship here. It is often called the Monkey Temple: hundreds of rhesus macaques live on the hill. Keep food out of sight, and walk around the stupa clockwise.",
+      zh: "斯瓦扬布（Swayambhu）意为“自生”。传说加德满都谷地曾是一片湖，湖中长出一朵发光的莲花。文殊菩萨劈开山谷放干湖水后，这座小山显现出来，佛塔就建在莲花之上。地质学家也认为，谷地在远古时期确实是一片湖泊。\n\n这里是谷地最古老的宗教圣地之一，有5世纪的碑文，佛教徒和印度教徒都在这里朝拜。它常被称为“猴庙”，山上生活着数百只猕猴。请把食物收好，并顺时针绕塔而行。",
+    },
+    fact: "The eastern stairway up to the stupa has 365 steps.",
+    factI18n: { zh: "通往佛塔的东侧台阶共有365级。" },
+    sources: [SRC.unescoKathmandu],
+    quiz: {
+      q: "What is Swayambhunath often called?",
+      options: ["The Monkey Temple", "The Golden Temple", "The Lotus Temple", "The Sky Temple"],
+      answer: 0,
+      explain: "Hundreds of rhesus macaques live on the hill, so Swayambhunath is widely known as the Monkey Temple.",
+    },
+    quizI18n: { zh: { q: "斯瓦扬布纳特常被称为什么？", options: ["猴庙", "金庙", "莲花寺", "天空之庙"], answer: 0, explain: "山上生活着数百只猕猴，所以斯瓦扬布纳特被普遍称为“猴庙”。" } },
+  },
+  {
+    id: "ne-pashupati",
+    worldId: "kathmandu",
+    countryId: "nepal",
+    category: "landmarks",
+    rarity: "legendary",
+    names: { en: "Pashupatinath Temple", zh: "帕舒帕蒂纳特神庙", ne: "पशुपतिनाथ मन्दिर", ur: "پشوپتی ناتھ مندر" },
+    localName: "पशुपतिनाथ · Pashupatinath",
+    summary: {
+      en: "Nepal's most sacred Hindu temple, on the banks of the Bagmati.",
+      zh: "尼泊尔最神圣的印度教神庙，坐落在巴格马蒂河畔。",
+      ne: "बागमती किनारमा रहेको नेपालको सबैभन्दा पवित्र हिन्दु मन्दिर।",
+      ur: "باگمتی کے کنارے نیپال کا سب سے مقدس ہندو مندر۔",
+    },
+    story: {
+      en: "Pashupatinath is Nepal's most important Hindu temple, dedicated to Shiva as Pashupati, \"lord of all living beings\". The pagoda has a two-tiered gilded roof and four silver-plated doors, and it stands on the west bank of the sacred Bagmati River. The present temple dates from the late 17th century, on a site that is far older.\n\nOnly Hindus may enter the main temple courtyard; visitors of other faiths watch from the terraces on the east bank. Along the river are ghats, where Hindu families cremate their loved ones, and each evening priests perform the Bagmati aarati with lamps and bells. These are private moments for families: watch quietly and do not photograph mourners.",
+      zh: "帕舒帕蒂纳特是尼泊尔最重要的印度教神庙，供奉以“帕舒帕蒂”（众生之主）形象出现的湿婆。这座塔式神庙有两层镀金屋顶和四扇包银大门，坐落在神圣的巴格马蒂河西岸。现存的庙宇建于17世纪末，但这个圣地的历史要古老得多。\n\n只有印度教徒可以进入主庙庭院，其他信仰的游客可以在河东岸的台阶上观看。河边有火葬台（ghat），印度教家庭在这里为逝去的亲人举行火葬；每天傍晚，祭司会用油灯和铃铛举行巴格马蒂河晚祷（aarati）。这些是家人的私人时刻，请安静观看，不要拍摄哀悼者。",
+    },
+    fact: "At Maha Shivaratri, hundreds of thousands of pilgrims and sadhus (holy men) gather at Pashupatinath.",
+    factI18n: { zh: "每逢湿婆节（Maha Shivaratri），数十万朝圣者和苦行僧会聚集在帕舒帕蒂纳特。" },
+    sources: [SRC.unescoKathmandu],
+    quiz: {
+      q: "Which deity is worshipped at Pashupatinath?",
+      options: ["Shiva", "Vishnu", "Ganesh", "Buddha"],
+      answer: 0,
+      explain: "Pashupatinath is dedicated to Shiva in his form as Pashupati, lord of all living beings.",
+    },
+    quizI18n: { zh: { q: "帕舒帕蒂纳特供奉的是哪位神？", options: ["湿婆", "毗湿奴", "象头神", "佛陀"], answer: 0, explain: "帕舒帕蒂纳特供奉的是以“众生之主”帕舒帕蒂形象出现的湿婆。" } },
+  },
+  {
+    id: "ne-boudha",
+    worldId: "kathmandu",
+    countryId: "nepal",
+    category: "landmarks",
+    rarity: "legendary",
+    names: { en: "Boudhanath Stupa", zh: "博达哈大佛塔", ne: "बौद्धनाथ स्तूप", ur: "بودھناتھ استوپا" },
+    localName: "बौद्ध · Boudha",
+    summary: {
+      en: "One of the world's largest stupas and a centre of Tibetan Buddhism.",
+      zh: "世界上最大的佛塔之一，也是藏传佛教的中心。",
+      ne: "विश्वकै ठूला स्तूपमध्ये एक र तिब्बती बौद्ध धर्मको केन्द्र।",
+      ur: "دنیا کے بڑے استوپوں میں سے ایک اور تبتی بدھ مت کا مرکز۔",
+    },
+    story: {
+      en: "Boudhanath is one of the largest stupas in the world and the heart of Tibetan Buddhism in Nepal. Its mandala-shaped base, white dome and gilded tower painted with the watchful eyes of the Buddha can be seen from far across the valley. The thirteen tiers of the tower stand for the stages on the path to enlightenment.\n\nMany Tibetans settled around Boudha after 1959, and dozens of monasteries now surround the stupa. Pilgrims walk around it clockwise, turning prayer wheels inscribed with Om Mani Padme Hum, and the prayer flags carry blessings on the wind. The stupa was damaged in the 2015 earthquake and restored by 2016.",
+      zh: "博达哈大佛塔是世界上最大的佛塔之一，也是尼泊尔藏传佛教的中心。它的曼荼罗形塔基、白色塔身和绘有佛眼的镀金塔顶，在谷地很远的地方都能看到。塔顶的十三层代表通往觉悟的各个阶段。\n\n1959年后，许多藏人在博达周围定居，如今佛塔四周有几十座寺院。朝圣者顺时针绕塔而行，转动刻有“唵嘛呢叭咪吽”的转经筒，经幡则把祝福带向风中。佛塔在2015年地震中受损，并于2016年修复完成。",
+    },
+    fact: "The five colours of prayer flags stand for the elements: blue for sky, white for air, red for fire, green for water and yellow for earth.",
+    factI18n: { zh: "经幡的五种颜色代表五大元素：蓝色为天空，白色为空气，红色为火，绿色为水，黄色为土。" },
+    sources: [SRC.unescoKathmandu],
+    quiz: {
+      q: "In which direction do pilgrims walk around Boudhanath?",
+      options: ["Clockwise", "Anticlockwise", "Straight through the middle", "They do not walk around it"],
+      answer: 0,
+      explain: "Pilgrims walk clockwise around the stupa, keeping it on their right side.",
+    },
+    quizI18n: { zh: { q: "朝圣者绕博达哈大佛塔行走的方向是？", options: ["顺时针", "逆时针", "从中间直穿", "不绕塔行走"], answer: 0, explain: "朝圣者顺时针绕塔，让佛塔始终在自己的右侧。" } },
+  },
+  {
+    id: "ne-krishna",
+    worldId: "kathmandu",
+    countryId: "nepal",
+    category: "architecture",
+    rarity: "epic",
+    names: { en: "Krishna Mandir, Patan", zh: "帕坦克里希纳神庙", ne: "कृष्ण मन्दिर, पाटन", ur: "کرشنا مندر، پاٹن" },
+    localName: "कृष्ण मन्दिर · Krishna Mandir",
+    summary: {
+      en: "A stone temple with 21 golden pinnacles in Patan Durbar Square.",
+      zh: "帕坦杜巴广场上一座有21个金色尖顶的石砌神庙。",
+      ne: "पाटन दरबार क्षेत्रमा २१ सुनौला गजुर भएको ढुङ्गाको मन्दिर।",
+      ur: "پاٹن دربار اسکوائر میں 21 سنہری چوٹیوں والا پتھر کا مندر۔",
+    },
+    story: {
+      en: "Krishna Mandir is a stone temple in the shikhara style of northern India, built in 1637 by King Siddhi Narasingh Malla. Its 21 golden pinnacles rise above Patan Durbar Square, among the brick-and-timber pagodas of the old royal city.\n\nFriezes carved along the first and second floors tell stories from the Mahabharata and the Ramayana. Patan, also called Lalitpur, \"city of beauty\", is known for metal craft, and workshops around the square still cast statues by hand.",
+      zh: "克里希纳神庙是一座北印度锡卡拉（shikhara）风格的石砌神庙，由悉地·纳拉辛哈·马拉国王于1637年修建。它的21个金色尖顶高耸在帕坦杜巴广场上，四周是古老王城的砖木塔庙。\n\n一层和二层的石雕饰带讲述了《摩诃婆罗多》和《罗摩衍那》中的故事。帕坦又名拉利特普尔（Lalitpur），意为“美丽之城”，以金属工艺闻名，广场周围的作坊至今仍用手工铸造神像。",
+    },
+    fact: "Krishna Mandir is built of stone, unlike the brick and timber pagodas around it.",
+    factI18n: { zh: "克里希纳神庙用石头建成，与周围的砖木塔庙不同。" },
+    sources: [SRC.unescoKathmandu],
+    quiz: {
+      q: "What material sets Krishna Mandir apart from the pagodas around it?",
+      options: ["Stone", "Bamboo", "Steel", "Glass"],
+      answer: 0,
+      explain: "Krishna Mandir is a stone shikhara temple, while most temples around it are brick and timber pagodas.",
+    },
+    quizI18n: { zh: { q: "克里希纳神庙与周围塔庙最大的不同在于什么材料？", options: ["石头", "竹子", "钢铁", "玻璃"], answer: 0, explain: "克里希纳神庙是石砌的锡卡拉式神庙，而周围大多数是砖木结构的塔庙。" } },
+  },
+  {
+    id: "ne-nagarkot",
+    worldId: "kathmandu",
+    countryId: "nepal",
+    category: "landmarks",
+    rarity: "rare",
+    names: { en: "Nagarkot Viewpoint", zh: "纳加阔特观景台", ne: "नगरकोट दृश्यस्थल", ur: "نگرکوٹ ویو پوائنٹ" },
+    localName: "नगरकोट · Nagarkot",
+    summary: {
+      en: "A ridge on the valley's rim with views of the Himalaya.",
+      zh: "谷地边缘的山脊，可远眺喜马拉雅山脉。",
+      ne: "उपत्यकाको किनारको डाँडा, जहाँबाट हिमाल देखिन्छ।",
+      ur: "وادی کے کنارے پہاڑی جہاں سے ہمالیہ نظر آتا ہے۔",
+    },
+    story: {
+      en: "Nagarkot is a hill station on the eastern rim of the Kathmandu Valley, about 2,175 m above sea level and roughly 32 km from Kathmandu. On a clear day the view runs along the Himalaya, including Langtang and Ganesh Himal, and on the clearest mornings it reaches the Everest region.\n\nAutumn, after the monsoon, brings the clearest skies, and sunrise is the classic time to come. In this 3D valley the high peaks lie to the north, and distances are compressed so you can walk between places.",
+      zh: "纳加阔特是加德满都谷地东缘的一处山间小镇，海拔约2175米，距加德满都约32公里。天气晴朗时，可以远眺喜马拉雅山脉，包括朗塘和加内什峰；在最晴朗的清晨，视野甚至能延伸到珠穆朗玛峰一带。\n\n雨季过后的秋天天空最为清澈，日出是来这里的经典时刻。在这个三维谷地里，高山位于北方，各地之间的距离做了压缩，方便你步行往来。",
+    },
+    fact: "October and November usually bring the clearest mountain views from the valley rim.",
+    factI18n: { zh: "十月和十一月通常是从谷地边缘眺望雪山最清晰的时节。" },
+    sources: [{ label: "Nepal Tourism Board", url: "https://ntb.gov.np/" }],
+    quiz: {
+      q: "When is the classic time to watch the Himalaya from Nagarkot?",
+      options: ["Sunrise", "Midnight", "Noon in the monsoon", "Only in winter fog"],
+      answer: 0,
+      explain: "Sunrise on a clear autumn morning is the classic Nagarkot view.",
+    },
+    quizI18n: { zh: { q: "在纳加阔特观赏喜马拉雅的经典时刻是？", options: ["日出", "午夜", "雨季的正午", "冬季大雾时"], answer: 0, explain: "晴朗秋日清晨的日出是纳加阔特最经典的景色。" } },
   },
 
   /* ------------------------------------------------------------- PAKISTAN */
@@ -1048,6 +1253,153 @@ export const OBJECTS = [
     },
   },
 
+  /* Karakoram Highway landmarks for the walkable route world */
+  {
+    id: "kk-chilas",
+    worldId: "karakoram",
+    countryId: "pakistan",
+    category: "landmarks",
+    rarity: "epic",
+    names: { en: "Chilas Rock Carvings", zh: "奇拉斯岩画", ne: "चिलास शिलाचित्र", ur: "چلاس کے چٹانی نقوش" },
+    localName: "چلاس · Chilas",
+    summary: {
+      en: "Thousands of pictures and inscriptions scratched into the rocks beside the Indus.",
+      zh: "印度河畔岩石上刻下的成千上万幅图画和铭文。",
+      ne: "सिन्धु नदी किनारका चट्टानमा कोरिएका हजारौं चित्र र अभिलेख।",
+      ur: "دریائے سندھ کے کنارے چٹانوں پر کندہ ہزاروں تصاویر اور تحریریں۔",
+    },
+    story: {
+      en: "Along the Karakoram Highway between Shatial and Hunza, and especially around Chilas, thousands of carvings cover the dark, sun-varnished boulders of the Indus valley. The oldest show hunters and animals such as ibex; later ones show Buddhist stupas and figures, with inscriptions in old scripts such as Kharoshthi and Brahmi. Together they record the travellers, pilgrims and traders who used this route long before the modern road.\n\nMany of these rocks lie in the area that the reservoir of the Diamer-Bhasha Dam, under construction downstream, is expected to flood. Researchers have worked to document them. Look closely, but never scratch, chalk or wet the carvings to make them easier to photograph.",
+      zh: "在喀喇昆仑公路沿线，从夏蒂亚尔到罕萨，尤其是奇拉斯附近，印度河谷深色、被阳光“漆”过的巨石上布满了成千上万的刻画。最古老的刻着猎人和北山羊等动物；较晚的刻有佛塔和佛像，还有佉卢文、婆罗米文等古老文字的铭文。它们记录了远在现代公路出现之前，就沿着这条路线往来的旅人、朝圣者和商人。\n\n其中许多岩石位于下游正在修建的迪阿梅尔—巴沙水坝预计会淹没的区域，研究人员一直在努力记录它们。可以仔细观看，但千万不要刮擦、涂粉笔或泼水来让刻画更容易拍照。",
+    },
+    fact: "Some Chilas inscriptions are written in Kharoshthi and Brahmi, scripts used in the region about two thousand years ago.",
+    factI18n: { zh: "奇拉斯的一些铭文使用佉卢文和婆罗米文书写，这些文字大约两千年前在这一地区使用。" },
+    sources: [SRC.kkh],
+    quiz: {
+      q: "What do many of the Chilas rock carvings show?",
+      options: ["Animals such as ibex, and Buddhist stupas", "Railway timetables", "Modern road signs", "Maps of the ocean"],
+      answer: 0,
+      explain: "The carvings range from hunting scenes and ibex to Buddhist stupas and inscriptions left by travellers and pilgrims.",
+    },
+    quizI18n: { zh: { q: "奇拉斯岩画中常见的内容是什么？", options: ["北山羊等动物和佛塔", "火车时刻表", "现代路标", "海洋地图"], answer: 0, explain: "这些刻画从狩猎场景、北山羊到佛塔，以及旅人和朝圣者留下的铭文都有。" } },
+  },
+  {
+    id: "kk-nangaparbat",
+    worldId: "karakoram",
+    countryId: "pakistan",
+    category: "landmarks",
+    rarity: "legendary",
+    names: { en: "Nanga Parbat Viewpoint", zh: "南迦帕尔巴特峰观景点", ne: "नाङ्गा पर्वत दृश्यबिन्दु", ur: "نانگا پربت ویو پوائنٹ" },
+    localName: "نانگا پربت · Nanga Parbat",
+    summary: {
+      en: "The ninth-highest mountain on Earth rises straight out of the Indus valley.",
+      zh: "世界第九高峰从印度河谷拔地而起。",
+      ne: "पृथ्वीको नवौं अग्लो हिमाल सिन्धु उपत्यकाबाट सिधै उठ्छ।",
+      ur: "دنیا کا نواں بلند ترین پہاڑ وادیٔ سندھ سے سیدھا اٹھتا ہے۔",
+    },
+    story: {
+      en: "Nanga Parbat, 8,126 m, is the ninth-highest mountain in the world and the western anchor of the Himalaya. From the Karakoram Highway near Raikot Bridge, where the jeep track to Fairy Meadows begins, its snow and ice rise thousands of metres above the hot, dry floor of the Indus valley. Its Rupal Face on the south side is one of the tallest mountain walls on Earth.\n\nThe name means \"naked mountain\". Early expeditions lost many climbers, which earned it the nickname \"Killer Mountain\", and the first ascent was made in 1953 by Hermann Buhl. For most travellers the mountain is something to look at from the road, and the view alone is worth the stop.",
+      zh: "南迦帕尔巴特峰海拔8126米，是世界第九高峰，也是喜马拉雅山脉的西端支柱。在喀喇昆仑公路的雷科特桥附近（通往仙境草原的吉普车道由此开始），可以看到它的冰雪在炎热干燥的印度河谷之上高出数千米。它南侧的鲁帕尔岩壁是地球上最高的山壁之一。\n\n这个名字的意思是“赤裸的山”。早期的登山队在这里失去了许多队员，因此它有“杀人峰”之称；1953年，赫尔曼·布尔首次登顶。对大多数旅人来说，这座山是在公路上远眺的风景，仅这一眼就值得停车。",
+    },
+    fact: "Nanga Parbat is 8,126 m high, the ninth-highest mountain in the world.",
+    factI18n: { zh: "南迦帕尔巴特峰海拔8126米，是世界第九高峰。" },
+    sources: [{ label: "Britannica · Nanga Parbat", url: "https://www.britannica.com/place/Nanga-Parbat" }],
+    quiz: {
+      q: "How high is Nanga Parbat?",
+      options: ["8,126 m", "4,693 m", "6,000 m", "8,848 m"],
+      answer: 0,
+      explain: "Nanga Parbat is 8,126 m. 4,693 m is Khunjerab Pass, and 8,848 m is Everest.",
+    },
+    quizI18n: { zh: { q: "南迦帕尔巴特峰有多高？", options: ["8126米", "4693米", "6000米", "8848米"], answer: 0, explain: "南迦帕尔巴特峰高8126米。4693米是红其拉甫山口的海拔，8848米是珠穆朗玛峰。" } },
+  },
+  {
+    id: "kk-junction",
+    worldId: "karakoram",
+    countryId: "pakistan",
+    category: "landmarks",
+    rarity: "epic",
+    names: { en: "Junction of Three Mountain Ranges", zh: "三大山脉交汇点", ne: "तीन पर्वतशृङ्खलाको सङ्गम", ur: "تین پہاڑی سلسلوں کا سنگم" },
+    localName: "جگلوٹ · Jaglot",
+    summary: {
+      en: "Where the Himalaya, the Karakoram and the Hindu Kush meet.",
+      zh: "喜马拉雅、喀喇昆仑和兴都库什三大山脉在此交汇。",
+      ne: "जहाँ हिमालय, काराकोरम र हिन्दुकुश भेटिन्छन्।",
+      ur: "جہاں ہمالیہ، قراقرم اور ہندوکش ملتے ہیں۔",
+    },
+    story: {
+      en: "Near Jaglot, a roadside viewpoint on the Karakoram Highway marks the place where three of the world's great mountain ranges meet: the Himalaya to the south-east, the Karakoram to the north and the Hindu Kush to the west. Nearby, the Gilgit River flows into the Indus.\n\nThe ranges were pushed up by the slow collision of the Indian plate with Asia, which is still going on. That is why this landscape has steep, young slopes, frequent landslides and earthquakes, and why keeping the highway open is constant work.",
+      zh: "在贾格洛特附近，喀喇昆仑公路边的一处观景点标出了世界三大山脉交汇的地方：东南是喜马拉雅山脉，北面是喀喇昆仑山脉，西面是兴都库什山脉。附近，吉尔吉特河汇入印度河。\n\n这些山脉是印度板块与亚洲板块缓慢碰撞抬升而成的，这一过程至今仍在继续。所以这里山坡陡峭而年轻，滑坡和地震频繁，保持公路畅通是一项永不停歇的工作。",
+    },
+    fact: "Near the junction viewpoint, the Gilgit River joins the Indus.",
+    factI18n: { zh: "在交汇点观景台附近，吉尔吉特河汇入印度河。" },
+    sources: [SRC.kkh],
+    quiz: {
+      q: "Which three mountain ranges meet near Jaglot?",
+      options: ["Himalaya, Karakoram and Hindu Kush", "Alps, Andes and Rockies", "Tian Shan, Altai and Ural", "Himalaya, Kunlun and Qinling"],
+      answer: 0,
+      explain: "The Himalaya, Karakoram and Hindu Kush meet in this part of Gilgit-Baltistan.",
+    },
+    quizI18n: { zh: { q: "在贾格洛特附近交汇的是哪三大山脉？", options: ["喜马拉雅、喀喇昆仑和兴都库什", "阿尔卑斯、安第斯和落基山", "天山、阿尔泰和乌拉尔", "喜马拉雅、昆仑和秦岭"], answer: 0, explain: "喜马拉雅、喀喇昆仑和兴都库什三大山脉在吉尔吉特—巴尔蒂斯坦这一带交汇。" } },
+  },
+  {
+    id: "kk-hussaini",
+    worldId: "karakoram",
+    countryId: "pakistan",
+    category: "traditions",
+    rarity: "rare",
+    names: { en: "Hussaini Suspension Bridge", zh: "侯赛尼吊桥", ne: "हुसैनी झोलुङ्गे पुल", ur: "حسینی معلق پل" },
+    localName: "حسینی · Hussaini",
+    summary: {
+      en: "Planks, cables and a long look down at the Hunza River.",
+      zh: "木板、钢索，以及脚下奔流的罕萨河。",
+      ne: "फल्याक, तार र तल हुन्जा नदीको लामो दृश्य।",
+      ur: "تختے، رسے اور نیچے دریائے ہنزہ کا لمبا نظارہ۔",
+    },
+    story: {
+      en: "The Hussaini bridge is a footbridge of wooden planks and steel cables strung across the Hunza River near Hussaini village, close to Passu. The planks are spaced with gaps between them, the bridge sways in the wind, and it is often described as one of the most frightening bridges in the world.\n\nFor villagers it has been a practical crossing to fields and pastures on the far bank, and it has been rebuilt after floods. If you cross, go one at a time, hold the side cables, and turn back in strong wind or high water. Here you can walk across it.",
+      zh: "侯赛尼吊桥是一座横跨罕萨河的人行桥，位于帕苏附近的侯赛尼村，由木板和钢索搭成。木板之间留有空隙，桥在风中摇晃，常被称为世界上最惊险的桥之一。\n\n对村民来说，它是通往对岸田地和牧场的实用通道，曾在洪水后多次重建。如果要过桥，请一人一人地走，抓紧两侧的钢索，遇到大风或河水上涨时就返回。在这里，你可以亲自走过去。",
+    },
+    fact: "The bridge crosses the Hunza River near Hussaini village, a short drive from Passu.",
+    factI18n: { zh: "这座桥在侯赛尼村附近横跨罕萨河，距帕苏只有很短的车程。" },
+    sources: [{ label: "Gilgit-Baltistan Tourism", url: "https://visitgilgitbaltistan.gov.pk/" }],
+    quiz: {
+      q: "Which river does the Hussaini bridge cross?",
+      options: ["The Hunza River", "The Ganges", "The Yangtze", "The Bagmati"],
+      answer: 0,
+      explain: "The Hussaini suspension bridge crosses the Hunza River in upper Hunza.",
+    },
+    quizI18n: { zh: { q: "侯赛尼吊桥横跨哪条河？", options: ["罕萨河", "恒河", "长江", "巴格马蒂河"], answer: 0, explain: "侯赛尼吊桥位于上罕萨，横跨罕萨河。" } },
+  },
+  {
+    id: "kk-tashkurgan",
+    worldId: "karakoram",
+    countryId: "china",
+    category: "landmarks",
+    rarity: "epic",
+    names: { en: "Tashkurgan Stone City", zh: "塔什库尔干石头城", ne: "ताशकुर्गन ढुङ्गे सहर", ur: "تاشقرغان پتھر کا شہر" },
+    localName: "塔什库尔干 · Tashkurgan",
+    summary: {
+      en: "Ruined fortress walls above the high plain on the Chinese side of the pass.",
+      zh: "山口中方一侧高原上的古城堡遗址。",
+      ne: "भन्ज्याङको चिनियाँ पट्टि उच्च मैदानमाथि भत्केका किल्लाका पर्खाल।",
+      ur: "درّے کے چینی جانب بلند میدان پر قلعے کی کھنڈر دیواریں۔",
+    },
+    story: {
+      en: "After Khunjerab Pass the highway descends into China and crosses the high grassland of Tashkurgan, the seat of the Tashkurgan Tajik Autonomous County in Xinjiang. Many residents are Tajiks, whose languages belong to the Pamir group; women's tall embroidered kulta hats are a well-known sign of local dress.\n\nOn a mound at the edge of town stand the ruins of the Stone City, a fortress that guarded this Silk Road crossing for many centuries; most of the walls you see come from later rebuilding. From here the road continues north to Kashgar.",
+      zh: "翻过红其拉甫山口后，公路下行进入中国，穿过塔什库尔干的高原草场。塔什库尔干是新疆塔什库尔干塔吉克自治县的县城，许多居民是塔吉克族，他们的语言属于帕米尔语支；女性头戴的高筒刺绣“库勒塔”帽是当地服饰的鲜明标志。\n\n在城边的一座土丘上，矗立着石头城的遗址。这座城堡守护这一丝绸之路通道达许多世纪，如今看到的城墙大多来自后来的重建。公路从这里继续向北通往喀什。",
+    },
+    fact: "From Tashkurgan the Karakoram Highway continues north to Kashgar.",
+    factI18n: { zh: "喀喇昆仑公路从塔什库尔干继续向北通往喀什。" },
+    sources: [SRC.silkRoad, SRC.kkh],
+    quiz: {
+      q: "Which community gives Tashkurgan County its name?",
+      options: ["Tajik", "Newar", "Sherpa", "Burusho"],
+      answer: 0,
+      explain: "Tashkurgan is the seat of the Tashkurgan Tajik Autonomous County in Xinjiang.",
+    },
+    quizI18n: { zh: { q: "塔什库尔干县以哪个民族命名？", options: ["塔吉克族", "纽瓦尔人", "夏尔巴人", "布鲁肖人"], answer: 0, explain: "塔什库尔干是新疆塔什库尔干塔吉克自治县的县城。" } },
+  },
+
   /* -------------------------------------------------------------- JOURNEY */
   {
     id: "jo-trailhead",
@@ -1128,6 +1480,108 @@ export const OBJECTS = [
     },
   },
 ];
+
+/* Chinese story, fact and quiz text for the Kathmandu discoveries. */
+const KATHMANDU_ZH = {
+  "ne-window": {
+    story: "在加德满都谷地，窗户不只是墙上的一个洞。纽瓦尔工匠把烧制的砖、木框和雕花板结合起来，做出向街道伸出的深窗。娑罗树木材上雕有格栅、卷草纹、守护神像，著名的例子里还有孔雀。\n\n这些手艺属于有名有姓的匠人家族和街区，如何修复、新建与发展旅游，至今仍是活生生的讨论。这扇窗是综合风格的再现，并非某一座受保护古迹的复制品。",
+    fact: "巴克塔普尔的孔雀窗是谷地最著名的雕花窗之一；许多古窗容易遭受盗窃、火灾和不当修缮的破坏。",
+    quiz: { q: "纽瓦尔建筑的雕花窗最常用什么材料？", options: ["雕花木材", "铸铁", "大理石", "竹席"], answer: 0, explain: "纽瓦尔建筑立面把砖与精雕的木框和格栅窗结合在一起，木雕是谷地建筑的标志。" },
+  },
+  "ne-momo": {
+    story: "馍馍（momo）是包着肉或蔬菜的蒸饺，通常配上阿查尔（achar）——一种常用番茄、芝麻和辣椒做成的酸辣酱。它是尼泊尔各地的日常街头小吃，馅料和酱汁因家庭和地区而异。\n\n饺子这种形式在喜马拉雅和中亚各地流传，但形状相似并不意味着只有一个起源或一种做法。尼泊尔的馍馍文化有自己的小摊、时间、褶子，以及关于哪种阿查尔最好吃的争论。",
+    fact: "馍馍通常放在层层叠起的蒸笼里蒸。褶子的数量没有统一规定，各家各店包法不同。",
+    quiz: { q: "在尼泊尔，馍馍通常搭配什么一起吃？", options: ["阿查尔酱（achar）", "德国酸菜", "枫糖浆", "味噌汤"], answer: 0, explain: "阿查尔是馍馍常配的酸辣酱或腌菜，各家做法差别很大。" },
+  },
+  "ne-topi": {
+    story: "达卡帽（dhaka topi）是一种无檐帽，用达卡布制成——一种带几何图案的手织棉布。人们在正式场合、节日和官方活动中佩戴它，它也成为尼泊尔身份认同的象征之一。\n\n但它并不是每个尼泊尔人的日常装束，尼泊尔各民族还有许多其他帽子、布料和服饰。达卡织造与帕尔帕（Palpa）等地有关，图案因作坊而异。与其把它当作国服，不如问一问这块布是谁织的。",
+    fact: "达卡布用手工织机织成；这顶帽子是某些场合的象征，并不代表所有尼泊尔服饰。",
+    quiz: { q: "达卡帽是用什么做的？", options: ["手织达卡布", "压制羊毛毡", "木版印花丝绸", "编织竹篾"], answer: 0, explain: "达卡帽由达卡布制成，这是一种手织的带图案棉布，款式和质量各不相同。" },
+  },
+  "ne-madal": {
+    story: "马达尔鼓（madal）是一种双面圆筒鼓，横放并用双手击打。它是许多尼泊尔民间音乐的核心，常在庆典、聚会和舞蹈表演中响起。鼓面上涂有调音膏，小木楔用来拉紧绑绳。\n\n不同社群和地区的演奏风格与曲目各不相同，并不存在唯一的“尼泊尔节奏”。这件乐器也提醒我们，民间传统是活的、不断变化的实践，而不是博物馆里固定不变的物件。",
+    fact: "马达尔鼓属于膜鸣乐器，靠绷紧的皮膜发声，两面鼓皮可以分别调音。",
+    quiz: { q: "马达尔鼓属于哪一类乐器？", options: ["打击乐器（膜鸣乐器）", "弦乐器", "木管乐器", "键盘乐器"], answer: 0, explain: "马达尔是一种鼓，靠绷在木制鼓身上的皮膜振动发声。" },
+  },
+  "ne-marigold": {
+    story: "万寿菊花环是尼泊尔许多地方节日和家庭生活的一部分，在德赛节（Dashain）和灯节（Tihar）前后尤其常见。人们用它装饰门口、车辆、神龛，也用来迎接客人，花瓣还用于普迦供奉。大节日前几天，花市格外热闹。\n\n习俗因社群和家庭而异。这里的花环代表一种常见的庆祝视觉语言，并不代表尼泊尔所有的节日或宗教传统。",
+    fact: "灯节有好几天，每天的习俗不同，包括敬狗、敬牛和兄弟姐妹之间的祝福，并不是一个统一的仪式。",
+    quiz: { q: "万寿菊花环尤其与尼泊尔哪个节日季节相关？", options: ["德赛节和灯节", "开斋节", "中秋节", "诺鲁孜节"], answer: 0, explain: "万寿菊在德赛节和灯节的装饰与供奉中十分突出，但各家各社群的习俗不同。" },
+  },
+  "ne-temple": {
+    story: "尼亚塔波拉神庙位于巴克塔普尔的陶马迪广场。这座五层塔式神庙建于1701—1702年，由布帕亭德拉·马拉国王主持修建，供奉女神悉地·拉克希米（Siddhi Lakshmi）。阶梯式台基两侧排列着成对的守护像：大象、狮子、狮鹫和女神。\n\n它是一座仍在使用的宗教场所，而不只是拍照的背景。参访规则和宗教活动可能限制进入某些部分，2015年地震后，保护工作也一直在持续。这里的三维再现经过刻意简化，不应作为真实建筑的指南。",
+    fact: "尼亚塔波拉通常被称为尼泊尔最高的塔式神庙，从台基算起高约30米。",
+    quiz: { q: "尼亚塔波拉神庙位于哪座城市？", options: ["巴克塔普尔", "博卡拉", "蓝毗尼", "拉合尔"], answer: 0, explain: "尼亚塔波拉位于加德满都谷地巴克塔普尔的陶马迪广场。" },
+  },
+  "ne-lokta": {
+    story: "洛克塔纸用尼泊尔中部山区采收的瑞香属灌木内层树皮制成。树皮经过蒸煮、捶打后悬浮在水中，再捞成纸张。可见的纤维让纸张坚韧，表面柔和而不平整，常用于手稿、卡片和包装。\n\n和许多手工艺一样，生产受到林地使用、劳动力和市场的影响。手工纸并不自动等于可持续，负责任的采收和公平的报酬同样重要。这里的作坊是风格化场景，并不指某一个具体的合作社。",
+    fact: "洛克塔植株经过谨慎采收后可以再生，管理得当时是可再生的原料；但纸张是否合乎伦理，取决于整条供应链。",
+    quiz: { q: "洛克塔纸是用什么材料做的？", options: ["洛克塔灌木的内层树皮", "只用棉布碎料", "稻草和黏土", "回收塑料"], answer: 0, explain: "洛克塔纸来自瑞香属灌木的树皮，纤维经蒸煮、捶打后手工抄成纸张。" },
+  },
+  "ne-hiti": {
+    story: "希蒂（hiti），又称石水口（dhunge dhara），是遍布加德满都谷地的传统石砌水口。水通过地下渠道流到下沉式的出水口，出水口常雕成神祇或动物的头像。有些已有数百年历史，至今仍是街区生活中实际使用的设施。\n\n帕坦的芒嘎希蒂（Manga Hiti）被普遍认为是最古老的仍在使用的石水口之一，碑文显示其年代可追溯到6世纪。这些都是在用的公共设施：请保持清洁，不要攀爬雕刻，并注意并非所有水都可以直接饮用。",
+    fact: "帕坦的芒嘎希蒂有三个鳄鱼头形的出水口，是谷地现存最古老、仍在运作的供水系统之一。",
+    quiz: { q: "加德满都谷地传统的石砌水口叫什么？", options: ["希蒂（石水口）", "库尔水渠（kuhl）", "坎儿井（qanat）", "阶梯井"], answer: 0, explain: "希蒂是由传统渠道供水的石砌水口。库尔是巴基斯坦山区的水渠术语，坎儿井和阶梯井是不同的供水系统。" },
+  },
+};
+OBJECTS.forEach((object) => {
+  const zh = KATHMANDU_ZH[object.id];
+  if (!zh) return;
+  object.story = { ...object.story, zh: zh.story };
+  object.factI18n = { ...(object.factI18n || {}), zh: zh.fact };
+  object.quizI18n = { ...(object.quizI18n || {}), zh: zh.quiz };
+});
+
+/* Chinese story, fact and quiz text for the Karakoram discoveries. */
+const KARAKORAM_ZH = {
+  "kk-pass": {
+    story: "红其拉甫山口位于喀喇昆仑山脉，海拔约4693米，地处巴基斯坦与中国的边境上。它是世界上海拔最高的铺装国际边境通道之一，能否通行取决于天气，出发前务必查清当时的路况和边境手续，不能临时起意。\n\n山口也是一个高海拔生态系统。请给自己留出适应海拔的时间，带足饮水，不要乱扔垃圾，尊重野生动物和边境规定。这里的石碑是风格化的展品，并非官方界碑的复制品。",
+    fact: "红其拉甫山口海拔约4693米，可能因降雪和边境开放时间而关闭。",
+    quiz: { q: "红其拉甫山口连接哪两个国家？", options: ["巴基斯坦和中国", "尼泊尔和印度", "中国和蒙古", "巴基斯坦和伊朗"], answer: 0, explain: "红其拉甫山口位于巴基斯坦与中国的边境上，喀喇昆仑公路由此穿过。" },
+  },
+  "kk-market": {
+    story: "苏斯特是上罕萨的一个小镇，也是喀喇昆仑公路上的物流节点，这里有陆港和与跨境贸易相关的路边服务。这里的路边小摊代表着这条路线上的劳作生活：茶、杏干、罐头、燃料和消息。\n\n这不是古老的商队驿站，而是由卡车、边境时间表、季节性旅游和货物流动塑造的现代聚落。买一杯茶很容易，弄懂背后的供应链则要花更多时间。",
+    fact: "苏斯特位于上罕萨，靠近红其拉甫边境的巴基斯坦一侧，是贸易和交通枢纽。",
+    quiz: { q: "为什么苏斯特在这条路线上很重要？", options: ["它是靠近边境的贸易和交通枢纽", "它是尼泊尔的首都", "它是沙漠油田", "它是陨石撞出的湖"], answer: 0, explain: "苏斯特虽小，却是上罕萨靠近红其拉甫口岸的重要物流和贸易聚落。" },
+  },
+  "kk-marker": {
+    story: "喀喇昆仑公路建于1959年至1979年间，穿越地球上最不稳定的山区之一，经红其拉甫山口连接巴基斯坦与中国。它是一项现代工程，而不是古代的丝绸之路。\n\n这条路改变了人们上学、就医、赶集和旅游的条件，同时也带来了交通、土地用途的变化和风险。它的故事包括成千上万的筑路工人，以及持续不断的滑坡和冰川灾害。里程碑是一个好地方，可以问一问：这条路是谁修的，谁在维护，谁能走这条路？",
+    fact: "这条公路全长约1300公里，修了二十年，于1979年建成。",
+    quiz: { q: "喀喇昆仑公路是哪一年建成的？", options: ["1979年", "1901年", "2005年", "1650年"], answer: 0, explain: "公路于1959年至1979年间修建，是一项现代工程，而不是古代丝绸之路。" },
+  },
+  "kk-village": {
+    story: "帕苏是上罕萨的一个村庄，紧邻被称为帕苏锥峰（又名图波普丹）的壮观山脊。梯田和果园展示了家家户户如何利用狭窄的河谷土地；罕萨河和附近的冰川既塑造了风景，也供应着用水。\n\n旅游和公路改变了村庄的经济。一张空荡梯田的照片，可能掩盖了维护它所付出的劳动。拍摄房屋或人物前请先征得同意，尽量雇用本地向导，并把垃圾带走。",
+    fact: "帕苏锥峰是帕苏附近一道独特的山脊，周边还有冰川和河流景观。",
+    quiz: { q: "帕苏锥峰是什么？", options: ["帕苏村附近的一道山脊", "一种杏子", "一种刺绣风格", "一座边境大门"], answer: 0, explain: "帕苏锥峰（图波普丹）是帕苏附近一道壮观的山脊，而不是手工艺品或食物。帕苏村位于上罕萨。" },
+  },
+  "kk-craft": {
+    story: "罕萨到边境之间的路边小摊出售羊毛袜、披肩、帽子、木雕和小纪念品。有些是本地制作的，有些混合了本地和外来的材料，有些则是专为游客市场设计的。这种混合本身就是当代经济的一部分，并不代表“不正宗”。\n\n可以问一问哪些是手工制作的、羊毛来自哪里、是谁做的。不要购买野生动物制品或来源不明的东西。买少而精的物品，往往比买一袋一模一样的小玩意更能支持手艺人。",
+    fact: "在高山地区，羊毛衣物十分实用；一些面向游客的设计把本地图案与迎合外来买家的款式结合在一起。",
+    quiz: { q: "购买山区手工艺品时，负责任的做法是什么？", options: ["询问来源、材料和制作者", "认定所有看起来旧的东西都是古董", "购买野生动物制品当纪念品", "从不和卖家交谈"], answer: 0, explain: "多提问，不买野生动物制品，尽量向手艺人或合作社购买。年代和“正宗”并不是衡量价值的唯一标准。" },
+  },
+  "kk-exchange": {
+    story: "这个站点是一个主题展品，而不是历史建筑。它想象了公路边的一张桌子，人们在这里交换茶、语言、音乐和实际的帮助。交流确实存在，但并不总是平等的：旅游、边境政策和贸易决定了谁能出行、谁能发声。\n\n尼泊尔不在喀喇昆仑公路上，但喜马拉雅地区的文化联系远比一条路更广。这个站点请游客多倾听、先征得同意，带着问题离开，而不是带走一句整齐的“共同文化”口号。",
+    fact: "喀喇昆仑公路连接巴基斯坦和中国；尼泊尔是相关的喜马拉雅背景，并不是这条路上的一站。",
+    quiz: { q: "尼泊尔位于喀喇昆仑公路上吗？", options: ["不在——这条公路连接巴基斯坦和中国", "在，位于南端", "在，经过加德满都", "只有冬天在"], answer: 0, explain: "尼泊尔是有着相关历史的喜马拉雅邻国，但喀喇昆仑公路连接的是巴基斯坦和中国，并不经过尼泊尔。" },
+  },
+  "kk-view": {
+    story: "2010年1月，一场巨大的山体滑坡堵塞了罕萨河，形成了阿塔巴德湖。上涨的湖水淹没了村庄、农田和部分公路，迫使当地社区搬迁。后来的工程修建了泄洪道、隧道和改线的新公路。\n\n如今碧绿的湖水成了旅游景点，但这份美丽并不能抵消人们失去家园的经历。来访时请记住这段历史，支持本地人经营的服务，并注意水边和不稳定的山坡。“灾难旅游”是一种选择，而不是必然。",
+    fact: "2010年的滑坡堵塞了罕萨河，形成了一个长约20公里的湖，公路因此被迫大规模重建。",
+    quiz: { q: "阿塔巴德湖是怎样形成的？", options: ["山体滑坡堵塞了罕萨河", "冰川刨蚀出新的山谷", "为水电站修建了大坝", "陨石撞击山谷"], answer: 0, explain: "2010年1月的一场巨大滑坡堵住了罕萨河，形成了湖泊，并使当地社区被迫搬迁。" },
+  },
+  "kk-monument": {
+    story: "喀喇昆仑公路穿越陡峭的山谷、冰川和活动断层。修建和维护这条路曾付出生命的代价，至今仍需不断与滑坡和洪水抗争。历史纪念碑很容易变成一串日期；更好的纪念碑会问：是谁付出了劳动，又是谁承担着风险？\n\n官方叙述强调中巴合作和工程成就；批评性的叙述则补充了劳动条件、环境变化和不平等的通行机会。两者都应该出现在一个诚实的展览里。这里的石碑代表着这场更大的讨论。",
+    fact: "这条公路修建了几十年，至今仍需在滑坡、洪水和地震后不断修复。",
+    quiz: { q: "一部细致的喀喇昆仑公路历史应该包括什么？", options: ["工人、工程、风险和环境变化", "只列出旅游观景点", "只有车辆统计数据", "只讲一个国家的故事"], answer: 0, explain: "更完整的叙述包括修路劳动、工程技术、搬迁、环境风险以及公路持续不断的维护。" },
+  },
+};
+OBJECTS.forEach((object) => {
+  const zh = KARAKORAM_ZH[object.id];
+  if (!zh) return;
+  object.story = { ...object.story, zh: zh.story };
+  object.factI18n = { ...(object.factI18n || {}), zh: zh.fact };
+  object.quizI18n = { ...(object.quizI18n || {}), zh: zh.quiz };
+});
 
 export const OBJECTS_BY_WORLD = Object.fromEntries(
   Object.keys(WORLDS).map((worldId) => [

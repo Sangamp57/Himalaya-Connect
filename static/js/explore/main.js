@@ -518,9 +518,10 @@ function autoCollectCard(cardId) {
 function showObjectQuiz(object) {
   const quizId = `object-${object.id}`;
   const previous = store.getQuizResult(quizId);
+  const localQuiz = object.quizI18n?.[store.language] || object.quiz;
   const quiz = {
-    ...object.quiz,
-    q: object.quiz.q,
+    ...localQuiz,
+    q: localQuiz.q,
   };
   ui.showQuiz(quiz, {
     previouslyPassed: Boolean(previous?.passed),
