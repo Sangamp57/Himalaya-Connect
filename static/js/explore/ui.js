@@ -510,11 +510,11 @@ export class ExploreUI {
       <div class="object-section">
         <h3>${escapeHtml(this.t("object.story"))}</h3>
         ${paragraphs(localize(object.story, this.lang))}
-        ${this.lang !== "en" ? `<p class="object-original-note">${escapeHtml(this.t("object.originalNotice"))}</p>` : ""}
+        ${this.lang !== "en" && !(object.story && object.story[this.lang]) ? `<p class="object-original-note">${escapeHtml(this.t("object.originalNotice"))}</p>` : ""}
       </div>
       <div class="object-section">
         <h3>${escapeHtml(this.t("object.fact"))}</h3>
-        <div class="object-fact">${escapeHtml(object.fact)}</div>
+        <div class="object-fact">${escapeHtml(object.factI18n?.[this.lang] || object.fact)}</div>
       </div>
       <div class="object-actions">
         <button class="ex-button ex-button--gold" type="button" data-object-action="collect" ${collected ? "disabled" : ""}>
@@ -986,8 +986,8 @@ export class ExploreUI {
       <div class="object-kicker"><span>${escapeHtml(categoryName(card.category, this.lang))}</span><span class="rarity rarity--${card.rarity}">${escapeHtml(rarityName(card.rarity, this.lang))}</span></div>
       <h2>${escapeHtml(localize(card.names, this.lang))}</h2>
       <p class="object-summary">${escapeHtml(localize(card.summary, this.lang))}</p>
-      <div class="object-section"><h3>${escapeHtml(this.t("object.story"))}</h3>${paragraphs(card.story)}</div>
-      <div class="object-section"><h3>${escapeHtml(this.t("object.fact"))}</h3><div class="object-fact">${escapeHtml(card.fact)}</div></div>
+      <div class="object-section"><h3>${escapeHtml(this.t("object.story"))}</h3>${paragraphs(localize(card.story, this.lang))}</div>
+      <div class="object-section"><h3>${escapeHtml(this.t("object.fact"))}</h3><div class="object-fact">${escapeHtml(card.factI18n?.[this.lang] || card.fact)}</div></div>
       ${sources ? `<div class="object-section"><h3>${escapeHtml(this.t("object.sources"))}</h3><div class="object-sources">${sources}</div></div>` : ""}
       <div class="dialog-actions">
         ${world && card.id && !OBJECT_MAP[card.id] ? `<button type="button" class="ex-button ex-button--ghost" data-card-world="${world.id}">${escapeHtml(this.t("today.view3d"))}</button>` : ""}
