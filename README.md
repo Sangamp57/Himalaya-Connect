@@ -8,7 +8,7 @@ The journal is fully functional, not a static mock-up. Members can sign up, sign
 
 Open **`/explore/`** (also linked as “3D Explorer” in the main navigation).
 
-- Five procedural, explorable 3D scenes, including the walkable Kathmandu Valley and Hunza Valley, the walkable Karakoram Highway, Kashgar, and the winding "Great Journey" mountain-trail world.
+- Eight procedural, explorable 3D scenes: the walkable Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, the walkable Karakoram Highway, and the winding "Great Journey" mountain-trail world.
 - Orbit, pan, zoom and walk controls, object raycasting, camera fly-to, highlighting, reset and mobile touch support.
 - A growing collection of cultural objects with stories, facts, source links, quizzes and collectible cards.
 - A scavenger-hunt **Game** section: three themed hunts that track your beacon discoveries and award XP and bonus cards.
@@ -62,7 +62,7 @@ Or set `SEED_ADMIN_PASSWORD` and `SEED_WRITER_PASSWORD` in `.env` before the fir
 
 ### Public site
 
-- Interactive 3D explorer with five explorable worlds, including the walkable Kathmandu Valley, Hunza Valley and Karakoram Highway, plus speaking beacons, object stories, quizzes, etiquette scenarios, comparison challenges, achievements, local progress and a collectible card gallery.
+- Interactive 3D explorer with eight explorable worlds, including the walkable Kathmandu Valley, Hunza Valley and Karakoram Highway, plus Pokhara, Skardu and Turpan, with speaking beacons, object stories, quizzes, etiquette scenarios, comparison challenges, achievements, local progress and a collectible card gallery.
 - A real geographic culture map with OpenStreetMap tiles, verified coordinates and world launch links.
 - A daily encounter that rotates deterministically from a curated set, with save, share and quiz actions.
 - Full-screen parallax home page with layered mountain photography, scroll depth, floating notes and scroll-reveal sections.

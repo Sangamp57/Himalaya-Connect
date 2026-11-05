@@ -163,6 +163,43 @@ function miniJourney(stage, x, y, z) {
   return group;
 }
 
+function miniPokhara(stage, x, y, z) {
+  const group = new THREE.Group();
+  group.position.set(x, y, z);
+  const water = stage.material("#2f8fa3", { roughness: 0.18, metalness: 0.2, transparent: true, opacity: 0.95 });
+  const lake = mesh(stage, new THREE.CircleGeometry(1.55, 24), water, 0.55, 0.04, 0.4);
+  lake.rotation.x = -Math.PI / 2;
+  lake.scale.set(1.4, 1, 0.9);
+  group.add(lake);
+  group.add(miniPagoda(stage, -0.9, 0, -0.6));
+  group.add(box(stage, 0.8, 0.1, 0.3, stage.material("#c94d3b", { roughness: 0.8 }), 0.9, 0.15, 0.4));
+  return group;
+}
+
+function miniSkardu(stage, x, y, z) {
+  const group = new THREE.Group();
+  group.position.set(x, y, z);
+  const water = stage.material("#2f7f8f", { roughness: 0.16, metalness: 0.2, transparent: true, opacity: 0.94 });
+  group.add(box(stage, 3.4, 0.05, 1.05, water, 0, 0.08, 1.15));
+  group.add(miniFort(stage, -0.5, 0, -0.6));
+  const dune = mesh(stage, new THREE.SphereGeometry(0.8, 10, 6), stage.material("#c4a978", { roughness: 1 }), 1.35, 0.2, 0.75);
+  dune.scale.set(1.25, 0.3, 0.8);
+  group.add(dune);
+  return group;
+}
+
+function miniTurpan(stage, x, y, z) {
+  const group = new THREE.Group();
+  group.position.set(x, y, z);
+  group.add(miniMarket(stage, -0.6, 0, 0.2));
+  const brick = stage.material("#b58a5c", { roughness: 0.96 });
+  group.add(cylinder(stage, 0.35, 0.55, 1.9, 12, brick, 1.5, 0.95, 0.4));
+  group.add(cylinder(stage, 0.55, 0.55, 0.15, 12, stage.material("#3f7a76", { roughness: 0.85 }), 1.5, 1.95, 0.4));
+  group.add(mesh(stage, new THREE.ConeGeometry(0.3, 0.5, 8), stage.material("#d8a541", { metalness: 0.4, roughness: 0.35 }), 1.5, 2.3, 0.4));
+  group.add(box(stage, 2.6, 0.04, 1.8, stage.material("#b79a6e", { roughness: 1 }), 0.6, 0.04, 1.2));
+  return group;
+}
+
 export default function buildOverview({ scene, stage }) {
   const detail = stage.quality !== "low";
   createSky(scene, {
@@ -181,12 +218,18 @@ export default function buildOverview({ scene, stage }) {
   const china = island(stage, 6.4, -5.0, 3.5, "#8b885a");
   const karakoram = island(stage, -5.4, -6.2, 3.4, "#708060");
   const journey = island(stage, 0.4, 6.4, 3.2, "#8a7d5a");
-  [nepal, pakistan, china, karakoram, journey].forEach((item) => stage.add(item));
+  const pokhara = island(stage, -13.4, 5.4, 2.8, "#6f8a70");
+  const skardu = island(stage, -12.6, -7.6, 2.8, "#8b7f5c");
+  const turpan = island(stage, 13.4, -0.6, 2.8, "#9a8552");
+  [nepal, pakistan, china, karakoram, journey, pokhara, skardu, turpan].forEach((item) => stage.add(item));
   nepal.add(miniPagoda(stage, 0, 0.42, 0));
   pakistan.add(miniFort(stage, 0, 0.42, 0));
   china.add(miniMarket(stage, 0, 0.42, 0));
   karakoram.add(miniKarakoram(stage, 0, 0.42, 0));
   journey.add(miniJourney(stage, 0, 0.42, 0));
+  pokhara.add(miniPokhara(stage, 0, 0.42, 0));
+  skardu.add(miniSkardu(stage, 0, 0.42, 0));
+  turpan.add(miniTurpan(stage, 0, 0.42, 0));
 
   stage.addInteractive("overview:kathmandu", nepal, {
     label: "Nepal",
@@ -231,6 +274,33 @@ export default function buildOverview({ scene, stage }) {
     focus: [0.4, 0.8, 6.4],
     radius: 10.2,
     beaconPosition: [0.4, 0.7, 9.6],
+    labelOffset: 1.0,
+  });
+  stage.addInteractive("overview:pokhara", pokhara, {
+    label: "Pokhara",
+    hideLabel: true,
+    accent: "#e6bc6a",
+    focus: [-13.4, 0.8, 5.4],
+    radius: 9.2,
+    beaconPosition: [-13.4, 0.7, 8.2],
+    labelOffset: 1.0,
+  });
+  stage.addInteractive("overview:skardu", skardu, {
+    label: "Skardu",
+    hideLabel: true,
+    accent: "#e6bc6a",
+    focus: [-12.6, 0.8, -7.6],
+    radius: 9.2,
+    beaconPosition: [-12.6, 0.7, -4.8],
+    labelOffset: 1.0,
+  });
+  stage.addInteractive("overview:turpan", turpan, {
+    label: "Turpan",
+    hideLabel: true,
+    accent: "#e6bc6a",
+    focus: [13.4, 0.8, -0.6],
+    radius: 9.2,
+    beaconPosition: [13.4, 0.7, 2.2],
     labelOffset: 1.0,
   });
 

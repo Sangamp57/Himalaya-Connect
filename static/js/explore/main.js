@@ -66,8 +66,11 @@ let booted = false;
 
 const WORLD_BUILDERS = {
   kathmandu: () => import("./three/worlds/kathmandu.js").then((module) => module.default),
+  pokhara: () => import("./three/worlds/pokhara.js").then((module) => module.default),
   hunza: () => import("./three/worlds/hunza-walkable.js").then((module) => module.default),
+  skardu: () => import("./three/worlds/skardu.js").then((module) => module.default),
   kashgar: () => import("./three/worlds/kashgar.js").then((module) => module.default),
+  turpan: () => import("./three/worlds/turpan.js").then((module) => module.default),
   karakoram: () => import("./three/worlds/karakoram.js").then((module) => module.default),
   journey: () => import("./three/worlds/journey.js").then((module) => module.default),
   overview: () => import("./three/worlds/overview.js").then((module) => module.default),
@@ -200,10 +203,10 @@ async function ensureOverview({ initial = false } = {}) {
   overviewPromise = (async () => {
     const builder = await WORLD_BUILDERS.overview();
     const config = {
-      position: [0.5, 17, 32],
-      target: [0, 0.4, -0.8],
-      min: 16,
-      max: 44,
+      position: [0.5, 20, 40],
+      target: [0, 0.4, 0],
+      min: 18,
+      max: 52,
       autoRotate: true,
       autoRotateSpeed: 0.032,
     };
