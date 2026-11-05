@@ -33,8 +33,8 @@ Changed (all backwards compatible; older worlds behave as before, apart from the
 | `three/worlds/kathmandu-people.js` | 8 designs appended at the end (existing indices unchanged): `tea-picker`, `tea-master`, `mule-driver`, `bulang-woman`, `dai-woman`, `dai-man`, `novice-monk`, `peacock-dancer`; new hats; optional per-person `tint`, right-arm `waveR` and sideways `armZ` in `makeCrowd`. |
 | `three/scene.js` | Two lines: if the stage has `stage.render`, it is used instead of `renderer.render` (post-processing). |
 | `three/worlds/overview.js` | Two islands (`overview:puer`, `overview:xishuangbanna`). |
-| `object-images.js` | Real photos for the 20 new discovery cards (Wikimedia Commons, author and licence in each credit). They load from `commons.wikimedia.org/wiki/Special:FilePath/…?width=960`; to host them locally, download each file to `static/images/objects/<id>.webp` and change `src`. |
-| `data.js` | `WORLDS.puer` (order 10) and `WORLDS.xishuangbanna` (order 11); 20 objects pushed onto `OBJECTS` (block starting `const SRC_YN`); 2 `SCAVENGER_HUNTS`; 3 `MAP_LOCATIONS`. |
+| `object-images.js` | Real photos for the 20 new discovery cards (Wikimedia Commons, author and licence in each credit), hosted locally in `static/images/objects/cn-pe-*.webp` and `cn-xb-*.webp`. |
+| `data.js` | `WORLDS.puer` (order 10) and `WORLDS.xishuangbanna` (order 11); 20 curated objects inserted into `OBJECTS`; 2 `SCAVENGER_HUNTS`; 3 `MAP_LOCATIONS`. |
 | `main.js` | `WORLD_BUILDERS.puer` / `.xishuangbanna` and the two overview labels. |
 
 No template, Python or CSS changes. The post-processing addons are loaded with a relative dynamic `import()` from `yunnan-fx.js`, so the import map in `templates/explore/app.html` does not need a new entry and it also works with `ManifestStaticFilesStorage`.
@@ -78,4 +78,4 @@ It checks, for both worlds: 10 beacons that exist in `data.js`, walking, that th
 
 ## Content notes
 
-All 20 discoveries have names and summaries in en/zh/ne/ur and story, fact and quiz in English and Chinese (`story.zh`, `factI18n.zh`, `quizI18n.zh`). Nepali and Urdu text was written by AI and should be checked by native speakers. Scenes are stylised composites, not survey maps; the post station is inspired by Nakeli (那柯里) and the pagoda by Manfeilong (曼飞龙白塔).
+All 20 discoveries have names in en/zh/ne/ur, summaries and stories in English and Chinese, and an English fact and quiz. Nepali and Urdu names were written by AI and should be checked by native speakers. Scenes are stylised composites, not survey maps; the post station is inspired by Nakeli (那柯里) and the pagoda by Manfeilong (曼飞龙白塔).

@@ -404,6 +404,126 @@ export const OBJECT_IMAGES = {
     "credit": "xiquinhosilva / CC BY 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Dunhuang_(54532845195).jpg"
   },
+  "cn-pe-terraces": {
+    "src": "/static/images/objects/cn-pe-terraces.webp",
+    "alt": "Tea plantations near Pu'er",
+    "credit": "CatOnMars / CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Tea_Plantations_around_Yixiang%2C_Pu%27er_01.jpg"
+  },
+  "cn-pe-shaqing": {
+    "src": "/static/images/objects/cn-pe-shaqing.webp",
+    "alt": "Roasting tea leaves",
+    "credit": "daejeonstory / CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Roasting_tea_leaves.jpg"
+  },
+  "cn-pe-rounian": {
+    "src": "/static/images/objects/cn-pe-rounian.webp",
+    "alt": "Tea leaves shaped by rolling",
+    "credit": "Usernet123u / CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Oolong_Tea_wrapped_tea_balls.jpg"
+  },
+  "cn-pe-shaiqing": {
+    "src": "/static/images/objects/cn-pe-shaiqing.webp",
+    "alt": "Tea leaves drying",
+    "credit": "Christophe95 / CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Tea_leaves_drying.jpg"
+  },
+  "cn-pe-cake": {
+    "src": "/static/images/objects/cn-pe-cake.webp",
+    "alt": "Compressed Pu'er tea",
+    "credit": "Tomáš Plocek / CC BY 2.5",
+    "source": "https://commons.wikimedia.org/wiki/File:Puerh_limited_edition.JPG"
+  },
+  "cn-pe-teahouse": {
+    "src": "/static/images/objects/cn-pe-teahouse.webp",
+    "alt": "Gongfu tea service",
+    "credit": "Neptunati / Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Gong_fu_cha.jpg"
+  },
+  "cn-pe-jingmai": {
+    "src": "/static/images/objects/cn-pe-jingmai.webp",
+    "alt": "Old tea forest on Jingmai Mountain",
+    "credit": "919sth. / CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Old_Tea_Forest_of_the_Jingmai_Mountain.jpg"
+  },
+  "cn-pe-bulang": {
+    "src": "/static/images/objects/cn-pe-bulang.webp",
+    "alt": "Bulang village",
+    "credit": "User:Doron / CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:ManpoVillage.jpg"
+  },
+  "cn-pe-caravan": {
+    "src": "/static/images/objects/cn-pe-caravan.webp",
+    "alt": "Historic mule caravan in western Yunnan",
+    "credit": "Unknown author / Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:A_Hui_Muslim_mule_caravan_passing_through_a_village_in_western_Yunnan_c.1905.jpg"
+  },
+  "cn-pe-station": {
+    "src": "/static/images/objects/cn-pe-station.webp",
+    "alt": "Ancient Tea Horse Road in a Yunnan village",
+    "credit": "Xin / CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Ancient_Tea_Horse_Road_in_Yunnan_Village.JPG"
+  },
+  "cn-xb-zhulou": {
+    "src": "/static/images/objects/cn-xb-zhulou.webp",
+    "alt": "Dai houses",
+    "credit": "ExxaZhan / CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Dai_people_and_their_houses.jpg"
+  },
+  "cn-xb-temple": {
+    "src": "/static/images/objects/cn-xb-temple.webp",
+    "alt": "Dai Buddhist temple in Xishuangbanna",
+    "credit": "Popolon / CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Xishuangbanna.temple.daizu.jpg"
+  },
+  "cn-xb-pagoda": {
+    "src": "/static/images/objects/cn-xb-pagoda.webp",
+    "alt": "Manfeilong Pagoda",
+    "credit": "Xin / CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Manfeilong_Pagoda_Jinghong.jpg"
+  },
+  "cn-xb-poshui": {
+    "src": "/static/images/objects/cn-xb-poshui.webp",
+    "alt": "Water-Splashing Festival",
+    "credit": "유신예 / CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Water_Splashing_Festival.jpg"
+  },
+  "cn-xb-dragonboat": {
+    "src": "/static/images/objects/cn-xb-dragonboat.webp",
+    "alt": "Dragon boats on the river",
+    "credit": "Peter Olshevsky / CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Water-Splashing_Festival%2C_China.jpg"
+  },
+  "cn-xb-peacock": {
+    "src": "/static/images/objects/cn-xb-peacock.webp",
+    "alt": "Peacock",
+    "credit": "Kandukuru Nagarjun / CC BY 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Peacock_on_tree_%2852077240794%29.jpg"
+  },
+  "cn-xb-clothing": {
+    "src": "/static/images/objects/cn-xb-clothing.webp",
+    "alt": "Dai clothing in the Yunnan Provincial Museum",
+    "credit": "Daderot / Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Huayao_Dai_female_clothing_-_Yunnan_Provincial_Museum_-_DSC02022.JPG"
+  },
+  "cn-xb-beiye": {
+    "src": "/static/images/objects/cn-xb-beiye.webp",
+    "alt": "Palm-leaf manuscript",
+    "credit": "Lannafolium / CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Wat_Ku_Daeng_-_palm_leaf_manuscript.jpg"
+  },
+  "cn-xb-pineapple": {
+    "src": "/static/images/objects/cn-xb-pineapple.webp",
+    "alt": "Pineapple rice",
+    "credit": "Pavel2610 / CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Pineapple_rice_served_in_Pineapple.jpg"
+  },
+  "cn-xb-elephant": {
+    "src": "/static/images/objects/cn-xb-elephant.webp",
+    "alt": "Asian elephant",
+    "credit": "Jaranda~commonswiki / CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Asianelephant3.jpg"
+  },
   "jo-dunhuang": {
     "src": "/static/images/objects/jo-dunhuang.webp",
     "alt": "Dunhuang Gate",
