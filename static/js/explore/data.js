@@ -150,12 +150,12 @@ export const WORLDS = {
       ur: "بلند درے، سڑک کنارے بستیاں اور جدید قراقرم ہائی وے۔",
     },
     long: {
-      en: "A thematic cultural route inspired by the Karakoram Highway, not one continuous geographic itinerary. The highway links Pakistan and China through Khunjerab Pass. Nepal is not on this road; it appears here as related Himalayan context. The route is a place of work, trade, engineering and fragile high-altitude ecology.",
-      zh: "一条受喀喇昆仑公路启发的主题文化路线，并非一条连续的地理行程。公路经红其拉甫山口连接巴基斯坦与中国。尼泊尔不在这条公路上，此处仅作为相关的喜马拉雅背景。这里也是劳作、贸易、工程与脆弱高海拔生态并存之地。",
-      ne: "कराकोरम राजमार्गबाट प्रेरित एक विषयगत सांस्कृतिक मार्ग, एकै निरन्तर भौगोलिक यात्रा होइन। राजमार्गले खुन्जेराब भन्ज्याङ हुँदै पाकिस्तान र चीनलाई जोड्छ। नेपाल यो सडकमा पर्दैन; यहाँ सम्बन्धित हिमाली सन्दर्भका रूपमा देखाइएको छ। यो बाटो काम, व्यापार, इन्जिनियरिङ र नाजुक उच्च-उचाइ पारिस्थितिकीको ठाउँ हो।",
-      ur: "قراقرم ہائی وے سے متاثر ایک موضوعی ثقافتی راستہ، نہ کہ ایک مسلسل جغرافیائی سفرنامہ۔ یہ شاہراہ خنجراب درے کے ذریعے پاکستان اور چین کو ملاتی ہے۔ نیپال اس سڑک پر نہیں؛ یہاں اسے متعلقہ ہمالیائی پس منظر کے طور پر دکھایا گیا ہے۔ یہ راستہ محنت، تجارت، انجینئرنگ اور نازک بلند پہاڑی ماحول کی جگہ ہے۔",
+      en: "A walkable Karakoram Highway, from the rock carvings of Chilas past Nanga Parbat, the meeting of three mountain ranges, Hunza, Attabad Lake, the Hussaini bridge, Passu and Sost, over Khunjerab Pass to Tashkurgan in China. Distances are compressed so you can walk the route. The highway is a place of work, trade, engineering and fragile high-altitude ecology. Nepal is not on this road.",
+      zh: "一条可以步行的喀喇昆仑公路：从奇拉斯岩画出发，经过南迦帕尔巴特峰、三大山脉交汇点、罕萨、阿塔巴德湖、侯赛尼吊桥、帕苏和苏斯特，翻越红其拉甫山口，抵达中国的塔什库尔干。距离经过压缩，方便步行走完全程。这条公路也是劳作、贸易、工程与脆弱高海拔生态并存之地。尼泊尔不在这条公路上。",
+      ne: "हिँडेर यात्रा गर्न सकिने काराकोरम राजमार्ग: चिलासका शिलाचित्रदेखि नाङ्गा पर्वत, तीन पर्वतशृङ्खलाको सङ्गम, हुन्जा, अटाबाद ताल, हुसैनी पुल, पासु र सोस्ट हुँदै खुन्जेराब भन्ज्याङ पार गरी चीनको ताशकुर्गनसम्म। दूरी छोट्याइएको छ। नेपाल यो सडकमा पर्दैन।",
+      ur: "پیدل چلنے کے قابل شاہراہ قراقرم: چلاس کے چٹانی نقوش سے نانگا پربت، تین پہاڑی سلسلوں کے سنگم، ہنزہ، عطا آباد جھیل، حسینی پل، پاسو اور سوست سے ہوتے ہوئے خنجراب درّے کے پار چین میں تاشقرغان تک۔ فاصلے کم کیے گئے ہیں۔ نیپال اس سڑک پر نہیں ہے۔",
     },
-    camera: { position: [32, 26, 42], target: [0, 6, 0], min: 18, max: 75 },
+    camera: { position: [0, 7.5, 13], target: [0, 2, 0], min: 4, max: 40 },
     mountain: true,
     journalUrl: "/stories/the-road-that-made-neighbours/",
   },
@@ -1253,6 +1253,153 @@ export const OBJECTS = [
     },
   },
 
+  /* Karakoram Highway landmarks for the walkable route world */
+  {
+    id: "kk-chilas",
+    worldId: "karakoram",
+    countryId: "pakistan",
+    category: "landmarks",
+    rarity: "epic",
+    names: { en: "Chilas Rock Carvings", zh: "奇拉斯岩画", ne: "चिलास शिलाचित्र", ur: "چلاس کے چٹانی نقوش" },
+    localName: "چلاس · Chilas",
+    summary: {
+      en: "Thousands of pictures and inscriptions scratched into the rocks beside the Indus.",
+      zh: "印度河畔岩石上刻下的成千上万幅图画和铭文。",
+      ne: "सिन्धु नदी किनारका चट्टानमा कोरिएका हजारौं चित्र र अभिलेख।",
+      ur: "دریائے سندھ کے کنارے چٹانوں پر کندہ ہزاروں تصاویر اور تحریریں۔",
+    },
+    story: {
+      en: "Along the Karakoram Highway between Shatial and Hunza, and especially around Chilas, thousands of carvings cover the dark, sun-varnished boulders of the Indus valley. The oldest show hunters and animals such as ibex; later ones show Buddhist stupas and figures, with inscriptions in old scripts such as Kharoshthi and Brahmi. Together they record the travellers, pilgrims and traders who used this route long before the modern road.\n\nMany of these rocks lie in the area that the reservoir of the Diamer-Bhasha Dam, under construction downstream, is expected to flood. Researchers have worked to document them. Look closely, but never scratch, chalk or wet the carvings to make them easier to photograph.",
+      zh: "在喀喇昆仑公路沿线，从夏蒂亚尔到罕萨，尤其是奇拉斯附近，印度河谷深色、被阳光“漆”过的巨石上布满了成千上万的刻画。最古老的刻着猎人和北山羊等动物；较晚的刻有佛塔和佛像，还有佉卢文、婆罗米文等古老文字的铭文。它们记录了远在现代公路出现之前，就沿着这条路线往来的旅人、朝圣者和商人。\n\n其中许多岩石位于下游正在修建的迪阿梅尔—巴沙水坝预计会淹没的区域，研究人员一直在努力记录它们。可以仔细观看，但千万不要刮擦、涂粉笔或泼水来让刻画更容易拍照。",
+    },
+    fact: "Some Chilas inscriptions are written in Kharoshthi and Brahmi, scripts used in the region about two thousand years ago.",
+    factI18n: { zh: "奇拉斯的一些铭文使用佉卢文和婆罗米文书写，这些文字大约两千年前在这一地区使用。" },
+    sources: [SRC.kkh],
+    quiz: {
+      q: "What do many of the Chilas rock carvings show?",
+      options: ["Animals such as ibex, and Buddhist stupas", "Railway timetables", "Modern road signs", "Maps of the ocean"],
+      answer: 0,
+      explain: "The carvings range from hunting scenes and ibex to Buddhist stupas and inscriptions left by travellers and pilgrims.",
+    },
+    quizI18n: { zh: { q: "奇拉斯岩画中常见的内容是什么？", options: ["北山羊等动物和佛塔", "火车时刻表", "现代路标", "海洋地图"], answer: 0, explain: "这些刻画从狩猎场景、北山羊到佛塔，以及旅人和朝圣者留下的铭文都有。" } },
+  },
+  {
+    id: "kk-nangaparbat",
+    worldId: "karakoram",
+    countryId: "pakistan",
+    category: "landmarks",
+    rarity: "legendary",
+    names: { en: "Nanga Parbat Viewpoint", zh: "南迦帕尔巴特峰观景点", ne: "नाङ्गा पर्वत दृश्यबिन्दु", ur: "نانگا پربت ویو پوائنٹ" },
+    localName: "نانگا پربت · Nanga Parbat",
+    summary: {
+      en: "The ninth-highest mountain on Earth rises straight out of the Indus valley.",
+      zh: "世界第九高峰从印度河谷拔地而起。",
+      ne: "पृथ्वीको नवौं अग्लो हिमाल सिन्धु उपत्यकाबाट सिधै उठ्छ।",
+      ur: "دنیا کا نواں بلند ترین پہاڑ وادیٔ سندھ سے سیدھا اٹھتا ہے۔",
+    },
+    story: {
+      en: "Nanga Parbat, 8,126 m, is the ninth-highest mountain in the world and the western anchor of the Himalaya. From the Karakoram Highway near Raikot Bridge, where the jeep track to Fairy Meadows begins, its snow and ice rise thousands of metres above the hot, dry floor of the Indus valley. Its Rupal Face on the south side is one of the tallest mountain walls on Earth.\n\nThe name means \"naked mountain\". Early expeditions lost many climbers, which earned it the nickname \"Killer Mountain\", and the first ascent was made in 1953 by Hermann Buhl. For most travellers the mountain is something to look at from the road, and the view alone is worth the stop.",
+      zh: "南迦帕尔巴特峰海拔8126米，是世界第九高峰，也是喜马拉雅山脉的西端支柱。在喀喇昆仑公路的雷科特桥附近（通往仙境草原的吉普车道由此开始），可以看到它的冰雪在炎热干燥的印度河谷之上高出数千米。它南侧的鲁帕尔岩壁是地球上最高的山壁之一。\n\n这个名字的意思是“赤裸的山”。早期的登山队在这里失去了许多队员，因此它有“杀人峰”之称；1953年，赫尔曼·布尔首次登顶。对大多数旅人来说，这座山是在公路上远眺的风景，仅这一眼就值得停车。",
+    },
+    fact: "Nanga Parbat is 8,126 m high, the ninth-highest mountain in the world.",
+    factI18n: { zh: "南迦帕尔巴特峰海拔8126米，是世界第九高峰。" },
+    sources: [{ label: "Britannica · Nanga Parbat", url: "https://www.britannica.com/place/Nanga-Parbat" }],
+    quiz: {
+      q: "How high is Nanga Parbat?",
+      options: ["8,126 m", "4,693 m", "6,000 m", "8,848 m"],
+      answer: 0,
+      explain: "Nanga Parbat is 8,126 m. 4,693 m is Khunjerab Pass, and 8,848 m is Everest.",
+    },
+    quizI18n: { zh: { q: "南迦帕尔巴特峰有多高？", options: ["8126米", "4693米", "6000米", "8848米"], answer: 0, explain: "南迦帕尔巴特峰高8126米。4693米是红其拉甫山口的海拔，8848米是珠穆朗玛峰。" } },
+  },
+  {
+    id: "kk-junction",
+    worldId: "karakoram",
+    countryId: "pakistan",
+    category: "landmarks",
+    rarity: "epic",
+    names: { en: "Junction of Three Mountain Ranges", zh: "三大山脉交汇点", ne: "तीन पर्वतशृङ्खलाको सङ्गम", ur: "تین پہاڑی سلسلوں کا سنگم" },
+    localName: "جگلوٹ · Jaglot",
+    summary: {
+      en: "Where the Himalaya, the Karakoram and the Hindu Kush meet.",
+      zh: "喜马拉雅、喀喇昆仑和兴都库什三大山脉在此交汇。",
+      ne: "जहाँ हिमालय, काराकोरम र हिन्दुकुश भेटिन्छन्।",
+      ur: "جہاں ہمالیہ، قراقرم اور ہندوکش ملتے ہیں۔",
+    },
+    story: {
+      en: "Near Jaglot, a roadside viewpoint on the Karakoram Highway marks the place where three of the world's great mountain ranges meet: the Himalaya to the south-east, the Karakoram to the north and the Hindu Kush to the west. Nearby, the Gilgit River flows into the Indus.\n\nThe ranges were pushed up by the slow collision of the Indian plate with Asia, which is still going on. That is why this landscape has steep, young slopes, frequent landslides and earthquakes, and why keeping the highway open is constant work.",
+      zh: "在贾格洛特附近，喀喇昆仑公路边的一处观景点标出了世界三大山脉交汇的地方：东南是喜马拉雅山脉，北面是喀喇昆仑山脉，西面是兴都库什山脉。附近，吉尔吉特河汇入印度河。\n\n这些山脉是印度板块与亚洲板块缓慢碰撞抬升而成的，这一过程至今仍在继续。所以这里山坡陡峭而年轻，滑坡和地震频繁，保持公路畅通是一项永不停歇的工作。",
+    },
+    fact: "Near the junction viewpoint, the Gilgit River joins the Indus.",
+    factI18n: { zh: "在交汇点观景台附近，吉尔吉特河汇入印度河。" },
+    sources: [SRC.kkh],
+    quiz: {
+      q: "Which three mountain ranges meet near Jaglot?",
+      options: ["Himalaya, Karakoram and Hindu Kush", "Alps, Andes and Rockies", "Tian Shan, Altai and Ural", "Himalaya, Kunlun and Qinling"],
+      answer: 0,
+      explain: "The Himalaya, Karakoram and Hindu Kush meet in this part of Gilgit-Baltistan.",
+    },
+    quizI18n: { zh: { q: "在贾格洛特附近交汇的是哪三大山脉？", options: ["喜马拉雅、喀喇昆仑和兴都库什", "阿尔卑斯、安第斯和落基山", "天山、阿尔泰和乌拉尔", "喜马拉雅、昆仑和秦岭"], answer: 0, explain: "喜马拉雅、喀喇昆仑和兴都库什三大山脉在吉尔吉特—巴尔蒂斯坦这一带交汇。" } },
+  },
+  {
+    id: "kk-hussaini",
+    worldId: "karakoram",
+    countryId: "pakistan",
+    category: "traditions",
+    rarity: "rare",
+    names: { en: "Hussaini Suspension Bridge", zh: "侯赛尼吊桥", ne: "हुसैनी झोलुङ्गे पुल", ur: "حسینی معلق پل" },
+    localName: "حسینی · Hussaini",
+    summary: {
+      en: "Planks, cables and a long look down at the Hunza River.",
+      zh: "木板、钢索，以及脚下奔流的罕萨河。",
+      ne: "फल्याक, तार र तल हुन्जा नदीको लामो दृश्य।",
+      ur: "تختے، رسے اور نیچے دریائے ہنزہ کا لمبا نظارہ۔",
+    },
+    story: {
+      en: "The Hussaini bridge is a footbridge of wooden planks and steel cables strung across the Hunza River near Hussaini village, close to Passu. The planks are spaced with gaps between them, the bridge sways in the wind, and it is often described as one of the most frightening bridges in the world.\n\nFor villagers it has been a practical crossing to fields and pastures on the far bank, and it has been rebuilt after floods. If you cross, go one at a time, hold the side cables, and turn back in strong wind or high water. Here you can walk across it.",
+      zh: "侯赛尼吊桥是一座横跨罕萨河的人行桥，位于帕苏附近的侯赛尼村，由木板和钢索搭成。木板之间留有空隙，桥在风中摇晃，常被称为世界上最惊险的桥之一。\n\n对村民来说，它是通往对岸田地和牧场的实用通道，曾在洪水后多次重建。如果要过桥，请一人一人地走，抓紧两侧的钢索，遇到大风或河水上涨时就返回。在这里，你可以亲自走过去。",
+    },
+    fact: "The bridge crosses the Hunza River near Hussaini village, a short drive from Passu.",
+    factI18n: { zh: "这座桥在侯赛尼村附近横跨罕萨河，距帕苏只有很短的车程。" },
+    sources: [{ label: "Gilgit-Baltistan Tourism", url: "https://visitgilgitbaltistan.gov.pk/" }],
+    quiz: {
+      q: "Which river does the Hussaini bridge cross?",
+      options: ["The Hunza River", "The Ganges", "The Yangtze", "The Bagmati"],
+      answer: 0,
+      explain: "The Hussaini suspension bridge crosses the Hunza River in upper Hunza.",
+    },
+    quizI18n: { zh: { q: "侯赛尼吊桥横跨哪条河？", options: ["罕萨河", "恒河", "长江", "巴格马蒂河"], answer: 0, explain: "侯赛尼吊桥位于上罕萨，横跨罕萨河。" } },
+  },
+  {
+    id: "kk-tashkurgan",
+    worldId: "karakoram",
+    countryId: "china",
+    category: "landmarks",
+    rarity: "epic",
+    names: { en: "Tashkurgan Stone City", zh: "塔什库尔干石头城", ne: "ताशकुर्गन ढुङ्गे सहर", ur: "تاشقرغان پتھر کا شہر" },
+    localName: "塔什库尔干 · Tashkurgan",
+    summary: {
+      en: "Ruined fortress walls above the high plain on the Chinese side of the pass.",
+      zh: "山口中方一侧高原上的古城堡遗址。",
+      ne: "भन्ज्याङको चिनियाँ पट्टि उच्च मैदानमाथि भत्केका किल्लाका पर्खाल।",
+      ur: "درّے کے چینی جانب بلند میدان پر قلعے کی کھنڈر دیواریں۔",
+    },
+    story: {
+      en: "After Khunjerab Pass the highway descends into China and crosses the high grassland of Tashkurgan, the seat of the Tashkurgan Tajik Autonomous County in Xinjiang. Many residents are Tajiks, whose languages belong to the Pamir group; women's tall embroidered kulta hats are a well-known sign of local dress.\n\nOn a mound at the edge of town stand the ruins of the Stone City, a fortress that guarded this Silk Road crossing for many centuries; most of the walls you see come from later rebuilding. From here the road continues north to Kashgar.",
+      zh: "翻过红其拉甫山口后，公路下行进入中国，穿过塔什库尔干的高原草场。塔什库尔干是新疆塔什库尔干塔吉克自治县的县城，许多居民是塔吉克族，他们的语言属于帕米尔语支；女性头戴的高筒刺绣“库勒塔”帽是当地服饰的鲜明标志。\n\n在城边的一座土丘上，矗立着石头城的遗址。这座城堡守护这一丝绸之路通道达许多世纪，如今看到的城墙大多来自后来的重建。公路从这里继续向北通往喀什。",
+    },
+    fact: "From Tashkurgan the Karakoram Highway continues north to Kashgar.",
+    factI18n: { zh: "喀喇昆仑公路从塔什库尔干继续向北通往喀什。" },
+    sources: [SRC.silkRoad, SRC.kkh],
+    quiz: {
+      q: "Which community gives Tashkurgan County its name?",
+      options: ["Tajik", "Newar", "Sherpa", "Burusho"],
+      answer: 0,
+      explain: "Tashkurgan is the seat of the Tashkurgan Tajik Autonomous County in Xinjiang.",
+    },
+    quizI18n: { zh: { q: "塔什库尔干县以哪个民族命名？", options: ["塔吉克族", "纽瓦尔人", "夏尔巴人", "布鲁肖人"], answer: 0, explain: "塔什库尔干是新疆塔什库尔干塔吉克自治县的县城。" } },
+  },
+
   /* -------------------------------------------------------------- JOURNEY */
   {
     id: "jo-trailhead",
@@ -1379,6 +1526,57 @@ const KATHMANDU_ZH = {
 };
 OBJECTS.forEach((object) => {
   const zh = KATHMANDU_ZH[object.id];
+  if (!zh) return;
+  object.story = { ...object.story, zh: zh.story };
+  object.factI18n = { ...(object.factI18n || {}), zh: zh.fact };
+  object.quizI18n = { ...(object.quizI18n || {}), zh: zh.quiz };
+});
+
+/* Chinese story, fact and quiz text for the Karakoram discoveries. */
+const KARAKORAM_ZH = {
+  "kk-pass": {
+    story: "红其拉甫山口位于喀喇昆仑山脉，海拔约4693米，地处巴基斯坦与中国的边境上。它是世界上海拔最高的铺装国际边境通道之一，能否通行取决于天气，出发前务必查清当时的路况和边境手续，不能临时起意。\n\n山口也是一个高海拔生态系统。请给自己留出适应海拔的时间，带足饮水，不要乱扔垃圾，尊重野生动物和边境规定。这里的石碑是风格化的展品，并非官方界碑的复制品。",
+    fact: "红其拉甫山口海拔约4693米，可能因降雪和边境开放时间而关闭。",
+    quiz: { q: "红其拉甫山口连接哪两个国家？", options: ["巴基斯坦和中国", "尼泊尔和印度", "中国和蒙古", "巴基斯坦和伊朗"], answer: 0, explain: "红其拉甫山口位于巴基斯坦与中国的边境上，喀喇昆仑公路由此穿过。" },
+  },
+  "kk-market": {
+    story: "苏斯特是上罕萨的一个小镇，也是喀喇昆仑公路上的物流节点，这里有陆港和与跨境贸易相关的路边服务。这里的路边小摊代表着这条路线上的劳作生活：茶、杏干、罐头、燃料和消息。\n\n这不是古老的商队驿站，而是由卡车、边境时间表、季节性旅游和货物流动塑造的现代聚落。买一杯茶很容易，弄懂背后的供应链则要花更多时间。",
+    fact: "苏斯特位于上罕萨，靠近红其拉甫边境的巴基斯坦一侧，是贸易和交通枢纽。",
+    quiz: { q: "为什么苏斯特在这条路线上很重要？", options: ["它是靠近边境的贸易和交通枢纽", "它是尼泊尔的首都", "它是沙漠油田", "它是陨石撞出的湖"], answer: 0, explain: "苏斯特虽小，却是上罕萨靠近红其拉甫口岸的重要物流和贸易聚落。" },
+  },
+  "kk-marker": {
+    story: "喀喇昆仑公路建于1959年至1979年间，穿越地球上最不稳定的山区之一，经红其拉甫山口连接巴基斯坦与中国。它是一项现代工程，而不是古代的丝绸之路。\n\n这条路改变了人们上学、就医、赶集和旅游的条件，同时也带来了交通、土地用途的变化和风险。它的故事包括成千上万的筑路工人，以及持续不断的滑坡和冰川灾害。里程碑是一个好地方，可以问一问：这条路是谁修的，谁在维护，谁能走这条路？",
+    fact: "这条公路全长约1300公里，修了二十年，于1979年建成。",
+    quiz: { q: "喀喇昆仑公路是哪一年建成的？", options: ["1979年", "1901年", "2005年", "1650年"], answer: 0, explain: "公路于1959年至1979年间修建，是一项现代工程，而不是古代丝绸之路。" },
+  },
+  "kk-village": {
+    story: "帕苏是上罕萨的一个村庄，紧邻被称为帕苏锥峰（又名图波普丹）的壮观山脊。梯田和果园展示了家家户户如何利用狭窄的河谷土地；罕萨河和附近的冰川既塑造了风景，也供应着用水。\n\n旅游和公路改变了村庄的经济。一张空荡梯田的照片，可能掩盖了维护它所付出的劳动。拍摄房屋或人物前请先征得同意，尽量雇用本地向导，并把垃圾带走。",
+    fact: "帕苏锥峰是帕苏附近一道独特的山脊，周边还有冰川和河流景观。",
+    quiz: { q: "帕苏锥峰是什么？", options: ["帕苏村附近的一道山脊", "一种杏子", "一种刺绣风格", "一座边境大门"], answer: 0, explain: "帕苏锥峰（图波普丹）是帕苏附近一道壮观的山脊，而不是手工艺品或食物。帕苏村位于上罕萨。" },
+  },
+  "kk-craft": {
+    story: "罕萨到边境之间的路边小摊出售羊毛袜、披肩、帽子、木雕和小纪念品。有些是本地制作的，有些混合了本地和外来的材料，有些则是专为游客市场设计的。这种混合本身就是当代经济的一部分，并不代表“不正宗”。\n\n可以问一问哪些是手工制作的、羊毛来自哪里、是谁做的。不要购买野生动物制品或来源不明的东西。买少而精的物品，往往比买一袋一模一样的小玩意更能支持手艺人。",
+    fact: "在高山地区，羊毛衣物十分实用；一些面向游客的设计把本地图案与迎合外来买家的款式结合在一起。",
+    quiz: { q: "购买山区手工艺品时，负责任的做法是什么？", options: ["询问来源、材料和制作者", "认定所有看起来旧的东西都是古董", "购买野生动物制品当纪念品", "从不和卖家交谈"], answer: 0, explain: "多提问，不买野生动物制品，尽量向手艺人或合作社购买。年代和“正宗”并不是衡量价值的唯一标准。" },
+  },
+  "kk-exchange": {
+    story: "这个站点是一个主题展品，而不是历史建筑。它想象了公路边的一张桌子，人们在这里交换茶、语言、音乐和实际的帮助。交流确实存在，但并不总是平等的：旅游、边境政策和贸易决定了谁能出行、谁能发声。\n\n尼泊尔不在喀喇昆仑公路上，但喜马拉雅地区的文化联系远比一条路更广。这个站点请游客多倾听、先征得同意，带着问题离开，而不是带走一句整齐的“共同文化”口号。",
+    fact: "喀喇昆仑公路连接巴基斯坦和中国；尼泊尔是相关的喜马拉雅背景，并不是这条路上的一站。",
+    quiz: { q: "尼泊尔位于喀喇昆仑公路上吗？", options: ["不在——这条公路连接巴基斯坦和中国", "在，位于南端", "在，经过加德满都", "只有冬天在"], answer: 0, explain: "尼泊尔是有着相关历史的喜马拉雅邻国，但喀喇昆仑公路连接的是巴基斯坦和中国，并不经过尼泊尔。" },
+  },
+  "kk-view": {
+    story: "2010年1月，一场巨大的山体滑坡堵塞了罕萨河，形成了阿塔巴德湖。上涨的湖水淹没了村庄、农田和部分公路，迫使当地社区搬迁。后来的工程修建了泄洪道、隧道和改线的新公路。\n\n如今碧绿的湖水成了旅游景点，但这份美丽并不能抵消人们失去家园的经历。来访时请记住这段历史，支持本地人经营的服务，并注意水边和不稳定的山坡。“灾难旅游”是一种选择，而不是必然。",
+    fact: "2010年的滑坡堵塞了罕萨河，形成了一个长约20公里的湖，公路因此被迫大规模重建。",
+    quiz: { q: "阿塔巴德湖是怎样形成的？", options: ["山体滑坡堵塞了罕萨河", "冰川刨蚀出新的山谷", "为水电站修建了大坝", "陨石撞击山谷"], answer: 0, explain: "2010年1月的一场巨大滑坡堵住了罕萨河，形成了湖泊，并使当地社区被迫搬迁。" },
+  },
+  "kk-monument": {
+    story: "喀喇昆仑公路穿越陡峭的山谷、冰川和活动断层。修建和维护这条路曾付出生命的代价，至今仍需不断与滑坡和洪水抗争。历史纪念碑很容易变成一串日期；更好的纪念碑会问：是谁付出了劳动，又是谁承担着风险？\n\n官方叙述强调中巴合作和工程成就；批评性的叙述则补充了劳动条件、环境变化和不平等的通行机会。两者都应该出现在一个诚实的展览里。这里的石碑代表着这场更大的讨论。",
+    fact: "这条公路修建了几十年，至今仍需在滑坡、洪水和地震后不断修复。",
+    quiz: { q: "一部细致的喀喇昆仑公路历史应该包括什么？", options: ["工人、工程、风险和环境变化", "只列出旅游观景点", "只有车辆统计数据", "只讲一个国家的故事"], answer: 0, explain: "更完整的叙述包括修路劳动、工程技术、搬迁、环境风险以及公路持续不断的维护。" },
+  },
+};
+OBJECTS.forEach((object) => {
+  const zh = KARAKORAM_ZH[object.id];
   if (!zh) return;
   object.story = { ...object.story, zh: zh.story };
   object.factI18n = { ...(object.factI18n || {}), zh: zh.fact };

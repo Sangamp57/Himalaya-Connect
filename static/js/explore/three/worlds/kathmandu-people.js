@@ -124,6 +124,27 @@ export const DESIGNS = [
     extras: [[0.62, 0.22, 0.36, 0, 1.28, 0, "#6f6a60"]],
     stick: true,
   },
+  {
+    id: "hunza-man",
+    label: "Man in shalwar kameez and a Hunza wool cap",
+    skin: "#c09070", shirt: "#d8d0bd", sleeve: "#d8d0bd", pants: "#d8d0bd", shoes: "#3a2a20",
+    hair: "short", hairColor: "#2a1d15", hat: "pakol", beard: "#3a2a20", robe: "#d8d0bd", robeTo: 0.42,
+    extras: [[0.56, 0.6, 0.04, 0, 1.06, 0.165, "#3a4048"], [0.08, 0.6, 0.05, 0, 1.06, 0.19, "#d8d0bd"]],
+  },
+  {
+    id: "hunza-woman",
+    label: "Woman with an embroidered cap and shawl",
+    skin: "#c99a76", shirt: "#7d2a45", sleeve: "#7d2a45", pants: "#2e2c38", shoes: "#2a1f18",
+    hair: "short", hairColor: "#2a1a12", hat: "pillbox", robe: "#7d2a45", robeTo: 0.36,
+    extras: [[0.6, 0.86, 0.06, 0, 1.2, -0.2, "#efe8d8"], [0.5, 0.06, 0.05, 0, 1.0, 0.17, "#e2a93b"]],
+  },
+  {
+    id: "tajik-woman",
+    label: "Tajik woman with a kulta hat",
+    skin: "#d2a684", shirt: "#b3241d", sleeve: "#b3241d", pants: "#b3241d", shoes: "#2a1f18",
+    hair: "braids", hairColor: "#2a1a12", hat: "kulta", robe: "#b3241d", robeTo: 0.1,
+    extras: [[0.6, 0.7, 0.05, 0, 1.38, -0.22, "#f4efe6"], [0.5, 0.08, 0.05, 0, 0.6, 0.19, "#e8b82a"]],
+  },
 ];
 
 export const PLAYER_DESIGN = {
@@ -194,6 +215,18 @@ function buildDesign(d) {
   } else if (d.hat === "beanie") {
     body.push([0.46, 0.18, 0.46, 0, hy + 0.27, 0, d.hatColor]);
     body.push([0.14, 0.1, 0.14, 0, hy + 0.41, 0, "#f6efe0"]);
+  } else if (d.hat === "pakol") {
+    body.push([0.46, 0.08, 0.46, 0, hy + 0.24, 0, "#cbb894"]);
+    body.push([0.5, 0.1, 0.5, 0, hy + 0.31, 0, "#b9a47c"]);
+    body.push([0.42, 0.06, 0.42, 0, hy + 0.38, 0, "#cbb894"]);
+  } else if (d.hat === "pillbox") {
+    body.push([0.42, 0.16, 0.42, 0, hy + 0.28, 0, "#b3241d"]);
+    body.push([0.44, 0.05, 0.44, 0, hy + 0.23, 0, "#2e8e4a"]);
+    body.push([0.44, 0.04, 0.44, 0, hy + 0.33, 0, "#e8b82a"]);
+  } else if (d.hat === "kulta") {
+    body.push([0.42, 0.34, 0.42, 0, hy + 0.36, 0, "#a0201a"]);
+    body.push([0.44, 0.06, 0.44, 0, hy + 0.22, 0, "#e8b82a"]);
+    body.push([0.44, 0.04, 0.44, 0, hy + 0.42, 0, "#e8b82a"]);
   } else if (d.hat === "chef") {
     body.push([0.44, 0.24, 0.44, 0, hy + 0.32, 0, "#f6f3ec"]);
   }
