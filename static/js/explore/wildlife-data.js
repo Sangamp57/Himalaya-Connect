@@ -430,13 +430,13 @@ export const SPECIES = {
 
 const IMG = (file, alt, credit) => ({ src: `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=960`, alt, credit, source: `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(file.replace(/ /g, "_"))}` });
 export const SPECIES_IMAGES = {
-  camel: IMG("敦煌市 Dunhuang Camels 2007 2.jpg", "Bactrian camels at Dunhuang", "Goldeyr / CC BY-SA 3.0"),
+  camel: IMG("Camels in Gobi Desert 02.jpg", "Bactrian camels in the Gobi Desert", "Bernard Gagnon / CC0"),
   donkey: IMG("Uyghur man on his donkey cart. Kashgar.jpg", "Donkey cart in Kashgar", "John Hill / CC BY-SA 4.0"),
   gazelle: IMG("Female goitered gazelle, Shirvan National Park, Azerbaijan.jpg", "Goitered gazelle", "Elşad İbrahimov / CC BY-SA 4.0"),
   eagle: IMG("015 Wild Golden Eagle in flight at Pfyn-Finges (Switzerland) Photo by Giles Laurent.jpg", "Golden eagle in flight", "Giles Laurent / CC BY-SA 4.0"),
   sheep: IMG("Erector fat tail sheep.jpg", "Fat-tailed sheep", "Erector / CC BY 3.0"),
-  goat: IMG("Gilgit mountain goats.jpg", "Goats in Gilgit", "Mujahidahmad191 / CC BY-SA 4.0"),
-  horse: IMG("Kashgar Sunday Market (23741606770).jpg", "Kashgar Sunday livestock market", "Laika ac / CC BY-SA 2.0"),
+  goat: IMG("Goat in Ganish.jpg", "Domestic goat in Ganish, Hunza", "Abbashuru / CC BY-SA 4.0"),
+  horse: IMG("Horses grazing at Trunkol meadow, Jammu and Kashmir, India (crop).jpg", "Horses grazing in a mountain meadow", "UnpetitproleX / CC BY 4.0"),
   yak: IMG("Bos grunniens at Letdar on Annapurna Circuit.jpg", "Yak on the Annapurna Circuit", "travelwayoflife / CC BY-SA 2.0"),
   bharal: IMG("Pseudois nayaur , Bharal, Himalayan blue sheep.jpg", "Bharal", "Jan Reurink / CC BY 2.0"),
   snowleopard: IMG("Uncia uncia Ähtäri.jpg", "Snow leopard", "kallerna / CC BY-SA 3.0"),
@@ -447,9 +447,36 @@ export const SPECIES_IMAGES = {
   buffalo: IMG("Farmer with Buffalo - Outside Lumbini - Nepal (13871635834).jpg", "Farmer with buffalo in Nepal", "Adam Jones / CC BY-SA 2.0"),
   zebu: IMG("Pahadi Cow Jomsom Village-WLV-0699.jpg", "Hill cow in Jomsom", "Bijay Chaurasia / CC BY-SA 4.0"),
   monkey: IMG("Potroit of Rhesus Macaque at Swayambhunath Stupa.jpg", "Rhesus macaque at Swayambhunath", "Nabin K. Sapkota / CC BY-SA 4.0"),
-  bear: IMG("Land of the Himalayan Brown Bear.jpg", "Deosai, land of the Himalayan brown bear", "Rizwan Bhiriya / CC BY-SA 4.0"),
+  bear: IMG("Himalayan Brown Bear at Jambu Zoo 1.jpg", "Himalayan brown bear", "Sumbria.vikramaditya / CC0"),
   mule: IMG("A Hui Muslim mule caravan passing through a village in western Yunnan c.1905.jpg", "Mule caravan in western Yunnan, c. 1905", "Unknown / public domain"),
 };
+
+/* Keep the wildlife cards fast and reliable: the same Commons photos are
+   bundled locally, while source and credit links remain in each card. */
+const LOCAL_SPECIES_IMAGES = {
+  camel: "/static/images/objects/an-camel.webp",
+  donkey: "/static/images/objects/an-donkey.webp",
+  gazelle: "/static/images/objects/an-gazelle.webp",
+  eagle: "/static/images/objects/an-eagle.webp",
+  sheep: "/static/images/objects/an-sheep.webp",
+  goat: "/static/images/objects/an-goat.webp",
+  horse: "/static/images/objects/an-horse.webp",
+  yak: "/static/images/objects/an-yak.webp",
+  bharal: "/static/images/objects/an-bharal.webp",
+  snowleopard: "/static/images/objects/an-snowleopard.webp",
+  vulture: "/static/images/objects/an-vulture.webp",
+  marcopolo: "/static/images/objects/an-marcopolo.webp",
+  ibex: "/static/images/objects/an-ibex.webp",
+  markhor: "/static/images/objects/an-markhor.webp",
+  buffalo: "/static/images/objects/an-buffalo.webp",
+  zebu: "/static/images/objects/an-zebu.webp",
+  monkey: "/static/images/objects/an-monkey.webp",
+  bear: "/static/images/objects/an-bear.webp",
+  mule: "/static/images/objects/an-mule.webp",
+};
+for (const [key, src] of Object.entries(LOCAL_SPECIES_IMAGES)) {
+  if (SPECIES_IMAGES[key]) SPECIES_IMAGES[key].src = src;
+}
 
 /* which animals live in which world */
 export const WORLD_ANIMALS = {

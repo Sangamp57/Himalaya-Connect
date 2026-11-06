@@ -14,7 +14,7 @@ Open **`/explore/`** (also linked as “3D Explorer” in the main navigation).
 - A scavenger-hunt **Game** section: three themed hunts that track your beacon discoveries and award XP and bonus cards.
 - A 3D cinema screen inside the Journey world that plays a freely-licensed Himalayan time-lapse as a live video texture (with a poster fallback and source credit).
 - A **Films** section with three real, freely-licensed short films — one each from Nepal, Pakistan and China — played as ordinary HTML5 videos.
-- Daily encounters, an etiquette practice lab, a Cultural Bridge comparison activity, XP, achievements and a filtered card gallery.
+- Daily encounters, a 19-scenario etiquette practice lab with place-specific guidance for every world, a Cultural Bridge comparison activity, XP, achievements and a filtered card gallery.
 - A real OpenStreetMap culture map with verified coordinates and links into the 3D worlds.
 - Persistent progress, language and settings in `localStorage`.
 - English, Simplified Chinese, Nepali and Urdu interface support, including RTL Urdu. Detailed cultural narratives remain in English where a community-reviewed translation is not yet available, and the interface says so.

@@ -114,10 +114,10 @@
     "licence": "CC BY-SA 4.0"
   },
   "cn-silkroad.webp": {
-    "source_file": "Dunhuang_(54532845195).jpg",
-    "source_page": "https://commons.wikimedia.org/wiki/File:Dunhuang_(54532845195).jpg",
-    "author": "xiquinhosilva",
-    "licence": "CC BY 2.0"
+    "source_file": "Dunhuang Night Market (20230916214410).jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Dunhuang_Night_Market_%2820230916214410%29.jpg",
+    "author": "N509FZ",
+    "licence": "CC BY-SA 4.0"
   },
   "jo-dunhuang.webp": {
     "source_file": "Dunhuang-06.JPG",
@@ -243,6 +243,96 @@
     "source_file": "Asianelephant3.jpg",
     "source_page": "https://commons.wikimedia.org/wiki/File:Asianelephant3.jpg",
     "author": "Jaranda~commonswiki",
+    "licence": "CC BY-SA 3.0"
+  },
+  "cn-courtyard.webp": {
+    "source_file": "Kashgar’s Old Town.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Kashgar%E2%80%99s_Old_Town.jpg",
+    "author": "Madlen Kobi",
+    "licence": "CC BY 4.0"
+  },
+  "cn-door.webp": {
+    "source_file": "Kashgar Old Town (23684207479).jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Kashgar_Old_Town_%2823684207479%29.jpg",
+    "author": "Laika ac",
+    "licence": "CC BY-SA 2.0"
+  },
+  "cn-liangfang.webp": {
+    "source_file": "Places to dry up the grapes.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Places_to_dry_up_the_grapes.jpg",
+    "author": "Clemson",
+    "licence": "CC BY 2.0"
+  },
+  "jo-buttertea.webp": {
+    "source_file": "Tibetan butter tea.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Tibetan_butter_tea.jpg",
+    "author": "Yosomono",
+    "licence": "CC BY 2.0"
+  },
+  "kk-marker.webp": {
+    "source_file": "Sign for foreigners Karakoram Highway Sep 2004.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Sign_for_foreigners_Karakoram_Highway_Sep_2004.jpg",
+    "author": "Martha C.",
+    "licence": "Public domain"
+  },
+  "kk-exchange.webp": {
+    "source_file": "The Tea Shop on Karakoram Highway in Chilas Town.JPG",
+    "source_page": "https://commons.wikimedia.org/wiki/File:The_Tea_Shop_on_Karakoram_Highway_in_Chilas_Town.JPG",
+    "author": "Kashifthegipsy",
+    "licence": "CC BY-SA 3.0"
+  },
+  "kk-monument.webp": {
+    "source_file": "Monument of Khunjerab Pass at Pak-China border on Karakoram Highway.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Monument_of_Khunjerab_Pass_at_Pak-China_border_on_Karakoram_Highway.jpg",
+    "author": "Vasiq Eqbal",
+    "licence": "CC BY-SA 4.0"
+  },
+  "kk-chilas.webp": {
+    "source_file": "Petroglyphs Chilas.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Petroglyphs_Chilas.jpg",
+    "author": "Kogo",
+    "licence": "CC BY-SA 3.0"
+  },
+  "kk-tashkurgan.webp": {
+    "source_file": "Stone City, Tashkurgan.JPG",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Stone_City%2C_Tashkurgan.JPG",
+    "author": "Drgkl",
+    "licence": "CC BY-SA 3.0"
+  },
+  "kk-view.webp": {
+    "source_file": "Attabad Lake - KKH.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Attabad_Lake_-_KKH.jpg",
+    "author": "Atif.malick",
+    "licence": "CC BY-SA 4.0"
+  },
+  "an-camel.webp": {
+    "source_file": "Camels in Gobi Desert 02.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Camels_in_Gobi_Desert_02.jpg",
+    "author": "Bernard Gagnon",
+    "licence": "CC0"
+  },
+  "an-horse.webp": {
+    "source_file": "Horses grazing at Trunkol meadow, Jammu and Kashmir, India (crop).jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Horses_grazing_at_Trunkol_meadow%2C_Jammu_and_Kashmir%2C_India_%28crop%29.jpg",
+    "author": "UnpetitproleX",
+    "licence": "CC BY 4.0"
+  },
+  "an-goat.webp": {
+    "source_file": "Goat in Ganish.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Goat_in_Ganish.jpg",
+    "author": "Abbashuru",
+    "licence": "CC BY-SA 4.0"
+  },
+  "an-bear.webp": {
+    "source_file": "Himalayan Brown Bear at Jambu Zoo 1.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Himalayan_Brown_Bear_at_Jambu_Zoo_1.jpg",
+    "author": "Sumbria.vikramaditya",
+    "licence": "CC0"
+  },
+  "cn-karez.webp": {
+    "source_file": "Turfan water system IGP4204.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Turfan_water_system_IGP4204.jpg",
+    "author": "w0zny",
     "licence": "CC BY-SA 3.0"
   }
 }

@@ -3,6 +3,7 @@
    The 3D environments are stylised interpretations, not survey reconstructions. */
 
 import { wildlifeObjects } from "./wildlife-data.js";
+import { EXTRA_ETIQUETTE } from "./etiquette-extra.js";
 
 export const CATEGORIES = {
   architecture: { en: "Architecture", zh: "建筑", ne: "वास्तुकला", ur: "تعمیرات", icon: "arch" },
@@ -3111,6 +3112,7 @@ export const ACHIEVEMENTS = [
 export const ETIQUETTE_SCENARIOS = [
   {
     id: "first-meeting",
+    place: "Kathmandu, Nepal",
     icon: "handshake",
     title: { en: "Meeting someone for the first time", zh: "初次见面", ne: "पहिलो भेट", ur: "پہلی ملاقات" },
     context: "You arrive at a community workshop in Kathmandu. A craftsperson turns to greet you.",
@@ -3133,6 +3135,7 @@ export const ETIQUETTE_SCENARIOS = [
   },
   {
     id: "home-visit",
+    place: "Hunza, Pakistan",
     icon: "home",
     title: { en: "Visiting a friend's home", zh: "拜访朋友家", ne: "साथीको घरमा भेट", ur: "دوست کے گھر جانا" },
     context: "A friend in Hunza invites you to their family home for tea.",
@@ -3155,6 +3158,7 @@ export const ETIQUETTE_SCENARIOS = [
   },
   {
     id: "sharing-meal",
+    place: "Kashgar, China",
     icon: "bowl",
     title: { en: "Sharing a meal", zh: "共享一餐", ne: "सँगै खाना खाने", ur: "کھانا بانٹنا" },
     context: "You are invited to a family meal in Kashgar. Several dishes are placed in the centre of the table.",
@@ -3177,6 +3181,7 @@ export const ETIQUETTE_SCENARIOS = [
   },
   {
     id: "gift-giving",
+    place: "Nepal, Pakistan and China",
     icon: "gift",
     title: { en: "Giving a gift", zh: "赠送礼物", ne: "उपहार दिने", ur: "تحفہ دینا" },
     context: "You want to thank a host after staying with a family for two nights.",
@@ -3199,6 +3204,7 @@ export const ETIQUETTE_SCENARIOS = [
   },
   {
     id: "religious-site",
+    place: "Kathmandu Valley and northern Pakistan",
     icon: "temple",
     title: { en: "Visiting a religious site", zh: "参观宗教场所", ne: "धार्मिक स्थलको भ्रमण", ur: "مذہبی مقام کی زیارت" },
     context: "You approach a temple complex in the Kathmandu Valley and a mosque in northern Pakistan on the same journey.",
@@ -3221,6 +3227,7 @@ export const ETIQUETTE_SCENARIOS = [
   },
   {
     id: "festival",
+    place: "Nepal",
     icon: "festival",
     title: { en: "Joining a festival", zh: "参加节日", ne: "चाडपर्वमा सहभागी हुने", ur: "تہوار میں شامل ہونا" },
     context: "You are invited to a neighbourhood celebration during Dashain in Nepal.",
@@ -3243,6 +3250,7 @@ export const ETIQUETTE_SCENARIOS = [
   },
   {
     id: "market",
+    place: "Kashgar, China",
     icon: "market",
     title: { en: "Shopping at a traditional market", zh: "在传统市场购物", ne: "परम्परागत बजारमा किनमेल", ur: "روایتی بازار میں خریداری" },
     context: "You are in a craft market in Kashgar and see a hand-embroidered cap you like.",
@@ -3265,6 +3273,7 @@ export const ETIQUETTE_SCENARIOS = [
   },
   {
     id: "photography",
+    place: "Hunza, Pakistan",
     icon: "camera",
     title: { en: "Taking photographs respectfully", zh: "尊重地拍照", ne: "सम्मानपूर्वक फोटो खिच्ने", ur: "احترام سے تصویر لینا" },
     context: "You see a woman in embroidered clothing at a roadside stall in Hunza and want to take a portrait.",
@@ -3286,6 +3295,8 @@ export const ETIQUETTE_SCENARIOS = [
     note: "Consent is specific: a yes for one photograph is not a yes for publishing it or for a second photo. Respect signs and children's privacy.",
   },
 ];
+
+ETIQUETTE_SCENARIOS.push(...EXTRA_ETIQUETTE);
 
 export const BRIDGES = [
   {

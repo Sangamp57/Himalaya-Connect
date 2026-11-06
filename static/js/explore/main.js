@@ -91,6 +91,9 @@ let currentWorldId = store.state.lastWorld && WORLDS[store.state.lastWorld] ? st
 let currentObjectId = null;
 let collectionFilter = "all";
 let etiquetteChoice = null;
+/* Where a panel's close button should return. Opening Etiquette (or any
+   panel) from a world returns to that world instead of dropping to Home. */
+let panelReturn = null;
 let bridgeChoice = null;
 let sceneManager = null;
 let hasWebGL = webglAvailable();
@@ -274,6 +277,7 @@ async function enterWorld(worldId, { updateHash = true, push = true, objectId = 
   currentWorldId = id;
   currentObjectId = null;
   currentView = "world";
+  panelReturn = null;
   store.recordWorld(id);
   if (updateHash) setHash(`#world/${id}`, push);
   ui.setActiveView("world");
@@ -504,6 +508,14 @@ async function openView(view, { updateHash = true, push = true, skipScene = fals
     return;
   }
 
+  if (view === "home") {
+    panelReturn = null;
+  } else if (currentView === "world") {
+    panelReturn = { view: "world", worldId: currentWorldId };
+  } else if (!panelReturn) {
+    panelReturn = { view: "home" };
+  }
+
   pauseFilmOnLeave();
   const previousObjectId = currentObjectId;
   currentView = view;
@@ -551,6 +563,16 @@ async function openView(view, { updateHash = true, push = true, skipScene = fals
     if (guideTabNow === "ask") window.setTimeout(() => document.getElementById("guide-input")?.focus({ preventScroll: true }), 220);
   }
   ui.updateTopbar();
+}
+
+function closePanel() {
+  const target = panelReturn;
+  panelReturn = null;
+  if (target?.view === "world" && WORLDS[target.worldId]) {
+    enterWorld(target.worldId);
+  } else {
+    openView("home");
+  }
 }
 
 function parseHash() {
@@ -882,6 +904,12 @@ function bindEvents() {
     const guideTab = event.target.closest("[data-guide-tab]");
     if (guideTab) {
       setGuideTab(guideTab.dataset.guideTab);
+      return;
+    }
+    const backButton = event.target.closest("[data-view-back]");
+    if (backButton) {
+      event.preventDefault();
+      closePanel();
       return;
     }
     const viewButton = event.target.closest("[data-view]");

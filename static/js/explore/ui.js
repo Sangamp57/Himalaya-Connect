@@ -655,7 +655,7 @@ export class ExploreUI {
       this.el.etiquetteList.innerHTML = ETIQUETTE_SCENARIOS.map((item, index) => `
         <button type="button" class="etiquette-nav-item ${item.id === scenario.id ? "is-active" : ""} ${completed.has(item.id) ? "is-done" : ""}" data-etiquette-scenario="${item.id}">
           <span class="etiquette-nav-icon">${completed.has(item.id) ? icon("check") : icon(item.icon)}</span>
-          <span><strong>${escapeHtml(localize(item.title, this.lang))}</strong><small>${escapeHtml(this.t("etiquette.scenario", { current: index + 1, total: ETIQUETTE_SCENARIOS.length }))}</small></span>
+          <span><strong>${escapeHtml(localize(item.title, this.lang))}</strong><small>${item.place ? `${escapeHtml(localize(item.place, this.lang))} · ` : ""}${escapeHtml(this.t("etiquette.scenario", { current: index + 1, total: ETIQUETTE_SCENARIOS.length }))}</small></span>
           ${completed.has(item.id) ? `<span class="trail-item-status">${escapeHtml(this.t("etiquette.completed"))}</span>` : ""}
         </button>`).join("");
     }
@@ -670,7 +670,7 @@ export class ExploreUI {
         <span class="etiquette-detail-icon">${icon(scenario.icon)}</span>
         <div><h2>${escapeHtml(localize(scenario.title, this.lang))}</h2><span class="ex-chip">${escapeHtml(this.t("etiquette.scenario", { current: ETIQUETTE_SCENARIOS.indexOf(scenario) + 1, total: ETIQUETTE_SCENARIOS.length }))}</span></div>
       </div>
-      <p class="etiquette-context">${escapeHtml(scenario.context)}</p>
+      <p class="etiquette-context">${scenario.place ? `<strong>${escapeHtml(localize(scenario.place, this.lang))}</strong> · ` : ""}${escapeHtml(scenario.context)}</p>
       <div class="etiquette-conversation">
         ${scenario.conversation.map((line) => `<div class="conversation-line"><span class="conversation-speaker">${escapeHtml(line.speaker)}</span><p>${escapeHtml(line.text)}</p></div>`).join("")}
       </div>

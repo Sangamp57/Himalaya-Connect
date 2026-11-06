@@ -185,10 +185,10 @@ export const OBJECT_IMAGES = {
     "source": "https://commons.wikimedia.org/wiki/File:Traditional_Silk_Factory_in_a_Village_outside_of_Hotan,_Xinjiang_3970161409_81191a058d_o.jpg"
   },
   "cn-courtyard": {
-    "src": "/static/images/kashgar-old-city.webp",
-    "alt": "Old-City Courtyard House",
-    "credit": "Radosław Botev / CC BY 3.0 pl",
-    "source": "https://commons.wikimedia.org/wiki/File:Kashgar_Old_City_%28crop%29.jpg"
+    "src": "/static/images/objects/cn-courtyard.webp",
+    "alt": "Old-town courtyard and gateway in Kashgar",
+    "credit": "Madlen Kobi / CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Kashgar%E2%80%99s_Old_Town.jpg"
   },
   "cn-doppa": {
     "src": "/static/images/objects/cn-doppa.webp",
@@ -197,10 +197,10 @@ export const OBJECT_IMAGES = {
     "source": "https://commons.wikimedia.org/wiki/File:Uyghur_doppa_from_%C3%9Cr%C3%BCmqi.jpg"
   },
   "cn-door": {
-    "src": "/static/images/kashgar-old-city.webp",
-    "alt": "Carved Wooden Door",
-    "credit": "Radosław Botev / CC BY 3.0 pl",
-    "source": "https://commons.wikimedia.org/wiki/File:Kashgar_Old_City_%28crop%29.jpg"
+    "src": "/static/images/objects/cn-door.webp",
+    "alt": "Ornate doorway in Kashgar's old town",
+    "credit": "Laika ac / CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Kashgar_Old_Town_%2823684207479%29.jpg"
   },
   "cn-market": {
     "src": "/static/images/kashgar-bazaar.webp",
@@ -221,10 +221,10 @@ export const OBJECT_IMAGES = {
     "source": "https://commons.wikimedia.org/wiki/File:Sost_Bazar.JPG"
   },
   "kk-marker": {
-    "src": "/static/images/karakoram-highway.webp",
-    "alt": "Karakoram Highway Marker",
-    "credit": "taylorandayumi / CC BY 2.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Karakoram_Highway_Long_View.jpg"
+    "src": "/static/images/objects/kk-marker.webp",
+    "alt": "Karakoram Highway sign",
+    "credit": "Martha C. / Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Sign_for_foreigners_Karakoram_Highway_Sep_2004.jpg"
   },
   "kk-village": {
     "src": "/static/images/hunza-valley.webp",
@@ -239,28 +239,28 @@ export const OBJECT_IMAGES = {
     "source": "https://commons.wikimedia.org/wiki/File:Gemstones_of_Gilgit_Baltistan_region.jpg"
   },
   "kk-exchange": {
-    "src": "/static/images/khunjerab-pass.webp",
-    "alt": "Cultural Exchange Station",
-    "credit": "Shaguftakarim / CC BY-SA 4.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Khunjerab_Pass_Road_-_Karakoram_Highway.jpg"
+    "src": "/static/images/objects/kk-exchange.webp",
+    "alt": "Tea shop on the Karakoram Highway in Chilas",
+    "credit": "Kashifthegipsy / CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Tea_Shop_on_Karakoram_Highway_in_Chilas_Town.JPG"
   },
   "kk-view": {
-    "src": "/static/images/passu-cones.webp",
-    "alt": "Attabad Lake Viewpoint",
-    "credit": "Musab243 / CC BY-SA 4.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Passu_Cones%2C_Pakistan.jpg"
+    "src": "/static/images/objects/kk-view.webp",
+    "alt": "Attabad Lake from the Karakoram Highway",
+    "credit": "Atif.malick / CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Attabad_Lake_-_KKH.jpg"
   },
   "kk-monument": {
-    "src": "/static/images/karakoram-highway.webp",
-    "alt": "Route History Monument",
-    "credit": "taylorandayumi / CC BY 2.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Karakoram_Highway_Long_View.jpg"
+    "src": "/static/images/objects/kk-monument.webp",
+    "alt": "Khunjerab Pass monument on the Karakoram Highway",
+    "credit": "Vasiq Eqbal / CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Monument_of_Khunjerab_Pass_at_Pak-China_border_on_Karakoram_Highway.jpg"
   },
   "kk-chilas": {
     "src": "/static/images/objects/kk-chilas.webp",
-    "alt": "Chilas Rock Carvings",
-    "credit": "Jamalguide / CC BY-SA 4.0",
-    "source": "https://commons.wikimedia.org/wiki/File:River-indus-near-chilas.jpg"
+    "alt": "Petroglyphs at Chilas",
+    "credit": "Kogo / CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Petroglyphs_Chilas.jpg"
   },
   "kk-nangaparbat": {
     "src": "/static/images/objects/kk-nangaparbat.webp",
@@ -282,9 +282,9 @@ export const OBJECT_IMAGES = {
   },
   "kk-tashkurgan": {
     "src": "/static/images/objects/kk-tashkurgan.webp",
-    "alt": "Tashkurgan Stone City",
-    "credit": "Hiroooooo / CC BY-SA 3.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Mountain_View_in_Tashkurgan,_Kashgar.jpg"
+    "alt": "Stone City, Tashkurgan",
+    "credit": "Drgkl / CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Stone_City%2C_Tashkurgan.JPG"
   },
   "jo-trailhead": {
     "src": "/static/images/objects/jo-trailhead.webp",
@@ -348,9 +348,9 @@ export const OBJECT_IMAGES = {
   },
   "cn-karez": {
     "src": "/static/images/objects/cn-karez.webp",
-    "alt": "Karez Wells",
-    "credit": "Yoshi Canopus / CC BY-SA 3.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Turpan_Karez_Paradice.jpg"
+    "alt": "Karez underground water channel in Turpan",
+    "credit": "w0zny / CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Turfan_water_system_IGP4204.jpg"
   },
   "cn-grapes": {
     "src": "/static/images/objects/cn-grapes.webp",
@@ -402,9 +402,9 @@ export const OBJECT_IMAGES = {
   },
   "cn-silkroad": {
     "src": "/static/images/objects/cn-silkroad.webp",
-    "alt": "Dunhuang Night Market",
-    "credit": "xiquinhosilva / CC BY 2.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Dunhuang_(54532845195).jpg"
+    "alt": "Dunhuang night market",
+    "credit": "N509FZ / CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Dunhuang_Night_Market_%2820230916214410%29.jpg"
   },
   "cn-pe-terraces": {
     "src": "/static/images/objects/cn-pe-terraces.webp",
@@ -551,7 +551,7 @@ const COMMONS = (file, alt, credit, localFile) => ({
 });
 Object.assign(OBJECT_IMAGES, {
   "cn-mingsha": COMMONS("Dunhuang Mingsha-shan 1995.jpg", "Mingsha Shan dunes, Dunhuang", "Prince Roy / CC BY 2.0", "commons-cn-mingsha.jpg"),
-  "cn-liangfang": COMMONS("Grape Drying Sheds outside of Shanshan, Xinjiang China.jpg", "Grape drying sheds near Turpan", "Peter Morgan / CC BY 2.0", "commons-cn-liangfang.jpg"),
+  "cn-liangfang": COMMONS("Places to dry up the grapes.jpg", "Grape drying house near Turpan", "Clemson / CC BY 2.0", "cn-liangfang.webp"),
   "cn-livestock": COMMONS("Kashgar livestock market Aug 2018.jpg", "Kashgar livestock market", "Kubilayaxun / CC BY-SA 4.0", "commons-cn-livestock.jpg"),
   "jo-kkh": COMMONS("Pakistani truck in Karakoram Highway, Passu, Northern Areas, Pakistan.jpg", "Decorated truck on the Karakoram Highway at Passu", "katorisi / CC BY-SA 3.0", "commons-jo-kkh.jpg"),
   "np-barahi": COMMONS("Tal Barahi Temple on Phewa Lake 2496.jpg", "Tal Barahi Temple on Phewa Lake", "Bijay Chaurasia / CC BY-SA 4.0", "commons-np-barahi.jpg"),
@@ -561,5 +561,5 @@ Object.assign(OBJECT_IMAGES, {
   "cn-raisins": COMMONS("Raisins and dried fruits sold in Turpan.jpg", "Raisins and dried fruit for sale in Turpan", "Radosław Botev / CC BY 3.0 PL", "commons-cn-raisins.jpg"),
   "np-bowl": COMMONS("Singing Bowl from Nepal.jpg", "Singing bowl from Nepal", "Serg Childed / CC BY-SA 4.0", "commons-np-bowl.jpg"),
   "pk-gems": COMMONS("Aquamarine, Shigar Valley, Pakistan - University of Arizona Mineral Museum - University of Arizona - Tucson, AZ - DSC08519.jpg", "Aquamarine from the Shigar Valley", "Daderot / CC0", "commons-pk-gems.jpg"),
-  "jo-buttertea": COMMONS("Tibetan butter tea at teahouse.jpg", "Butter tea at a teahouse", "Jpatokal / CC BY-SA 4.0", "commons-jo-buttertea.jpg"),
+  "jo-buttertea": COMMONS("Tibetan butter tea.jpg", "Butter tea in a bowl", "Yosomono / CC BY 2.0", "jo-buttertea.webp"),
 });
