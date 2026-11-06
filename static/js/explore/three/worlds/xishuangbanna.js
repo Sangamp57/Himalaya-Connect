@@ -3,6 +3,8 @@ import { bird } from "../helpers.js";
 import { buildWalkableTown } from "./walk-town.js";
 import { fbm, ss, lerp, mulberry } from "./walk-engine.js";
 import { createFx, SKY_PRESETS, tint, lathe, mergeGeometries } from "./yunnan-fx.js";
+import { createFauna } from "./fauna.js";
+import { animalId } from "../../wildlife-data.js";
 import { boxUV, cylUV, roofGeometry, latticeTextures, signTexture, makeAnimal, makePeacock, lanternGeometry, species, plant, stiltHouse } from "./yunnan-props.js";
 
 /* Walkable Xishuangbanna 西双版纳: a Dai village of stilt houses, a Theravada
@@ -1399,6 +1401,30 @@ export default function buildXishuangbanna({ scene, stage, manager }) {
         pc.p.update(time, dt, reduced);
       });
     });
+
+    /* ------------------------------------------------ animal info badges and more animals (fauna.js) */
+    {
+      S.animals.forEach((a, i) => {
+        if (a.kind === "elephant" && i === 0) Wk.addInfoTarget("cn-xb-elephant", a.a.root, 5.4);
+        if (a.kind === "buffalo") Wk.addInfoTarget(animalId("xishuangbanna", "buffalo"), a.a.root, 2.8);
+      });
+      (S.trek || []).forEach((r) => Wk.addInfoTarget("cn-xb-elephant", r.e.root, 6.4));
+      S.peacocks.forEach((p, i) => { if (i < 2) Wk.addInfoTarget("cn-xb-peacock", p.p.root, 1.8); });
+      const fa = createFauna({ W: Wk, stage, kit, hgt, groundY, canStand, fx: F });
+      const near = (x, z, r = 20) => {
+        for (let d = 0; d <= r; d += 2) for (let k = 0; k < 12; k += 1) {
+          const px = x + Math.cos(k * 0.52) * d, pz = z + Math.sin(k * 0.52) * d;
+          if (canStand(px, pz) && !kit.blocked(px, pz, 1.2)) return [px, pz];
+        }
+        return [x, z];
+      };
+      const id = (k) => animalId("xishuangbanna", k);
+      { const [x, z] = near(-70, 110); fa.herd({ id: id("monkey"), kind: "monkey", count: 7, cx: x, cz: z, R: 10, speed: 1.3, wild: true, flee: 4, opts: { color: "#8a7258" } }); }
+      { const [x, z] = near(-8, 62); fa.herd({ id: id("goat"), kind: "goat", count: 5, cx: x, cz: z, R: 7, speed: 0.7, opts: (i) => ({ color: ["#2a2420", "#6b5644", "#d8d0c4"][i % 3] }) }); }
+      { const [x, z] = near(-110, 70); fa.herd({ id: id("buffalo"), kind: "buffalo", count: 2, cx: x, cz: z, R: 8, speed: 0.4 }); }
+      fa.soar({ id: id("eagle"), kind: "eagle", count: 2, cx: -40, cz: 20, R: 60, h: 70 });
+      F.contactShadows(() => fa.shadows(Wk.st), { max: 60, opacity: 0.38 });
+    }
 
     F.post({ bloom: { strength: 0.34, radius: 0.62, threshold: 0.84 }, grade: { tint: "#fff7ec", contrast: 1.05, saturation: 1.1, vignette: 0.3 } });
     return {};

@@ -1,7 +1,10 @@
 import * as THREE from "three";
-import { bird, cloud, mountain, pine, tree } from "../helpers.js";
+import { mountain, pine, tree } from "../helpers.js";
 import { buildWalkableTown } from "./walk-town.js";
+import { placeShop } from "./shops.js";
 import { fbm, ss, lerp } from "./walk-engine.js";
+import { SKY_PRESETS, mergeGeometries, tint } from "./yunnan-fx.js";
+import { animalId } from "../../wildlife-data.js";
 
 const VIDEO_SRC =
   "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/cc/The_Himalayan_-_Mt.Everest_Base_Camp_trek_HD_Time_Lapse.webm/The_Himalayan_-_Mt.Everest_Base_Camp_trek_HD_Time_Lapse.webm.480p.vp9.webm";
@@ -273,7 +276,35 @@ export default function buildJourney({ scene, stage, manager }) {
     },
   };
 
+  /* The highway: a closed loop round the valley, its bed smoothed so a jeep can drive it. */
+  const ROAD_PTS = [[-70, 58], [-30, 60], [10, 58], [44, 54], [66, 30], [68, -6], [48, -20], [18, -8], [-14, -12], [-48, -16], [-70, -4], [-74, 30]];
+  const roadCurve = new THREE.CatmullRomCurve3(ROAD_PTS.map(([x, z]) => new THREE.Vector3(x, 0, z)), true, "centripetal");
+  const ROAD = roadCurve.getSpacedPoints(360).slice(0, 360);
+  const RB = new Map();
+  ROAD.forEach((p, i) => {
+    const k = Math.floor(p.x / 12) + "," + Math.floor(p.z / 12);
+    if (!RB.has(k)) RB.set(k, []);
+    RB.get(k).push(i);
+  });
+  function roadNear(x, z) {
+    const cx = Math.floor(x / 12), cz = Math.floor(z / 12);
+    let bi = -1, bd = 1e9;
+    for (let a = -1; a <= 1; a += 1) for (let b = -1; b <= 1; b += 1) {
+      const l = RB.get(cx + a + "," + (cz + b));
+      if (l) for (const i of l) { const d = (ROAD[i].x - x) ** 2 + (ROAD[i].z - z) ** 2; if (d < bd) { bd = d; bi = i; } }
+    }
+    return bi < 0 ? null : { i: bi, d: Math.sqrt(bd) };
+  }
+  let roadY = null;
   function heightFn(x, z) {
+    let h = heightFn0(x, z);
+    if (roadY) {
+      const r = roadNear(x, z);
+      if (r && r.d < 10) h = lerp(h, roadY[r.i], ss(10, 4.8, r.d));
+    }
+    return h;
+  }
+  function heightFn0(x, z) {
     let h = 5.0 + fbm(x * 0.03, z * 0.03, 4) * 3.0;
     h += 26 * Math.exp(-(((x + 45) ** 2 + (z + 45) ** 2) / (2 * 30 * 30)));
     h += 32 * Math.exp(-(((x - 45) ** 2 + (z + 50) ** 2) / (2 * 32 * 32)));
@@ -292,8 +323,16 @@ export default function buildJourney({ scene, stage, manager }) {
     return h;
   }
 
+  /* road bed: average the ground around each road point, then smooth along the road */
+  {
+    const raw = ROAD.map((p) => { let s = 0; for (let k = 0; k < 9; k += 1) { const a = (k / 9) * Math.PI * 2, r = k ? 7 : 0; s += heightFn0(p.x + Math.cos(a) * r, p.z + Math.sin(a) * r); } return s / 9; });
+    roadY = raw.map((_, i) => { let s = 0; for (let k = -10; k <= 10; k += 1) s += raw[(i + k + raw.length) % raw.length]; return s / 21; });
+  }
+
   function colorFn(x, z, h) {
     const n = fbm(x * 0.06, z * 0.06, 3);
+    const r = roadNear(x, z);
+    if (r && r.d < 7) return new THREE.Color("#8a806e").lerp(new THREE.Color("#a09682"), n);
     if (h > 24) return new THREE.Color("#7b7564").lerp(new THREE.Color("#98917b"), n);
     if (h > 14) return new THREE.Color("#6f7d5a").lerp(new THREE.Color("#8a9168"), n);
     return new THREE.Color("#5e7d54").lerp(new THREE.Color("#7d925e"), n);
@@ -304,7 +343,12 @@ export default function buildJourney({ scene, stage, manager }) {
     stage,
     manager,
     seed: 20261114,
-    terrain: { heightFn, colorFn, segments: 160 },
+    terrain: {
+      heightFn,
+      colorFn,
+      segments: 200,
+      material: (M, fx) => (fx ? fx.pbr("plaster", { color: "#ffffff", color2: "#e2ddd2", color3: "#b8b0a0", stains: 0.5, seed: 101, bump: 1.6, repeat: [40, 40] }, { vertexColors: true }) : M({ vertexColors: true, roughness: 0.98 })),
+    },
     places,
     startPlace: "trailhead",
     worldName: { en: "The Great Journey", zh: "\u4f1f\u5927\u65c5\u7a0b", sub: "\u0639\u0638\u06cc\u0645 \u0633\u0641\u0631" },
@@ -314,21 +358,27 @@ export default function buildJourney({ scene, stage, manager }) {
       [[0, -25], [16, -36], [28, -42], [35, -50]],
       [[0, -25], [-16, -32], [-28, -40], [-35, -45]],
       [[0, 30], [-12, 30], [-30, 30]],
+      ROAD_PTS.concat([ROAD_PTS[0]]),
     ],
     mapColor: (x, z) => {
       const h = heightFn(x, z);
+      const r = roadNear(x, z);
+      if (r && r.d < 4) return [70, 70, 72];
       if (h > 24) return [123, 117, 100];
       if (h > 14) return [111, 125, 90];
       return [94, 125, 84];
     },
     fogDensity: 0.0007,
     exposureScale: 0.94,
-    build: ({ kit, W, stage, hgt, makePath }) => {
+    walker: { collision: "slide", skyKeys: SKY_PRESETS.alpine },
+    build: ({ kit, W, stage, hgt, makePath, fx }) => {
       const trailhead = buildTrailheadSign(stage);
       trailhead.position.set(0, hgt(0, 30), 30);
       trailhead.rotation.y = 0.4;
       stage.add(trailhead);
       W.interactive("jo-trailhead", trailhead, "Trailhead", [3, 30], { radius: 14, labelOffset: 1.5 });
+
+      placeShop({ W, kit, stage, hgt }, { x: 13, z: 34, ry: -Math.PI / 2, goods: "tea", sign: "TEAHOUSE · 茶馆", id: "jo-buttertea", label: "Trail teahouse", seller: "tibetan-woman", cloth: "#8a2a1a", cloth2: "#e8c840" });
 
       const cairn = buildCairn(stage);
       cairn.position.set(0, hgt(0, -25), -25);
@@ -364,6 +414,82 @@ export default function buildJourney({ scene, stage, manager }) {
       cinemaVideo = cinema.video;
       W.interactive("video:everest", cinema.group, "Everest time-lapse", [-25, 30], { radius: 15, labelOffset: 1.2 });
 
+
+      /* ---------------- The Karakoram Highway loop: asphalt, centre line, kilometre stones, signs */
+      {
+        const asphalt = fx.pbr("plaster", { color: "#5a5a5c", color2: "#4a4a4c", color3: "#3a3a3c", stains: 0.3, seed: 102, bump: 0.8, repeat: [1, 40] }, { polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+        const pts = ROAD.concat([ROAD[0]]);
+        kit.ribbon(pts, 6.4, (x, z) => hgt(x, z) + 0.1, asphalt, 4);
+        const geos = [];
+        for (let i = 0; i < ROAD.length; i += 2) {
+          const a = ROAD[i], b = ROAD[(i + 1) % ROAD.length];
+          const g = new THREE.BoxGeometry(0.16, 0.02, 1.4);
+          g.rotateY(Math.atan2(b.x - a.x, b.z - a.z));
+          g.translate(a.x, hgt(a.x, a.z) + 0.14, a.z);
+          geos.push(tint(g, "#e8c84a"));
+        }
+        /* kilometre stones every ~40 m on the outside of the road */
+        for (let i = 0; i < ROAD.length; i += 22) {
+          const a = ROAD[i], b = ROAD[(i + 1) % ROAD.length];
+          const yaw = Math.atan2(b.x - a.x, b.z - a.z), ox = Math.cos(yaw) * 4.2, oz = -Math.sin(yaw) * 4.2;
+          const g = new THREE.BoxGeometry(0.4, 0.7, 0.2);
+          g.rotateY(yaw);
+          g.translate(a.x + ox, hgt(a.x + ox, a.z + oz) + 0.35, a.z + oz);
+          geos.push(tint(g, "#f2f0e8", "#c8c4b8", 0, 0.7));
+          const t = new THREE.BoxGeometry(0.42, 0.22, 0.22); t.rotateY(yaw); t.translate(a.x + ox, hgt(a.x + ox, a.z + oz) + 0.62, a.z + oz);
+          geos.push(tint(t, "#c0302a"));
+        }
+        const g = mergeGeometries(geos); geos.forEach((q) => q.dispose());
+        const lines = mesh(stage, g, stage.material("#ffffff", { vertexColors: true, roughness: 0.7 }));
+        lines.receiveShadow = true;
+        stage.add(lines);
+        /* green highway signs */
+        const sign = (i, text) => {
+          const a = ROAD[i], b = ROAD[(i + 1) % ROAD.length];
+          const yaw = Math.atan2(b.x - a.x, b.z - a.z), ox = Math.cos(yaw) * 5.2, oz = -Math.sin(yaw) * 5.2;
+          const grp = new THREE.Group();
+          grp.position.set(a.x + ox, hgt(a.x + ox, a.z + oz), a.z + oz);
+          grp.rotation.y = yaw + Math.PI;
+          grp.add(box(stage, 0.14, 3.2, 0.14, stage.material("#9a9a9a", { metalness: 0.4 }), -1.2, 1.6, 0));
+          grp.add(box(stage, 0.14, 3.2, 0.14, stage.material("#9a9a9a", { metalness: 0.4 }), 1.2, 1.6, 0));
+          const c = document.createElement("canvas"); c.width = 512; c.height = 192;
+          const x2 = c.getContext("2d");
+          x2.fillStyle = "#1f6a3a"; x2.fillRect(0, 0, 512, 192); x2.strokeStyle = "#fff"; x2.lineWidth = 8; x2.strokeRect(10, 10, 492, 172);
+          x2.fillStyle = "#fff"; x2.font = "bold 52px sans-serif"; x2.textAlign = "center"; x2.fillText(text[0], 256, 86); x2.font = "40px sans-serif"; x2.fillText(text[1], 256, 146);
+          const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; stage.trackTexture(tex);
+          grp.add(box(stage, 3.2, 1.2, 0.08, stage.material("#ffffff", { map: tex, roughness: 0.6 }), 0, 3.2, 0));
+          stage.add(grp);
+        };
+        sign(8, ["KARAKORAM HWY", "N-35 · Khunjerab 108 km"]);
+        sign(130, ["喀喇昆仑公路", "G314 · 塔什库尔干"]);
+        sign(250, ["Passu · Sost", "Hunza Valley ←"]);
+        /* a decorated "jingle" truck parked in a lay-by */
+        const ti = 40, ta = ROAD[ti], tb = ROAD[ti + 1], ty = Math.atan2(tb.x - ta.x, tb.z - ta.z);
+        const truck = new THREE.Group();
+        truck.position.set(ta.x + Math.cos(ty) * 6.2, hgt(ta.x + Math.cos(ty) * 6.2, ta.z - Math.sin(ty) * 6.2), ta.z - Math.sin(ty) * 6.2);
+        truck.rotation.y = ty;
+        const art = (() => {
+          const c = document.createElement("canvas"); c.width = 256; c.height = 256; const x2 = c.getContext("2d");
+          const cols = ["#e8402a", "#f2c230", "#2a9a5a", "#2a6ab8", "#e86ab0", "#ffffff"];
+          for (let k = 0; k < 18; k += 1) { x2.fillStyle = cols[k % cols.length]; x2.fillRect(0, k * 14.2, 256, 14.2); }
+          for (let k = 0; k < 40; k += 1) { x2.fillStyle = cols[(k * 7) % cols.length]; x2.beginPath(); x2.arc((k * 53) % 256, (k * 97) % 256, 10 + (k % 4) * 4, 0, Math.PI * 2); x2.fill(); }
+          const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; stage.trackTexture(t); return t;
+        })();
+        const artM = stage.material("#ffffff", { map: art, roughness: 0.6 });
+        truck.add(box(stage, 2.5, 1.0, 9, stage.material("#2a2a2a"), 0, 1.0, 0));
+        truck.add(box(stage, 2.5, 2.2, 2.4, artM, 0, 2.6, 3.3));
+        truck.add(box(stage, 2.6, 2.6, 6.2, artM, 0, 2.8, -1.2));
+        truck.add(box(stage, 2.3, 1.2, 0.8, artM, 0, 4.4, 4.2));
+        truck.add(box(stage, 2.0, 0.9, 0.06, stage.material("#3a5868", { roughness: 0.3 }), 0, 3.0, 4.52));
+        for (const [wx, wz] of [[-1.2, 3], [1.2, 3], [-1.2, -2.6], [1.2, -2.6], [-1.2, -3.8], [1.2, -3.8]]) {
+          const w = mesh(stage, new THREE.CylinderGeometry(0.55, 0.55, 0.4, 14), stage.material("#1d1d1d"), wx, 0.55, wz);
+          w.rotation.z = Math.PI / 2;
+          truck.add(w);
+        }
+        stage.add(truck);
+        W.interactive("jo-kkh", truck, "Karakoram Highway", [ta.x + Math.cos(ty) * 6.2 - Math.sin(ty) * 7, ta.z - Math.sin(ty) * 6.2 - Math.cos(ty) * 7], { radius: 16, labelOffset: 1.4 });
+      }
+      makePath([[0, 36], [2, 46], [4, 55]], 3.0);
       makePath([[0, 36], [4, 22], [8, 10], [-6, -8], [0, -25]], 3.2);
       makePath([[0, -25], [16, -36], [28, -42], [35, -50]], 2.8);
       makePath([[0, -25], [-16, -32], [-28, -40], [-35, -45]], 2.8);
@@ -393,23 +519,24 @@ export default function buildJourney({ scene, stage, manager }) {
         stage.add(t);
       });
 
-      const clouds = [];
-      for (let i = 0; i < 5; i += 1) {
-        const c = cloud(1.5 + (i % 3) * 0.4);
-        c.position.set(-40 + i * 20, 20 + (i % 3) * 2, -60 - (i % 2) * 6);
-        stage.add(c);
-        clouds.push({ mesh: c, speed: 0.15 + i * 0.03 });
-      }
-      for (let i = 0; i < 5; i += 1) {
-        stage.add(bird(-30 + i * 15, 16 + i * 0.6, -24 - i * 4));
-      }
-      stage.animate((time, delta) => {
-        if (stage.reducedMotion) return;
-        clouds.forEach((c) => {
-          c.mesh.position.x += c.speed * delta;
-          if (c.mesh.position.x > 80) c.mesh.position.x = -80;
-        });
-      });
+    },
+    upgrade: {
+      grass: { density: (x, z) => { const h = heightFn(x, z); const r = roadNear(x, z); return (h < 20 ? 0.9 : 0.3) * (r && r.d < 5 ? 0 : 1); }, colors: ["#4e6a30", "#a3a865"], count: 3000 },
+      clouds: { coverage: 0.5, scale: 1.4, speed: 0.006 },
+      post: { grade: { tint: "#f6f9ff", contrast: 1.07, saturation: 1.05, vignette: 0.28 } },
+      animals: (fa, { W: Wk }) => {
+        const id = (k) => animalId("journey", k);
+        /* drive the highway */
+        const a = ROAD[2], b = ROAD[3];
+        fa.rideJeep({ x: a.x, z: a.z, yaw: Math.atan2(b.x - a.x, b.z - a.z), label: { en: "the jeep (Karakoram Highway)", zh: "吉普车（喀喇昆仑公路）" }, color: "#e6e0d0" });
+        fa.herd({ id: id("yak"), kind: "yak", count: 5, cx: -48, cz: 40, R: 10, speed: 0.5, opts: (i) => (i % 3 === 0 ? { patch: true } : {}) });
+        fa.rideAnimal({ kind: "yak", x: -10, z: 38, yaw: -1.2, label: { en: "a yak", zh: "牦牛" }, id: id("yak") });
+        fa.herd({ id: id("horse"), kind: "horse", count: 3, cx: 26, cz: 30, R: 8, speed: 0.6, opts: (i) => ({ color: ["#6a4a30", "#2a2420", "#c8b8a0"][i % 3] }) });
+        fa.herd({ id: id("bharal"), kind: "ibex", count: 6, cx: 52, cz: -46, R: 10, speed: 1.1, wild: true, flee: 12, opts: { color: "#8a8478" } });
+        fa.herd({ id: id("snowleopard"), kind: "snowleopard", count: 1, cx: -50, cz: -56, R: 6, speed: 0.8, wild: true, flee: 16 });
+        fa.soar({ id: id("vulture"), kind: "vulture", count: 2, cx: 10, cz: -30, R: 40, h: 62 });
+        fa.soar({ id: id("eagle"), kind: "eagle", count: 1, cx: -30, cz: 10, R: 30, h: 48 });
+      },
     },
     people: (W) => {
       const mix = ["trekker", "porter", "elder", "hunza-man", "hunza-woman", "schoolgirl"];

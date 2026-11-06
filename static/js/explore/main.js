@@ -15,6 +15,7 @@ import { ExploreUI } from "./ui.js";
 import { SceneManager, webglAvailable } from "./three/scene.js";
 import { CultureMap } from "./map.js";
 import { CulturalGuide } from "./guide.js";
+import { WorldGuide } from "./world-guide.js";
 import { SoundEngine } from "./audio.js";
 
 const app = document.getElementById("explore-app");
@@ -444,6 +445,53 @@ function refreshSceneLabels() {
   sceneManager.updateLabels(store.language, dirFor(store.language), texts);
 }
 
+
+/* -----------------------------------------------------------------------
+   3D world guide (a tab of the Guide view)
+   ----------------------------------------------------------------------- */
+let worldGuide = null;
+let guideTabNow = "ask";
+function setGuideTab(tab) {
+  guideTabNow = tab === "worlds" ? "worlds" : "ask";
+  const panel = document.querySelector(".guide-panel");
+  if (!panel) return;
+  const tabs = WorldGuide.tabs(store.language);
+  panel.querySelectorAll("[data-guide-tab]").forEach((b) => {
+    const on = b.dataset.guideTab === guideTabNow;
+    b.classList.toggle("is-active", on);
+    b.setAttribute("aria-selected", String(on));
+    b.textContent = b.dataset.guideTab === "worlds" ? tabs.worlds : tabs.ask;
+  });
+  panel.classList.toggle("is-world-guide", guideTabNow === "worlds");
+  const root = document.getElementById("world-guide");
+  root.hidden = guideTabNow !== "worlds";
+  if (guideTabNow === "worlds") {
+    if (!worldGuide) {
+      worldGuide = new WorldGuide({
+        root,
+        getLang: () => store.language,
+        onOpenCard: (id) => openCard(id),
+        onGo: (worldId, placeKey) => goToPlace(worldId, placeKey),
+      });
+      worldGuide.setWorld(currentWorldId);
+    }
+    worldGuide.render();
+  }
+}
+async function goToPlace(worldId, placeKey) {
+  const before = window.__walk || window.__ktm || null;
+  const same = sceneManager && sceneManager.currentWorldId === worldId && before;
+  await enterWorld(worldId);
+  const t0 = performance.now();
+  const tick = () => {
+    const A = window.__walk || window.__ktm;
+    const ready = A && A.places && A.places[placeKey] && sceneManager && sceneManager.currentWorldId === worldId && (same || A !== before);
+    if (ready) { window.setTimeout(() => A.travelTo(placeKey), same ? 0 : 900); return; }
+    if (performance.now() - t0 < 60000) window.setTimeout(tick, 300);
+  };
+  tick();
+}
+
 /* -----------------------------------------------------------------------
    Views, routing and language
    ----------------------------------------------------------------------- */
@@ -498,7 +546,9 @@ async function openView(view, { updateHash = true, push = true, skipScene = fals
     guide.setContext({ worldId: null, objectId: null });
   } else if (view === "guide") {
     guide.setContext({ worldId: currentWorldId, objectId: previousObjectId || null });
-    window.setTimeout(() => document.getElementById("guide-input")?.focus({ preventScroll: true }), 220);
+    if (worldGuide) worldGuide.setWorld(currentWorldId);
+    setGuideTab(guideTabNow);
+    if (guideTabNow === "ask") window.setTimeout(() => document.getElementById("guide-input")?.focus({ preventScroll: true }), 220);
   }
   ui.updateTopbar();
 }
@@ -829,6 +879,11 @@ async function openTodayWorld(button) {
 
 function bindEvents() {
   document.addEventListener("click", (event) => {
+    const guideTab = event.target.closest("[data-guide-tab]");
+    if (guideTab) {
+      setGuideTab(guideTab.dataset.guideTab);
+      return;
+    }
     const viewButton = event.target.closest("[data-view]");
     if (viewButton) {
       event.preventDefault();
@@ -1107,7 +1162,7 @@ function bindEvents() {
     if (!sceneManager || currentView !== "world") return;
     if (document.querySelector("dialog[open]")) return;
     const target = event.target;
-    if (target && (target.matches("input, textarea, select") || target.isContentEditable)) return;
+    if (target && target.matches && (target.matches("input, textarea, select") || target.isContentEditable)) return;
     if (event.key === "ArrowLeft") {
       event.preventDefault();
       sceneManager.rotate(-0.14, 0);
@@ -1150,6 +1205,7 @@ function changeLanguage(lang) {
   ui.setLanguage(lang);
   guide.setLanguage(lang);
   map.setLanguage(lang);
+  if (currentView === "guide") setGuideTab(guideTabNow);
   refreshSceneLabels();
   ui.renderHome();
   const encounter = ui.getTodayEncounter();

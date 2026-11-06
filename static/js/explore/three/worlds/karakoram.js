@@ -14,6 +14,8 @@ import {
   woodTexture,
 } from "../helpers.js";
 import { createKit, createWalker, fbm, hs, lerp, ss, col } from "./walk-engine.js";
+import { upgradeWorld } from "./world-upgrade.js";
+import { animalId } from "../../wildlife-data.js";
 
 /* Karakoram Highway — a walkable world from Chilas to Tashkurgan.
    The stalls, gate, village and monuments below are the original
@@ -712,7 +714,7 @@ export default function buildKarakoram({ scene, stage, manager }) {
   const W = createWalker({
     scene, stage, manager, kit, places: PL, startPlace: "chilas",
     worldName: { en: "Karakoram Highway", zh: "喀喇昆仑公路", sub: "شاہراہ قراقرم" },
-    hgt, groundY, canStand, nightMats, kmPerUnit: 0.24, runSpeed: 14, exposureScale: 0.74, fogDensity: 0.00042, far: 5200,
+    hgt, groundY, canStand, nightMats, kmPerUnit: 0.24, runSpeed: 14, collision: "slide", exposureScale: 0.74, fogDensity: 0.00042, far: 5200,
     mapBounds: { x0: -1150, x1: 1150, z0: -1550, z1: 750 },
     mapLines: [RP.filter((p, i) => i % 8 === 0).map((p) => [p.x, p.z])],
     mapColor: (x, z) => {
@@ -1116,6 +1118,38 @@ export default function buildKarakoram({ scene, stage, manager }) {
       stage.add(s);
     }
   })();
+
+  /* ---------- realism, solid objects, animals and the drive ---------- */
+  {
+    const U = upgradeWorld({
+      W, stage, manager, kit, hgt, groundY, canStand, bounds: { x0: -700, x1: 740, z0: -1640, z1: 980 }, since: 0,
+      protect: Object.values(PL).map((p) => [p.spawn[0], p.spawn[1], 1.6]).concat(RP.filter((_, i) => i % 3 === 0).map((p) => [p.x, p.z, 0.6])),
+      clouds: { coverage: 0.55, scale: 1.3, speed: 0.005 },
+      post: { grade: { tint: "#fbf8f2", contrast: 1.05, saturation: 1.05, vignette: 0.26 } },
+    });
+    const fa = U.fauna, id = (k) => animalId("karakoram", k);
+    const yawAt = (t) => { const i = Math.round(t * NS); return Math.atan2(TAN[i][0], TAN[i][1]); };
+    const near = (x, z, r = 14) => {
+      for (let d = 0; d <= r; d += 2) for (let k = 0; k < 12; k += 1) {
+        const px = x + Math.cos(k * 0.52) * d, pz = z + Math.sin(k * 0.52) * d;
+        if (canStand(px, pz) && !kit.blocked(px, pz, 1.2)) return [px, pz];
+      }
+      return [x, z];
+    };
+    /* jeeps: drive the Karakoram Highway from Chilas, Karimabad or Sost */
+    [[0.056, "#e6e0d0"], [0.474, "#c0302a"], [0.785, "#2f5a7a"]].forEach(([t, c]) => {
+      const [x, z] = at(t, 1.6);
+      fa.rideJeep({ x, z, yaw: yawAt(t), label: { en: "the jeep (drive the Karakoram Highway)", zh: "吉普车（驾驶喀喇昆仑公路）" }, color: c, vmax: 16, vrun: 28 });
+    });
+    /* yaks at Passu, Sost and Tashkurgan; ride one at Khunjerab */
+    [[0.71, -26], [0.8, 24], [0.975, -40]].forEach(([t, side], i) => { const [x, z] = near(...at(t, side)); fa.herd({ id: id("yak"), kind: "yak", count: 4, cx: x, cz: z, R: 12, speed: 0.5, opts: (k) => ((k + i) % 2 ? { patch: true } : {}) }); });
+    { const [x, z] = near(...at(0.915, -8)); fa.rideAnimal({ kind: "yak", x, z, yaw: yawAt(0.915), label: { en: "a yak", zh: "牦牛" }, id: id("yak") }); }
+    { const [x, z] = near(...at(0.9, 44), 24); fa.herd({ id: id("marcopolo"), kind: "marcopolo", count: 5, cx: x, cz: z, R: 16, speed: 1.0, wild: true, flee: 16 }); }
+    { const [x, z] = near(...at(0.69, 40), 24); fa.herd({ id: id("ibex"), kind: "ibex", count: 5, cx: x, cz: z, R: 14, speed: 1.0, wild: true, flee: 12 }); }
+    { const [x, z] = near(...at(0.27, -36), 24); fa.herd({ id: id("markhor"), kind: "markhor", count: 4, cx: x, cz: z, R: 14, speed: 1.0, wild: true, flee: 14 }); }
+    { const [x, z] = near(...at(0.94, -40), 30); fa.herd({ id: id("snowleopard"), kind: "snowleopard", count: 1, cx: x, cz: z, R: 8, speed: 0.8, wild: true, flee: 20 }); }
+    { const [x, z] = at(0.5, 0); fa.soar({ id: id("eagle"), kind: "eagle", count: 3, cx: x, cz: z, R: 60, h: groundY(x, z) + 90 }); }
+  }
 
   /* ---------- people ---------- */
   const mixes = {

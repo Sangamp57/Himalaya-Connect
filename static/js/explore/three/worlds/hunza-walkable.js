@@ -9,6 +9,9 @@ import {
   woodTexture,
 } from "../helpers.js";
 import { createKit, createWalker, fbm, hs, lerp, ss, col } from "./walk-engine.js";
+import { SKY_PRESETS } from "./yunnan-fx.js";
+import { upgradeWorld } from "./world-upgrade.js";
+import { animalId } from "../../wildlife-data.js";
 import {
   buildApricotStall,
   buildCraftWorkshop,
@@ -24,7 +27,7 @@ import {
 } from "./hunza-builders.js";
 
 /* ------------------------------------------------------------------
-   Hunza Valley Ã¢â‚¬â€ a walkable valley focused only on Hunza.
+   Hunza Valley — a walkable valley focused only on Hunza.
    Karimabad bazaar, Baltit Fort, Altit Fort, the apricot terraces,
    Ganish and the kuhl, Duikar viewpoint, the Hussaini bridge and
    Attabad Lake. The Karakoram is the backdrop; the walk stays in Hunza.
@@ -587,6 +590,8 @@ export default function buildHunzaValley({ scene, stage, manager }) {
     nightMats,
     kmPerUnit: 0.02,
     runSpeed: 11,
+    collision: "slide",
+    skyKeys: SKY_PRESETS.alpine,
     exposureScale: 0.96,
     fogDensity: 0.0005,
     far: 4600,
@@ -751,7 +756,7 @@ export default function buildHunzaValley({ scene, stage, manager }) {
   );
   altit.children[altit.children.length - 1].position.set(-5.2, 12.1, -3.2);
   blockRect(-58, 142, 20, 18, -0.7);
-  makeSign("ALTIT FORT", -44, 128, 2.3);
+  makeSign("ALTIT FORT", -37, 133, 2.3);
   placeGroup(hamletHouse(stage, 0, 0, stoneMap, timberMap, 1.0), -42, 156, 0.4);
   placeGroup(hamletHouse(stage, 0, 0, stoneMap, timberMap, 0.85), -72, 154, -0.2);
   blockRect(-42, 156, 7, 6, 0.4);
@@ -766,7 +771,7 @@ export default function buildHunzaValley({ scene, stage, manager }) {
   const duikar = placeGroup(buildViewpoint(stage), -198, 95, -0.85, 2.0);
   placeGroup(hamletHouse(stage, 0, 0, stoneMap, timberMap, 0.9), -212, 90, 0.6);
   blockRect(-212, 90, 6, 5, 0.6);
-  makeSign("DUIKAR Ã‚Â· EAGLE'S NEST", -188, 108, 0.4);
+  makeSign("DUIKAR · EAGLE'S NEST", -188, 108, 0.4);
   kit.flagString(
     new THREE.Vector3(-206, hgt(-206, 88) + 6, 88),
     new THREE.Vector3(-188, hgt(-188, 100) + 6, 100),
@@ -916,6 +921,39 @@ export default function buildHunzaValley({ scene, stage, manager }) {
   W.interactive("pk-view", duikar, "Duikar viewpoint", [-190, 92], { radius: 20, labelOffset: 2 });
   W.interactive("pk-hussaini", hussainiGroup, "Hussaini Bridge", [-38, 250], { radius: 18, labelOffset: 2 });
   W.interactive("pk-attabad", attabad, "Attabad Lake", [-82, 378], { radius: 28, labelOffset: 2 });
+
+  /* ---------- realism, solid objects, animals and rides ---------- */
+  {
+    const U = upgradeWorld({
+      W, stage, manager, kit, hgt, groundY, canStand, bounds: BOUNDS, since: 0,
+      protect: Object.values(PL).map((p) => [p.spawn[0], p.spawn[1], 1.6]),
+      clouds: { coverage: 0.56, scale: 1.3, speed: 0.005 },
+      post: { grade: { tint: "#f8f9fa", contrast: 1.06, saturation: 1.06, vignette: 0.26 } },
+    });
+    const fa = U.fauna, id = (k) => animalId("hunza", k);
+    const near = (x, z, r = 12) => {
+      for (let d = 0; d <= r; d += 2) for (let k = 0; k < 12; k += 1) {
+        const px = x + Math.cos(k * 0.52) * d, pz = z + Math.sin(k * 0.52) * d;
+        if (canStand(px, pz) && !kit.blocked(px, pz, 1.2)) return [px, pz];
+      }
+      return [x, z];
+    };
+    /* horse riding from Karimabad up the valley */
+    { const [x, z] = near(-62, 22); fa.rideAnimal({ kind: "horse", x, z, yaw: 0.3, label: { en: "a Hunza horse", zh: "罕萨马" }, id: id("horse"), opts: { color: "#7a4a2a" }, vmax: 5, vrun: 12 }); }
+    { const [x, z] = near(84, 104); fa.herd({ id: id("horse"), kind: "horse", count: 3, cx: x, cz: z, R: 10, speed: 0.6, opts: (i) => ({ color: ["#2a2420", "#c8b8a0", "#6a4a30"][i % 3] }) }); }
+    { const [x, z] = near(-196, 112); fa.herd({ id: id("yak"), kind: "yak", count: 5, cx: x, cz: z, R: 12, speed: 0.5, opts: (i) => (i % 2 ? { patch: true } : {}) }); }
+    { const [x, z] = near(-176, 98); fa.rideAnimal({ kind: "yak", x, z, yaw: 1.2, label: { en: "a yak", zh: "牦牛" }, id: id("yak") }); }
+    { const [x, z] = near(-150, 200, 30); fa.herd({ id: id("markhor"), kind: "markhor", count: 4, cx: x, cz: z, R: 14, speed: 1.0, wild: true, flee: 14 }); }
+    { const [x, z] = near(70, 230, 30); fa.herd({ id: id("ibex"), kind: "ibex", count: 5, cx: x, cz: z, R: 14, speed: 1.1, wild: true, flee: 12 }); }
+    fa.soar({ id: id("eagle"), kind: "eagle", count: 2, cx: -70, cz: -40, R: 50, h: 95 });
+    /* a boat on Attabad Lake */
+    const lakeWater = (x, z) => z > LAKE_Z0 + 55 && z < LAKE_Z1 - 30 && Math.abs(x - RIVER(z)) < waterHalf(z) - 3 && hgt(x, z) < LAKE_Y - 0.2;
+    let bz = 400, bx = RIVER(400);
+    for (let k = 0; k < 40 && !lakeWater(bx, bz); k += 1) { bz += 4; bx = RIVER(bz); }
+    for (let k = 0; k < 30; k += 1) { const t = bx - 1.5; if (lakeWater(t, bz)) bx = t; else break; }
+    bx += 3;
+    fa.rideBoat({ x: bx, z: bz, yaw: 0.2, label: { en: "a boat on Attabad Lake", zh: "阿塔巴德湖游船" }, water: lakeWater, waterY: LAKE_Y, color: "#2b7d88", vmax: 7, vrun: 12 });
+  }
 
   /* ---------- people ---------- */
   const bazaarMix = ["hunza-man", "hunza-woman", "elder", "schoolgirl", "porter", "trekker", "tajik-woman"];

@@ -1,4 +1,4 @@
-﻿import * as THREE from "three";
+import * as THREE from "three";
 import { OBJECT_MAP } from "../../data.js";
 import { DESIGNS, PLAYER_DESIGN, makeCrowd, makeFigure } from "./kathmandu-people.js";
 
@@ -275,15 +275,15 @@ const SKY_KEYS = [
 const BASE_STR = {
   en: {
     travel: "Travel", here: "you are here", km: "km", arriving: "Arriving at", learn: "Learn about",
-    times: ["Morning", "Midday", "Golden hour", "Night"], langBtn: "ä¸­æ–‡", langLabel: "Switch to Chinese",
-    hintTouch: "Left thumb to walk Â· drag to look Â· tap a beacon to read",
-    hintDesk: "W A S D to walk Â· Shift to run Â· drag to look Â· E or click a beacon to read", map: "Route map. Select to travel.",
+    times: ["Morning", "Midday", "Golden hour", "Night"], langBtn: "中文", langLabel: "Switch to Chinese",
+    hintTouch: "Left thumb to walk · drag to look · tap a beacon to read",
+    hintDesk: "W A S D to walk · Shift to run · drag to look · E or click a beacon to read", map: "Route map. Select to travel.",
   },
   zh: {
-    travel: "å‰å¾€", here: "ä½ åœ¨è¿™é‡Œ", km: "å…¬é‡Œ", arriving: "æŠµè¾¾", learn: "äº†è§£",
-    times: ["æ¸…æ™¨", "æ­£åˆ", "é»„æ˜", "å¤œæ™š"], langBtn: "EN", langLabel: "åˆ‡æ¢åˆ°è‹±æ–‡",
-    hintTouch: "å·¦æ‰‹æ‹‡æŒ‡è¡Œèµ° Â· æ‹–åŠ¨è½¬æ¢è§†è§’ Â· ç‚¹æŒ‰å…‰æŸ±é˜…è¯»",
-    hintDesk: "W A S D è¡Œèµ° Â· Shift å¥”è·‘ Â· æ‹–åŠ¨è½¬æ¢è§†è§’ Â· æŒ‰ E æˆ–ç‚¹å‡»å…‰æŸ±é˜…è¯»", map: "è·¯çº¿åœ°å›¾ï¼Œç‚¹å‡»å¯å‰å¾€å„åœ°ã€‚",
+    travel: "前往", here: "你在这里", km: "公里", arriving: "抵达", learn: "了解",
+    times: ["清晨", "正午", "黄昏", "夜晚"], langBtn: "EN", langLabel: "切换到英文",
+    hintTouch: "左手拇指行走 · 拖动转换视角 · 点按光柱阅读",
+    hintDesk: "W A S D 行走 · Shift 奔跑 · 拖动转换视角 · 按 E 或点击光柱阅读", map: "路线地图，点击可前往各地。",
   },
 };
 
@@ -297,6 +297,27 @@ const BASE_STR = {
  *   kmPerUnit, startPlace, onTime(info), nightMats, fogDensity, skyKeys
  * }
  */
+
+/* Minimap badge for a rideable: a teal disc with a tiny glyph for its kind. */
+export function drawRideIcon(g, kind, X, Y, active = false) {
+  g.save();
+  g.translate(X, Y);
+  g.fillStyle = active ? "#f2c76b" : "#1f8a8a";
+  g.strokeStyle = "#ffffff";
+  g.lineWidth = 2;
+  g.beginPath(); g.arc(0, 0, 7.5, 0, Math.PI * 2); g.fill(); g.stroke();
+  g.strokeStyle = active ? "#1d1406" : "#ffffff";
+  g.fillStyle = active ? "#1d1406" : "#ffffff";
+  g.lineWidth = 1.6;
+  g.beginPath();
+  if (kind === "boat") { g.moveTo(-5, 0); g.lineTo(5, 0); g.lineTo(3, 3); g.lineTo(-3, 3); g.closePath(); g.fill(); g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -5); g.lineTo(3, -1); g.stroke(); }
+  else if (kind === "glider") { g.moveTo(-5.5, -1); g.quadraticCurveTo(0, -6.5, 5.5, -1); g.stroke(); g.beginPath(); g.moveTo(-4, -1); g.lineTo(0, 4); g.lineTo(4, -1); g.stroke(); }
+  else if (kind === "jeep" || kind === "cart" || kind === "rickshaw") { g.rect(-4.5, -3, 9, 3.5); g.fill(); g.beginPath(); g.arc(-2.6, 2.2, 1.6, 0, 7); g.arc(2.6, 2.2, 1.6, 0, 7); g.fill(); }
+  else if (kind === "sled") { g.moveTo(-5, 1); g.lineTo(4, 1); g.quadraticCurveTo(6, 1, 5, -2); g.stroke(); g.beginPath(); g.moveTo(-3, 1); g.lineTo(-3, -2); g.moveTo(2, 1); g.lineTo(2, -2); g.stroke(); }
+  else { /* animals: a horseshoe */ g.arc(0, 0.5, 3.6, Math.PI * 0.1, Math.PI * 0.9, true); g.lineWidth = 2.2; g.stroke(); }
+  g.restore();
+}
+
 export function createWalker(opts) {
   const { scene, stage, manager, kit, places: PL } = opts;
   const { _o } = kit;
@@ -426,7 +447,7 @@ export function createWalker(opts) {
   let nearRide = null;
   const RIDE_STR = {
     en: { ride: "Ride", off: "Get off", shore: "Steer closer to the shore or a pier to get off" },
-    zh: { ride: "ä¹˜å", off: "ä¸‹æ¥", shore: "é è¿‘å²¸è¾¹æˆ–ç å¤´æ‰èƒ½ä¸‹æ¥" },
+    zh: { ride: "乘坐", off: "下来", shore: "靠近岸边或码头才能下来" },
   };
   function pushDyn(x, z) {
     for (const r of RIDES) {
@@ -434,12 +455,33 @@ export function createWalker(opts) {
       const p = r.pos(), dx = x - p.x, dz = z - p.z, R = r.blockR + PR, d = Math.hypot(dx, dz);
       if (d < R && d > 1e-5) { x = p.x + (dx / d) * R; z = p.z + (dz / d) * R; }
     }
+    for (const b of DYN) {
+      const p = b.pos(), dx = x - p.x, dz = z - p.z, R = b.r + PR, d = Math.hypot(dx, dz);
+      if (d < R && d > 1e-5) { x = p.x + (dx / d) * R; z = p.z + (dz / d) * R; }
+    }
     return [x, z];
+  }
+  /* a small ride log: the first time you try each ride in a world you get a note */
+  function logRide(r) {
+    try {
+      const key = "hc-rides", wname = (opts.worldName && opts.worldName.en) || "world";
+      const log = JSON.parse(window.localStorage.getItem(key) || "{}");
+      const list = log[wname] || [];
+      const tag = r.kind + ":" + RIDES.indexOf(r);
+      const kinds = [...new Set(RIDES.map((q) => q.kind + ":" + RIDES.indexOf(q)))];
+      if (list.includes(tag)) return;
+      list.push(tag); log[wname] = list;
+      window.localStorage.setItem(key, JSON.stringify(log));
+      const n = list.filter((q) => kinds.includes(q)).length;
+      const lab = r.label ? r.label[lang] || r.label.en : r.kind;
+      timers.push(window.setTimeout(() => showNote((lang === "zh" ? "新坐骑：" : "New ride: ") + lab + `  ·  ${n}/${kinds.length}`), 400));
+    } catch (e) { /* storage unavailable */ }
   }
   function mount(r) {
     if (riding || !r) return;
     riding = r;
     r.mount();
+    logRide(r);
     saved.rideRadius = controls.desiredRadius;
     controls.desiredRadius = r.camDist || 18;
     promptKey = "";
@@ -455,7 +497,7 @@ export function createWalker(opts) {
   function dismount(force = false) {
     if (!riding) return;
     let spot = riding.dismount();
-    if (!spot && !force) { showNote(RIDE_STR[lang].shore); return; }
+    if (!spot && !force) { showNote(riding.offNote ? riding.offNote[lang] || riding.offNote.en : RIDE_STR[lang].shore); return; }
     if (!spot) spot = [st.x, st.z];
     const r = riding;
     riding = null;
@@ -466,7 +508,97 @@ export function createWalker(opts) {
     if (r.dismounted) r.dismounted();
     promptKey = "";
   }
-  function addRideable(r) { RIDES.push(r); return r; }
+  /* each rideable gets a floating ride badge so it can be spotted from afar */
+  const rideTex = {};
+  function rideBadge(kind) {
+    if (!rideTex[kind]) {
+      const c = document.createElement("canvas"); c.width = c.height = 64;
+      const g = c.getContext("2d"); g.scale(3.6, 3.6); drawRideIcon(g, kind, 8.9, 8.9);
+      const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; stage.trackTexture(t);
+      rideTex[kind] = t;
+    }
+    const m = new THREE.SpriteMaterial({ map: rideTex[kind], depthTest: false, transparent: true });
+    stage.materials.add(m);
+    const sp = new THREE.Sprite(m); sp.renderOrder = 11; sp.scale.setScalar(1.1);
+    stage.add(sp);
+    return sp;
+  }
+  function addRideable(r) { RIDES.push(r); r.badge = rideBadge(r.kind); return r; }
+  function updateRideBadges(time) {
+    for (const r of RIDES) {
+      const p = r.pos(), d = Math.hypot(p.x - st.x, p.z - st.z);
+      r.badge.visible = r !== riding && d < 90 && worldVisible();
+      if (!r.badge.visible) continue;
+      const h = r.iconH || (r.camLift || 2) * 1.6 + 1.6;
+      r.badge.position.set(p.x, opts.groundY(p.x, p.z) + h + (stage.reducedMotion ? 0 : Math.sin(time * 2.4 + p.x) * 0.1), p.z);
+      r.badge.scale.setScalar(0.8 + Math.min(2.2, d / 22));
+    }
+  }
+  /* Moving obstacles (herd animals, carts...): { pos():{x,z}, r } */
+  const DYN = [];
+  function addBlocker(b) { DYN.push(b); return b; }
+  /* Info targets: moving things (animals) that open a discovery card. Each gets a
+     small floating ⓘ badge; E or clicking the badge opens the card. Several
+     targets can share one discovery id (a herd); the nearest one is used. */
+  const INFO = [];
+  let badgeTex = null;
+  function badgeTexture() {
+    if (badgeTex) return badgeTex;
+    const c = document.createElement("canvas");
+    c.width = c.height = 128;
+    const g = c.getContext("2d");
+    g.beginPath(); g.arc(64, 64, 54, 0, Math.PI * 2);
+    g.fillStyle = "rgba(14,40,52,.88)"; g.fill();
+    g.lineWidth = 9; g.strokeStyle = "#f2c76b"; g.stroke();
+    g.fillStyle = "#fff4d6";
+    g.font = "bold 76px Georgia, 'Times New Roman', serif";
+    g.textAlign = "center"; g.textBaseline = "middle";
+    g.fillText("i", 64, 70);
+    badgeTex = new THREE.CanvasTexture(c);
+    badgeTex.colorSpace = THREE.SRGBColorSpace;
+    stage.trackTexture(badgeTex);
+    return badgeTex;
+  }
+  function addInfoTarget(id, object, height = 2.6) {
+    const mat = new THREE.SpriteMaterial({ map: badgeTexture(), depthTest: true, transparent: true, fog: false });
+    stage.materials.add(mat);
+    const sp = new THREE.Sprite(mat);
+    sp.scale.setScalar(0.85);
+    sp.userData.infoId = id;
+    sp.renderOrder = 6;
+    stage.add(sp);
+    const t = { id, object, height, sprite: sp };
+    INFO.push(t);
+    return t;
+  }
+  const infoRay = new THREE.Raycaster();
+  let infoDown = null;
+  function onInfoDown(e) { infoDown = { x: e.clientX, y: e.clientY }; }
+  function onInfoUp(e) {
+    if (!infoDown || Math.hypot(e.clientX - infoDown.x, e.clientY - infoDown.y) > 6 || !INFO.length) return;
+    const r = renderer.domElement.getBoundingClientRect();
+    infoRay.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
+    const hit = infoRay.intersectObjects(INFO.filter((t) => t.sprite.visible).map((t) => t.sprite), false)[0];
+    if (hit) manager.onSelect(hit.object.userData.infoId);
+  }
+  renderer.domElement.addEventListener("pointerdown", onInfoDown);
+  renderer.domElement.addEventListener("pointerup", onInfoUp);
+  const _ip = new THREE.Vector3();
+  function updateInfo(time) {
+    updateRideBadges(time);
+    if (!INFO.length) return;
+    const best = {};
+    for (const t of INFO) {
+      t.object.getWorldPosition(_ip);
+      const d = Math.hypot(_ip.x - st.x, _ip.z - st.z);
+      t.sprite.position.set(_ip.x, _ip.y + t.height + (stage.reducedMotion ? 0 : Math.sin(time * 2 + t.height) * 0.08), _ip.z);
+      t.sprite.visible = d < 46 && worldVisible();
+      const s = 0.55 + Math.min(1.6, d / 30);
+      t.sprite.scale.setScalar(s);
+      if (!best[t.id] || d < best[t.id].d) best[t.id] = { d, x: _ip.x, z: _ip.z };
+    }
+    for (const id in best) POS[id] = { x: best[id].x, z: best[id].z };
+  }
   /* Small looping actions for idle NPCs (n.act): picking tea, working a wok,
      splashing water, dancing, rowing, praying. Arms only; cheap. */
   function actPose(n, time, dt) {
@@ -625,10 +757,10 @@ export function createWalker(opts) {
       local.textContent = placeSub(p);
       const sep = document.createElement("span");
       sep.className = "ktm-sep";
-      sep.textContent = placeSub(p) ? "Â·" : "";
+      sep.textContent = placeSub(p) ? "·" : "";
       const dist = document.createElement("span");
       dist.className = "ktm-dist";
-      dist.textContent = here ? tr().here : "â‰ˆ " + Math.round(d * kmPer) + " " + tr().km;
+      dist.textContent = here ? tr().here : "≈ " + Math.round(d * kmPer) + " " + tr().km;
       small.append(local, sep, dist);
       b.append(name, small);
       b.addEventListener("click", () => travelTo(k));
@@ -656,7 +788,7 @@ export function createWalker(opts) {
     timeBtn.textContent = t.times[timeIdx];
     travelBtn.textContent = t.travel;
     q("map").setAttribute("aria-label", t.map);
-    if (hintEl) hintEl.textContent = (touch ? t.hintTouch : t.hintDesk) + (RIDES.length && !touch ? (lang === "zh" ? " Â· F ä¹˜å" : " Â· F to ride") : "");
+    if (hintEl) hintEl.textContent = (touch ? t.hintTouch : t.hintDesk) + (RIDES.length && !touch ? (lang === "zh" ? " · F 乘坐" : " · F to ride") : "");
     lastPlace = "";
     nearId = "__refresh__";
     promptKey = "";
@@ -742,6 +874,11 @@ export function createWalker(opts) {
     Object.values(POS).forEach((m) => {
       const [X, Y] = toMap(m.x, m.z);
       mg.fillStyle = "#e6bc6a"; mg.beginPath(); mg.arc(X, Y, 3, 0, 7); mg.fill();
+    });
+    RIDES.forEach((r) => {
+      if (r === riding) return;
+      const p = r.pos(), [rx, ry] = toMap(p.x, p.z);
+      drawRideIcon(mg, r.kind, rx, ry, r === nearRide);
     });
     const [X, Y] = toMap(st.x, st.z);
     mg.save(); mg.translate(X, Y); mg.rotate(-st.face + Math.PI);
@@ -902,7 +1039,7 @@ export function createWalker(opts) {
     if (gy === undefined) gy = opts.groundY(st.x, st.z);
     player.root.position.set(st.x, gy, st.z);
     player.inner.rotation.y = st.face;
-    if (riding) player.sit();
+    if (riding) (riding.pose === "straddle" ? player.straddle() : riding.pose === "stand" ? player.pose(0) : player.sit());
     else player.pose(moving ? Math.sin(st.walk) * Math.min(0.75, st.speed * 0.09) : 0);
     player.inner.position.y = moving ? Math.abs(Math.cos(st.walk)) * 0.05 : 0;
     controls.target.set(st.x, gy + (riding ? riding.camLift || 1.6 : 1.6), st.z);
@@ -966,6 +1103,7 @@ export function createWalker(opts) {
     });
     if (crowd) crowd.update();
     extraUpdates.forEach((fn) => fn(time, dt, st));
+    updateInfo(time);
 
     let best = null, bd = 10;
     stage.interactives.forEach((entry) => {
@@ -979,11 +1117,23 @@ export function createWalker(opts) {
       if (d < bd) { bd = d; best = entry.id; }
     });
     /* nearest rideable within reach (only when walking) */
+    let bestInfo = false;
+    if (best === null && INFO.length) {
+      /* moving info targets (animals) also count as nearby discoveries */
+      for (const t of INFO) {
+        const p = POS[t.id];
+        if (!p) continue;
+        const d = Math.hypot(p.x - st.x, p.z - st.z);
+        if (d < 7 && d < bd) { bd = d; best = t.id; bestInfo = true; }
+      }
+    }
     nearRide = null;
     if (!riding) {
       let rd = 1e9;
       RIDES.forEach((r) => { const p = r.pos(), d = Math.hypot(p.x - st.x, p.z - st.z); if (d < r.radius && d < rd) { rd = d; nearRide = r; } });
       /* Rideables take priority over nearby beacons: F should mount at a pier or trek station. */
+      /* ...and over an animal's ⓘ (it stays clickable): standing by a camel, the prompt says "Ride" */
+      if (nearRide && bestInfo) best = null;
     }
     if (best !== nearId) { nearId = best; promptKey = ""; }
     const kind = riding ? "off" : nearRide ? "ride" : best ? "learn" : "";
@@ -996,9 +1146,9 @@ export function createWalker(opts) {
         const k2 = kind === "learn" ? (touch ? "Tap" : "E") : touch ? "Tap" : "F";
         prompt.innerHTML = `<span></span><kbd>${k2}</kbd>`;
         const R2 = RIDE_STR[lang];
-        prompt.firstChild.textContent = kind === "off" ? R2.off + (riding.label ? (lang === "zh" ? "" : " Â· ") + riding.label[lang] : "")
+        prompt.firstChild.textContent = kind === "off" ? R2.off + (riding.label ? (lang === "zh" ? "" : " · ") + riding.label[lang] : "")
           : kind === "ride" ? R2.ride + (lang === "zh" ? "" : " ") + nearRide.label[lang]
-            : tr().learn + (lang === "zh" ? "ï¼š" : " ") + objectName(best);
+            : tr().learn + (lang === "zh" ? "：" : " ") + objectName(best);
         prompt.hidden = false;
       }
     }
@@ -1047,6 +1197,8 @@ export function createWalker(opts) {
     renderer.toneMappingExposure = saved.exposure;
     Object.assign(controls, { maxTargetY: saved.maxTargetY, minTargetY: saved.minTargetY, minPhi: saved.minPhi, maxPhi: saved.maxPhi });
     controls.updateCamera = saved.updateCamera;
+    renderer.domElement.removeEventListener("pointerdown", onInfoDown);
+    renderer.domElement.removeEventListener("pointerup", onInfoUp);
     window.removeEventListener("keydown", onKeyDown);
     window.removeEventListener("keyup", onKeyUp);
     window.removeEventListener("blur", onBlur);
@@ -1059,8 +1211,8 @@ export function createWalker(opts) {
 
   const api = {
     st, sun, hemi, sunDir, skyU, setTime, lights, interactive, controls, stage, addNpc, pick, D, NPC, start, travelTo, figMat, kit, player,
-    getTimeIdx: () => timeIdx, getLang: () => lang, POS,
-    addRideable, mount, dismount, isRiding: () => riding, RIDES,
+    getTimeIdx: () => timeIdx, getLang: () => lang, POS, places: opts.places,
+    addRideable, mount, dismount, isRiding: () => riding, RIDES, addBlocker, addInfoTarget, INFO,
     onUpdate: (fn) => extraUpdates.push(fn),
     setTimeIdx: (i) => { timeIdx = i; timeBtn.textContent = tr().times[i]; setTime(TIMES[i]); },
   };

@@ -1,8 +1,11 @@
 import * as THREE from "three";
-import { bird, cloud, mountain, pine, stoneTexture, tree, woodTexture } from "../helpers.js";
+import { mountain, pine, stoneTexture, tree, woodTexture } from "../helpers.js";
 import { buildFort, hamletHouse } from "./hunza-builders.js";
 import { buildWalkableTown } from "./walk-town.js";
+import { placeShop } from "./shops.js";
 import { fbm, ss, lerp } from "./walk-engine.js";
+import { SKY_PRESETS } from "./yunnan-fx.js";
+import { animalId } from "../../wildlife-data.js";
 
 function mesh(stage, geometry, material, x = 0, y = 0, z = 0) {
   stage.trackGeometry(geometry);
@@ -86,7 +89,12 @@ export default function buildSkardu({ scene, stage, manager }) {
     stage,
     manager,
     seed: 20261111,
-    terrain: { heightFn, colorFn, segments: 170 },
+    terrain: {
+      heightFn,
+      colorFn,
+      segments: 200,
+      material: (M, fx) => (fx ? fx.pbr("plaster", { color: "#ffffff", color2: "#e2ddd2", color3: "#b8b0a0", stains: 0.5, seed: 121, bump: 1.6, repeat: [44, 44] }, { vertexColors: true }) : M({ vertexColors: true, roughness: 0.98 })),
+    },
     places: {
       bazaar: {
         n: "Skardu Bazaar",
@@ -169,7 +177,8 @@ export default function buildSkardu({ scene, stage, manager }) {
     waterMask: (x, z, h) => riverD(x) < 12 && h < 1.2,
     fogDensity: 0.0005,
     exposureScale: 0.94,
-    build: ({ kit, W, stage, hgt, makePath, addBridge }) => {
+    walker: { collision: "slide", skyKeys: SKY_PRESETS.alpine },
+    build: ({ kit, W, stage, hgt, makePath, addBridge, fx }) => {
       const stoneMap = stage.trackTexture(stoneTexture("#8c8475", "#605b51", [3, 3]));
       const timberMap = stage.trackTexture(woodTexture("#65402a", "#3c2415", [2, 2]));
 
@@ -180,7 +189,7 @@ export default function buildSkardu({ scene, stage, manager }) {
         river.map(([x, z]) => new THREE.Vector3(x, 0, z)),
         24,
         () => 0.6,
-        stage.material("#2f7f8f", { roughness: 0.15, metalness: 0.2, transparent: true, opacity: 0.94 }),
+        fx.waterMaterial({ color: "#3a6a6a", opacity: 0.9, repeat: [3, 40], flow: [0, -0.05], flow2: [0.01, -0.035] }),
         30
       );
 
@@ -288,27 +297,47 @@ export default function buildSkardu({ scene, stage, manager }) {
         stage.add(peak);
       });
 
-      const clouds = [];
-      for (let i = 0; i < 5; i += 1) {
-        const c = cloud(1.7 + (i % 3) * 0.5);
-        c.position.set(-60 + i * 28, 22 + (i % 3) * 3, -70 - (i % 2) * 8);
-        stage.add(c);
-        clouds.push({ mesh: c, speed: 0.17 + i * 0.03 });
-      }
-      for (let i = 0; i < 6; i += 1) {
-        stage.add(bird(-40 + i * 18, 20 + i * 0.8, -20 - i * 4));
-      }
-      stage.animate((time, delta) => {
-        if (stage.reducedMotion) return;
-        clouds.forEach((c) => {
-          c.mesh.position.x += c.speed * delta;
-          if (c.mesh.position.x > 120) c.mesh.position.x = -120;
-        });
-      });
 
+
+      // Skardu polo ground: low stone walls, goal posts and a spectators' stand.
+      const polo = new THREE.Group();
+      polo.position.set(-14, hgt(-14, 56), 56);
+      {
+        const stone = stage.material("#ffffff", { map: stoneMap, roughness: 1 });
+        for (const sz of [-9, 9]) polo.add(box(stage, 52, 1.3, 0.6, stone, 0, 0.55, sz));
+        for (const sx of [-26, 26]) for (const gz of [-2.2, 2.2]) polo.add(box(stage, 0.26, 2.6, 0.26, stage.material("#e8e2d2"), sx, 1.3, gz));
+        polo.add(box(stage, 10, 0.4, 3, stage.material("#7a5a3a"), 0, 0.9, 11.2));
+        polo.add(box(stage, 10, 0.4, 3, stage.material("#7a5a3a"), 0, 1.5, 12.4));
+        for (let k = 0; k < 6; k += 1) polo.add(box(stage, 0.16, 3.2, 0.16, stage.material("#5a3a24"), -5 + k * 2, 1.6, 13.6));
+        polo.add(box(stage, 11, 0.12, 4, stage.material("#2d6a58"), 0, 3.2, 12));
+        const ball = mesh(stage, new THREE.SphereGeometry(0.2, 10, 8), stage.material("#f4f0e6"), 3, 0.2, 1);
+        polo.add(ball);
+      }
+      stage.add(polo);
+      makePath([[0, 16], [-6, 36], [-10, 46]], 3.0);
+      placeShop({ W, kit, stage, hgt }, { x: -16, z: 15, ry: Math.PI / 2, goods: "gems", sign: "GEMSTONES · جواہرات", id: "pk-gems", label: "Gemstone shop", seller: "hunza-man", cloth: "#2a4a7a", cloth2: "#e8e0c8" });
+      W.interactive("pk-polo", polo, "Polo ground", [-6, 44], { radius: 18, labelOffset: 1.4 });
       W.interactive("pk-shigar", fort, "Shigar Fort", [-40, -16], { radius: 20, labelOffset: 1.8 });
       W.interactive("pk-indus", crossing, "Indus River", [25, 20], { radius: 18, labelOffset: 1.4 });
       W.interactive("pk-katpana", dunes, "Katpana cold desert", [60, 42], { radius: 20, labelOffset: 1.4 });
+    },
+    upgrade: {
+      grass: { density: (x, z) => (riverD(x) > 14 && !(x > 48 && z > 24) ? (Math.abs(x + 14) < 26 && Math.abs(z - 56) < 9 ? 1 : 0.6) : 0), colors: ["#4e6a30", "#a3a865"], count: 2600 },
+      clouds: { coverage: 0.55, scale: 1.3, speed: 0.005 },
+      post: { grade: { tint: "#f8f8f6", contrast: 1.07, saturation: 1.04, vignette: 0.28 } },
+      animals: (fa) => {
+        const id = (k) => animalId("skardu", k);
+        const inPolo = (x, z) => Math.abs(x + 14) < 24 && Math.abs(z - 56) < 7.5;
+        fa.rideAnimal({ kind: "horse", x: -30, z: 56, yaw: Math.PI / 2, label: { en: "a polo pony", zh: "马球马" }, id: id("horse"), opts: { color: "#5a3a24" }, vmax: 5, vrun: 12 });
+        fa.herd({ id: id("horse"), kind: "horse", count: 3, cx: 0, cz: 56, R: 10, speed: 1.0, area: inPolo, opts: (i) => ({ color: ["#2a2420", "#8a5a34", "#c8b8a0"][i % 3] }) });
+        fa.rideAnimal({ kind: "yak", x: -40, z: 2, yaw: 0.4, label: { en: "a yak", zh: "牦牛" }, id: id("yak") });
+        fa.herd({ id: id("yak"), kind: "yak", count: 4, cx: -70, cz: 20, R: 10, speed: 0.5, opts: (i) => (i % 2 ? { patch: true } : {}) });
+        fa.herd({ id: id("ibex"), kind: "ibex", count: 5, cx: 80, cz: -60, R: 12, speed: 1.1, wild: true, flee: 12 });
+        fa.herd({ id: id("bear"), kind: "bear", count: 1, cx: -92, cz: 76, R: 10, speed: 0.6, wild: true, flee: 18 });
+        fa.soar({ id: id("eagle"), kind: "eagle", count: 2, cx: 30, cz: -40, R: 40, h: 60 });
+        /* a zak (goat-skin raft) on the Indus */
+        fa.rideBoat({ x: 25, z: 34, yaw: 0, raft: true, label: { en: "a zak raft on the Indus", zh: "羊皮筏子（印度河）" }, water: (x, z) => riverD(x) < 9 && Math.abs(z - 20) > 3.2 && z > -112 && z < 112, waterY: 0.6, vmax: 4, vrun: 7 });
+      },
     },
     people: (W) => {
       const mix = ["hunza-man", "hunza-woman", "elder", "porter", "schoolgirl", "trekker"];

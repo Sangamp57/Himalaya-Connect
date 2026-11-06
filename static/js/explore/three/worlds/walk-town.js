@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { createKit, createWalker } from "./walk-engine.js";
+import { createFx } from "./yunnan-fx.js";
+import { upgradeWorld } from "./world-upgrade.js";
 
 /**
  * Shared terrain + walker setup for the compact walkable town worlds.
@@ -31,9 +33,12 @@ export function buildWalkableTown({
   build,
   people,
   walker = {},
+  upgrade = null,
 }) {
   const kit = createKit(stage, manager.renderer, seed);
   const { M } = kit;
+  /* upgrade: shared realism, auto-colliders, animals and rides (world-upgrade.js) */
+  const fx = upgrade ? createFx({ stage, manager }) : null;
   const { x0, x1, z0, z1 } = mapBounds;
 
   const HC = { x0: x0 - 40, z0: z0 - 40, c: 2 };
@@ -105,7 +110,7 @@ export function buildWalkableTown({
     geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
     stage.trackGeometry(geometry);
     /* terrain.material(M) lets a world supply a detailed ground material (optional) */
-    const mesh = new THREE.Mesh(geometry, terrain.material ? terrain.material(M) : M({ vertexColors: true, roughness: 0.98 }));
+    const mesh = new THREE.Mesh(geometry, terrain.material ? terrain.material(M, fx) : M({ vertexColors: true, roughness: 0.98 }));
     mesh.receiveShadow = true;
     stage.add(mesh);
   })();
@@ -195,7 +200,16 @@ export function buildWalkableTown({
     return pts;
   }
 
-  const built = build({ kit, W, stage, hgt, groundY, makePath, addBridge, M, canStand });
+  if (fx) fx.attach(W);
+  const since = stage.root.children.length;
+  const built = build({ kit, W, stage, hgt, groundY, makePath, addBridge, M, canStand, fx });
+  if (upgrade) {
+    const protect = Object.values(places).map((p) => [p.spawn[0], p.spawn[1], 1.4]);
+    const U = upgradeWorld(Object.assign({ W, stage, manager, kit, hgt, groundY, canStand, bounds: mapBounds, since, protect, fx }, upgrade));
+    W.fx = fx;
+    W.fauna = U.fauna;
+    if (upgrade.animals) upgrade.animals(U.fauna, { W, kit, hgt, groundY, canStand, fx, stage, makePath });
+  }
   if (people) people(W);
   W.start();
   if (built && typeof built.afterStart === "function") built.afterStart(W);

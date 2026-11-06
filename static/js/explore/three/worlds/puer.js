@@ -4,6 +4,8 @@ import { buildWalkableTown } from "./walk-town.js";
 import { fbm, ss, lerp, mulberry } from "./walk-engine.js";
 import { createFx, SKY_PRESETS, mergeGeometries, tint, lathe, cardCluster } from "./yunnan-fx.js";
 import { boxUV, cylUV, roofGeometry, latticeTextures, signTexture, makeAnimal, lanternGeometry, species, plant, stiltHouse } from "./yunnan-props.js";
+import { createFauna } from "./fauna.js";
+import { animalId } from "../../wildlife-data.js";
 
 /* Walkable Pu'er 普洱: terraced tea mountains, a tea-making village, the
    Jingmai ancient tea forest with a Bulang village, and a post station on
@@ -204,7 +206,7 @@ export default function buildPuer({ scene, stage, manager }) {
   return W;
 
   /* ===================================================================== */
-  function buildWorld({ kit, W: Wk, stage: st, hgt, groundY, makePath, addBridge, M }) {
+  function buildWorld({ kit, W: Wk, stage: st, hgt, groundY, makePath, addBridge, M, canStand }) {
     fx.attach(Wk);
     const F = fx;
     /* interactive() clones a building's materials for its highlight; keep night glow on the clones */
@@ -1026,6 +1028,27 @@ export default function buildPuer({ scene, stage, manager }) {
       }
       ANIMALS.forEach((a) => { if (a.still) a.anim.update(time, false, 0, reduced); });
     });
+
+    /* ------------------------------------------------ animal info badges, a horse to ride, more animals */
+    {
+      const id = (k) => animalId("puer", k);
+      if (CARAVAN.mules) Wk.addInfoTarget(id("mule"), CARAVAN.mules[0].root, 2.9);
+      ANIMALS.forEach((a, i) => { if (a.still && i === 1) Wk.addInfoTarget(id("horse"), a.anim.root, 2.8); });
+      const fa = createFauna({ W: Wk, stage, kit, hgt, groundY, canStand, fx: F });
+      const near = (x, z, r = 20) => {
+        for (let d = 0; d <= r; d += 2) for (let k = 0; k < 12; k += 1) {
+          const px = x + Math.cos(k * 0.52) * d, pz = z + Math.sin(k * 0.52) * d;
+          if (canStand(px, pz) && !kit.blocked(px, pz, 1.2)) return [px, pz];
+        }
+        return [x, z];
+      };
+      /* ride a Yunnan pony along the Tea Horse Road */
+      { const [x, z] = near(-84, -100, 12); fa.rideAnimal({ kind: "horse", x, z, yaw: 2.4, label: { en: "a Yunnan pony (Tea Horse Road)", zh: "滇马（茶马古道）" }, id: id("horse"), opts: { color: "#6a4a30" }, vmax: 4.5, vrun: 10 }); }
+      { const [x, z] = near(30, 70); fa.herd({ id: id("buffalo"), kind: "buffalo", count: 3, cx: x, cz: z, R: 8, speed: 0.4 }); }
+      { const [x, z] = near(118, -176); fa.herd({ id: id("goat"), kind: "goat", count: 5, cx: x, cz: z, R: 8, speed: 0.7, opts: (i) => ({ color: ["#2a2420", "#6b5644", "#d8d0c4"][i % 3] }) }); }
+      fa.soar({ id: id("eagle"), kind: "eagle", count: 2, cx: -120, cz: 40, R: 50, h: 85 });
+      F.contactShadows(() => fa.shadows(Wk.st), { max: 40, opacity: 0.38 });
+    }
 
     /* post-processing: gentle bloom and a cool morning grade */
     F.post({ bloom: { strength: 0.28, radius: 0.6, threshold: 0.86 }, grade: { tint: "#f4f8f4", contrast: 1.06, saturation: 1.04, vignette: 0.3 } });

@@ -2,6 +2,9 @@ import * as THREE from "three";
 import { colors } from "../helpers.js";
 import { DESIGNS, PLAYER_DESIGN, makeCrowd, makeFigure } from "./kathmandu-people.js";
 import { OBJECT_MAP } from "../../data.js";
+import { createFauna } from "./fauna.js";
+import { drawRideIcon } from "./walk-engine.js";
+import { animalId } from "../../wildlife-data.js";
 
 /* Kathmandu Valley — a walkable world.
    Stalls and craft scenes below are the original Himalaya Connect builders;
@@ -1681,6 +1684,7 @@ export default function buildKathmandu({ scene, stage, manager }) {
   }
   function travelTo(k) {
     toggleMenu(false);
+    if (typeof dismountRide === "function") dismountRide(true);
     const p = PL[k];
     fade.classList.add("on");
     timers.push(window.setTimeout(() => {
@@ -1701,7 +1705,7 @@ export default function buildKathmandu({ scene, stage, manager }) {
       fade.classList.remove("on");
     }, 480));
   }
-  prompt.addEventListener("click", () => { if (nearId) manager.onSelect(nearId); });
+  prompt.addEventListener("click", () => { if (riding) dismountRide(); else if (nearRide) mountRide(nearRide); else if (nearId) manager.onSelect(nearId); });
 
   /* minimap */
   const mapC = q("ktm-map"), mg = mapC.getContext("2d");
@@ -1731,6 +1735,11 @@ export default function buildKathmandu({ scene, stage, manager }) {
       const X = ((m.x - MAP.x0) / (MAP.x1 - MAP.x0)) * W, Y = ((m.z - MAP.z0) / (MAP.z1 - MAP.z0)) * H;
       mg.fillStyle = "#e6bc6a"; mg.beginPath(); mg.arc(X, Y, 3, 0, 7); mg.fill();
     });
+    RIDES.forEach((r) => {
+      if (r === riding) return;
+      const p = r.pos();
+      drawRideIcon(mg, r.kind, ((p.x - MAP.x0) / (MAP.x1 - MAP.x0)) * W, ((p.z - MAP.z0) / (MAP.z1 - MAP.z0)) * H, r === nearRide);
+    });
     const X = ((st.x - MAP.x0) / (MAP.x1 - MAP.x0)) * W, Y = ((st.z - MAP.z0) / (MAP.z1 - MAP.z0)) * H;
     mg.save(); mg.translate(X, Y); mg.rotate(-st.face + Math.PI);
     mg.fillStyle = "#fff"; mg.strokeStyle = "#c8462e"; mg.lineWidth = 3;
@@ -1746,6 +1755,7 @@ export default function buildKathmandu({ scene, stage, manager }) {
     if (typing(e.target) || document.querySelector("dialog[open]")) return;
     keys[e.code] = true;
     if (e.code === "KeyE" && nearId && worldVisible()) manager.onSelect(nearId);
+    if (e.code === "KeyF" && worldVisible()) { if (riding) dismountRide(); else if (nearRide) mountRide(nearRide); }
   };
   const onKeyUp = (e) => { keys[e.code] = false; };
   const onBlur = () => { Object.keys(keys).forEach((k) => (keys[k] = false)); };
@@ -1817,6 +1827,86 @@ export default function buildKathmandu({ scene, stage, manager }) {
     return best;
   };
 
+  /* ---------- animals and the rickshaw (fauna.js through a small adapter) ---------- */
+  const RIDES = [], DYN = [], INFO = [], extra = [];
+  let riding = null, nearRide = null;
+  const RIDE_T = { en: { ride: "Ride", off: "Get off", shore: "Find open ground to get off" }, zh: { ride: "乘坐", off: "下来", shore: "找一块空地再下来" } };
+  function mountRide(r) { if (riding || !r) return; riding = r; r.mount(); st.rideR = controls.desiredRadius; controls.desiredRadius = r.camDist || 14; nearId = "__refresh__"; }
+  function dismountRide(force = false) {
+    if (!riding) return;
+    let spot = riding.dismount();
+    if (!spot && !force) return;
+    if (!spot) spot = [st.x, st.z];
+    const r = riding; riding = null;
+    if (force && r.reset) r.reset();
+    st.x = spot[0]; st.z = spot[1];
+    controls.desiredRadius = st.rideR || 15;
+    if (r.dismounted) r.dismounted();
+    nearId = "__refresh__";
+  }
+  const shimW = {
+    st, NPC, RIDES, POS: {},
+    addRideable: (r) => {
+      RIDES.push(r);
+      const c = document.createElement("canvas"); c.width = c.height = 64;
+      const g2 = c.getContext("2d"); g2.scale(3.6, 3.6); drawRideIcon(g2, r.kind, 8.9, 8.9);
+      const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; stage.trackTexture(t);
+      const m = new THREE.SpriteMaterial({ map: t, depthTest: false, transparent: true }); stage.materials.add(m);
+      r.badge = new THREE.Sprite(m); r.badge.renderOrder = 11; stage.add(r.badge);
+      return r;
+    },
+    addBlocker: (b) => { DYN.push(b); return b; },
+    addInfoTarget: (id, object, h = 2.6) => {
+      if (!infoTex) {
+        const c = document.createElement("canvas"); c.width = c.height = 64; const g2 = c.getContext("2d");
+        g2.fillStyle = "rgba(8,26,34,.88)"; g2.beginPath(); g2.arc(32, 32, 28, 0, Math.PI * 2); g2.fill();
+        g2.lineWidth = 4; g2.strokeStyle = "#f2c76b"; g2.stroke();
+        g2.fillStyle = "#f2c76b"; g2.font = "bold 38px Georgia,serif"; g2.textAlign = "center"; g2.textBaseline = "middle"; g2.fillText("i", 32, 34);
+        infoTex = new THREE.CanvasTexture(c); infoTex.colorSpace = THREE.SRGBColorSpace; stage.trackTexture(infoTex);
+      }
+      const m = new THREE.SpriteMaterial({ map: infoTex, depthTest: false, transparent: true });
+      stage.materials.add(m);
+      const sp = new THREE.Sprite(m); sp.renderOrder = 10; sp.scale.setScalar(0.9);
+      stage.add(sp);
+      INFO.push({ id, object, h, sprite: sp });
+    },
+    onUpdate: (fn) => extra.push(fn),
+    isRiding: () => riding,
+    dismount: () => dismountRide(),
+    mount: (r) => mountRide(r),
+  };
+  let infoTex = null;
+  const fauna = createFauna({ W: shimW, stage, kit: { blocked, resolve: (x, z) => [x, z] }, hgt, groundY, canStand });
+  {
+    const id = (k) => animalId("kathmandu", k);
+    const near = (x, z, r = 16) => {
+      for (let d = 0; d <= r; d += 2) for (let k = 0; k < 12; k += 1) {
+        const px = x + Math.cos(k * 0.52) * d, pz = z + Math.sin(k * 0.52) * d;
+        if (canStand(px, pz) && !blocked(px, pz, 1.0)) return [px, pz];
+      }
+      return [x, z];
+    };
+    { const [x, z] = near(12, 44); fauna.rideRickshaw({ x, z, yaw: Math.PI, label: { en: "a cycle rickshaw", zh: "人力三轮车" } }); }
+    { const [x, z] = near(8, 12); fauna.herd({ id: id("zebu"), kind: "zebu", count: 3, cx: x, cz: z, R: 10, speed: 0.3, opts: (i) => ({ color: ["#e2dccf", "#c8b8a0", "#8a6a4a"][i % 3] }) }); }
+    { const [x, z] = near(-6, 22); fauna.herd({ id: id("dog"), kind: "dog", count: 4, cx: x, cz: z, R: 14, speed: 0.9, opts: (i) => ({ color: ["#b08a5a", "#2a2420", "#d8c8a8", "#8a6a48"][i % 4] }) }); }
+    { const [x, z] = near(-94, -52); fauna.herd({ id: id("monkey"), kind: "monkey", count: 5, cx: x, cz: z, R: 6, speed: 1.2, wild: true, flee: 3 }); }
+    { const [x, z] = near(340, 70); fauna.herd({ id: id("goat"), kind: "goat", count: 5, cx: x, cz: z, R: 8, speed: 0.7, opts: (i) => ({ color: ["#2a2420", "#6b5644", "#d8d0c4"][i % 3] }) }); }
+    { const [x, z] = near(330, 120); fauna.herd({ id: id("buffalo"), kind: "buffalo", count: 3, cx: x, cz: z, R: 8, speed: 0.4 }); }
+  }
+  const _ip = new THREE.Vector3();
+  function pushDyn(x, z) {
+    for (const r of RIDES) {
+      if (r === riding || !r.blockR) continue;
+      const p = r.pos(), dx = x - p.x, dz = z - p.z, R = r.blockR + 0.45, d = Math.hypot(dx, dz);
+      if (d < R && d > 1e-5) { x = p.x + (dx / d) * R; z = p.z + (dz / d) * R; }
+    }
+    for (const b of DYN) {
+      const p = b.pos(), dx = x - p.x, dz = z - p.z, R = b.r + 0.45, d = Math.hypot(dx, dz);
+      if (d < R && d > 1e-5) { x = p.x + (dx / d) * R; z = p.z + (dz / d) * R; }
+    }
+    return [x, z];
+  }
+
   stage.animate((time, delta) => {
     frame += 1;
     const dt = Math.min(delta || 0.016, 0.05);
@@ -1848,7 +1938,18 @@ export default function buildKathmandu({ scene, stage, manager }) {
     if (joy.id !== null) { ix += joy.dx; iz -= joy.dy; run = run || Math.hypot(joy.dx, joy.dy) > 0.92; }
     const L = Math.hypot(ix, iz);
     let moving = false;
-    if (L > 0.08 && worldVisible()) {
+    let rideY;
+    if (riding) {
+      let mx = 0, mz = 0, n = 0;
+      if (L > 0.08 && worldVisible()) {
+        n = Math.min(1, L);
+        const th = controls.theta, ux = ix / L, uz = iz / L;
+        mx = -Math.sin(th) * uz + Math.cos(th) * ux;
+        mz = -Math.cos(th) * uz - Math.sin(th) * ux;
+      }
+      const seat = riding.step(dt, { mx, mz, n, run, reduced: stage.reducedMotion, time });
+      st.x = seat.x; st.z = seat.z; st.face = seat.face; st.speed = 0; rideY = seat.y;
+    } else if (L > 0.08 && worldVisible()) {
       const n = Math.min(1, L);
       ix /= L; iz /= L;
       const th = controls.theta;
@@ -1858,6 +1959,7 @@ export default function buildKathmandu({ scene, stage, manager }) {
       if (canStand(nx, nz)) { st.x = nx; st.z = nz; }
       else if (canStand(nx, st.z)) st.x = nx;
       else if (canStand(st.x, nz)) st.z = nz;
+      { const [px, pz] = pushDyn(st.x, st.z); if (canStand(px, pz)) { st.x = px; st.z = pz; } }
       let df = Math.atan2(mx, mz) - st.face;
       df = Math.atan2(Math.sin(df), Math.cos(df));
       st.face += df * Math.min(1, dt * 10);
@@ -1865,10 +1967,12 @@ export default function buildKathmandu({ scene, stage, manager }) {
       st.speed = sp;
       moving = true;
     } else st.speed = 0;
-    const gy = groundY(st.x, st.z);
+    const gy = rideY !== undefined ? rideY : groundY(st.x, st.z);
     player.root.position.set(st.x, gy, st.z);
     player.inner.rotation.y = st.face;
-    player.pose(moving ? Math.sin(st.walk) * Math.min(0.75, st.speed * 0.09) : 0);
+    if (riding) (riding.pose === "straddle" ? player.straddle() : riding.pose === "stand" ? player.pose(0) : player.sit());
+    else player.pose(moving ? Math.sin(st.walk) * Math.min(0.75, st.speed * 0.09) : 0);
+    extra.forEach((fn) => fn(time, stage.reducedMotion ? 0 : dt, st));
     player.inner.position.y = moving ? Math.abs(Math.cos(st.walk)) * 0.05 : 0;
     controls.target.set(st.x, gy + 1.6, st.z);
     controls.desiredTarget.copy(controls.target);
@@ -1974,9 +2078,38 @@ export default function buildKathmandu({ scene, stage, manager }) {
       entry.beacon.group.scale.setScalar(1.6 * Math.max(1, d / 50));
       if (d < bd) { bd = d; best = entry.id; }
     });
-    if (best !== nearId) {
+    /* animal info badges: follow the animal; nearest one counts as a discovery nearby */
+    let bi = 1e9;
+    INFO.forEach((t) => {
+      t.object.getWorldPosition(_ip);
+      const d = Math.hypot(_ip.x - st.x, _ip.z - st.z);
+      t.sprite.visible = d < 46;
+      t.sprite.position.set(_ip.x, _ip.y + t.h * (t.object.scale.y || 1), _ip.z);
+      t.sprite.scale.setScalar(0.9 * Math.max(1, d / 18));
+      if (!best && d < 7 && d < bi) { bi = d; best = t.id; }
+    });
+    RIDES.forEach((r) => {
+      const p = r.pos(), d = Math.hypot(p.x - st.x, p.z - st.z);
+      r.badge.visible = r !== riding && d < 90;
+      r.badge.position.set(p.x, groundY(p.x, p.z) + (r.iconH || 3.6) + Math.sin(time * 2.4) * 0.1, p.z);
+      r.badge.scale.setScalar(0.8 + Math.min(2.2, d / 22));
+    });
+    nearRide = null;
+    if (!riding) {
+      let rd = 1e9;
+      RIDES.forEach((r) => { const p = r.pos(), d = Math.hypot(p.x - st.x, p.z - st.z); if (d < r.radius && d < rd) { rd = d; nearRide = r; } });
+      if (nearRide && bi < 1e9 && !stage.interactives.some((e) => e.id === best)) best = null;
+    }
+    const pk = (riding ? "off" : nearRide ? "ride" + RIDES.indexOf(nearRide) : best || "") + lang;
+    if (pk !== st.promptKey || best !== nearId) {
+      st.promptKey = pk;
       nearId = best;
-      if (best) {
+      if (riding || nearRide) {
+        const R2 = RIDE_T[lang] || RIDE_T.en, r = riding || nearRide;
+        prompt.innerHTML = `<span></span><kbd>${touch ? "Tap" : "F"}</kbd>`;
+        prompt.firstChild.textContent = (riding ? R2.off + " · " : R2.ride + " ") + (r.label ? r.label[lang] || r.label.en : "");
+        prompt.hidden = false;
+      } else if (best) {
         prompt.innerHTML = `<span></span><kbd>${touch ? "Tap" : "E"}</kbd>`;
         prompt.firstChild.textContent = tr().learn + (lang === "zh" ? "：" : " ") + objectName(best);
         prompt.hidden = false;
@@ -2012,6 +2145,6 @@ export default function buildKathmandu({ scene, stage, manager }) {
     baseDispose();
   };
 
-  if (typeof window !== "undefined") window.__ktm = { travelTo, st, setTimeIdx: (i) => { timeIdx = i; timeBtn.textContent = TIMES[i][0]; setTime(TIMES[i][1]); } };
+  if (typeof window !== "undefined") window.__ktm = { travelTo, st, RIDES, places: PL, ipos: INTERACTIVE_POS, INFO, mount: (r) => mountRide(r), dismount: dismountRide, isRiding: () => riding, setTimeIdx: (i) => { timeIdx = i; timeBtn.textContent = TIMES[i][0]; setTime(TIMES[i][1]); } };
   return { objectId: "kathmandu" };
 }

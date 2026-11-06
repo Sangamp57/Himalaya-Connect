@@ -1,4 +1,5 @@
 const ICONS = {
+  paw: '<circle cx="6.5" cy="10" r="1.9"/><circle cx="10" cy="6" r="1.9"/><circle cx="14" cy="6" r="1.9"/><circle cx="17.5" cy="10" r="1.9"/><path d="M12 11.5c-2.6 0-5 3.4-5 6 0 1.6 1.2 2.5 2.6 2.5 1 0 1.6-.5 2.4-.5s1.4.5 2.4.5c1.4 0 2.6-.9 2.6-2.5 0-2.6-2.4-6-5-6Z"/>',
   home: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/>',
   compass: '<circle cx="12" cy="12" r="8.5"/><path d="m15.7 8.3-2.1 5.3-5.3 2.1 2.1-5.3Z"/>',
   calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M7.5 3v4M16.5 3v4M3.5 9.5h17"/><circle cx="12" cy="14.5" r="2.2"/>',
@@ -68,6 +69,7 @@ export function categoryIcon(category) {
     music: "music",
     landmarks: "landmark",
     traditions: "tradition",
+    wildlife: "paw",
   };
   return icon(map[category] || "spark");
 }

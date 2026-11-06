@@ -418,13 +418,24 @@ export function makeFigure(design, material) {
     inner,
     geometries: [g.body, g.leg, g.armL, g.armR],
     pose(swing) {
+      legL.rotation.z = 0;
+      legR.rotation.z = 0;
       legL.rotation.x = swing;
       legR.rotation.x = -swing;
       armL.rotation.x = -swing * 0.8;
       armR.rotation.x = swing * 0.8;
     },
+    /* astride a horse, camel or yak: legs apart and down */
+    straddle() {
+      legL.rotation.set(-0.35, 0, -0.42);
+      legR.rotation.set(-0.35, 0, 0.42);
+      armL.rotation.x = -0.7;
+      armR.rotation.x = -0.7;
+    },
     /* seated (riding an elephant or a boat) */
     sit() {
+      legL.rotation.z = 0;
+      legR.rotation.z = 0;
       legL.rotation.x = -1.35;
       legR.rotation.x = -1.35;
       armL.rotation.x = -0.6;

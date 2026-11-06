@@ -1,3 +1,5 @@
+import { wildlifeImages } from "./wildlife-data.js";
+
 // Real photographs for the discovery cards.
 // Local images are credited in journal/data/photo_credits.json;
 // downloaded images carry their Commons author/licence in the card credit.
@@ -531,3 +533,33 @@ export const OBJECT_IMAGES = {
     "source": "https://commons.wikimedia.org/wiki/File:Dunhuang-06.JPG"
   }
 };
+
+/* animal cards share one photo per species */
+Object.assign(OBJECT_IMAGES, wildlifeImages());
+
+/*
+ * These photos are bundled locally.  They were previously loaded from
+ * Wikimedia's Special:FilePath endpoint, which made the guide show broken
+ * image icons whenever the visitor was offline (and made the guide depend on
+ * a third-party request before it could render).
+ */
+const COMMONS = (file, alt, credit, localFile) => ({
+  src: `/static/images/objects/${localFile}`,
+  alt,
+  credit,
+  source: `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(file.replace(/ /g, "_"))}`,
+});
+Object.assign(OBJECT_IMAGES, {
+  "cn-mingsha": COMMONS("Dunhuang Mingsha-shan 1995.jpg", "Mingsha Shan dunes, Dunhuang", "Prince Roy / CC BY 2.0", "commons-cn-mingsha.jpg"),
+  "cn-liangfang": COMMONS("Grape Drying Sheds outside of Shanshan, Xinjiang China.jpg", "Grape drying sheds near Turpan", "Peter Morgan / CC BY 2.0", "commons-cn-liangfang.jpg"),
+  "cn-livestock": COMMONS("Kashgar livestock market Aug 2018.jpg", "Kashgar livestock market", "Kubilayaxun / CC BY-SA 4.0", "commons-cn-livestock.jpg"),
+  "jo-kkh": COMMONS("Pakistani truck in Karakoram Highway, Passu, Northern Areas, Pakistan.jpg", "Decorated truck on the Karakoram Highway at Passu", "katorisi / CC BY-SA 3.0", "commons-jo-kkh.jpg"),
+  "np-barahi": COMMONS("Tal Barahi Temple on Phewa Lake 2496.jpg", "Tal Barahi Temple on Phewa Lake", "Bijay Chaurasia / CC BY-SA 4.0", "commons-np-barahi.jpg"),
+  "pk-polo": COMMONS("Astore Polo Ground- Gilgit Baltistan.jpeg", "Polo ground in Astore, Gilgit-Baltistan", "Taimur Dee / CC BY-SA 4.0", "commons-pk-polo.jpg"),
+  "an-kathmandu-dog": COMMONS("Kukur Tihar or Dog Puja in Kathmandu. Dog decorate with marigold garland and Tika.jpg", "Dog with marigold garland and tika on Kukur Tihar", "Manto17 / CC0", "commons-an-kathmandu-dog.jpg"),
+  "cn-feitian": COMMONS("Dunhuang mural flying apsarasa.jpg", "Flying apsara mural from Dunhuang", "Public domain", "commons-cn-feitian.jpg"),
+  "cn-raisins": COMMONS("Raisins and dried fruits sold in Turpan.jpg", "Raisins and dried fruit for sale in Turpan", "Radosław Botev / CC BY 3.0 PL", "commons-cn-raisins.jpg"),
+  "np-bowl": COMMONS("Singing Bowl from Nepal.jpg", "Singing bowl from Nepal", "Serg Childed / CC BY-SA 4.0", "commons-np-bowl.jpg"),
+  "pk-gems": COMMONS("Aquamarine, Shigar Valley, Pakistan - University of Arizona Mineral Museum - University of Arizona - Tucson, AZ - DSC08519.jpg", "Aquamarine from the Shigar Valley", "Daderot / CC0", "commons-pk-gems.jpg"),
+  "jo-buttertea": COMMONS("Tibetan butter tea at teahouse.jpg", "Butter tea at a teahouse", "Jpatokal / CC BY-SA 4.0", "commons-jo-buttertea.jpg"),
+});
