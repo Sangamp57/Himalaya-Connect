@@ -25,7 +25,7 @@
   </script>
 </head>
 <body class="explore-body">
-  <div id="explore-app" data-guide-live="{{ guide_live|yesno:'true,false' }}" data-authenticated="{{ explorer_authenticated|yesno:'true,false' }}" data-progress-url="{% url 'explorer_progress' %}" data-progress-save-url="{% url 'save_explorer_progress' %}" data-journal-url="{% url 'story_list' %}" data-home-url="{% url 'home' %}" data-guide-url="{% url 'cultural_guide' %}">
+  <div id="explore-app" data-guide-live="{{ guide_live|yesno:'true,false' }}" data-authenticated="{{ explorer_authenticated|yesno:'true,false' }}" data-progress-url="{% url 'explorer_progress' %}" data-progress-save-url="{% url 'save_explorer_progress' %}" data-catalogue-url="{% url 'explorer_catalogue' %}" data-journal-url="{% url 'story_list' %}" data-home-url="{% url 'home' %}" data-guide-url="{% url 'cultural_guide' %}">
     <a class="skip-link" href="#ex-main">Skip to the explorer</a>
     <div class="ex-scene" id="ex-scene">
       <canvas id="explore-canvas" tabindex="0" aria-label="Interactive 3D cultural world. Use drag to orbit, scroll to zoom, and click a golden beacon to open a story."></canvas>

@@ -7,6 +7,7 @@ import {
   OBJECT_MAP,
   SCAVENGER_HUNTS,
   WORLDS,
+  applyDatabaseCatalogue,
 } from "./data.js";
 import { dirFor, translate } from "./i18n.js";
 import { icon } from "./icons.js";
@@ -20,6 +21,14 @@ import { SoundEngine } from "./audio.js";
 
 const app = document.getElementById("explore-app");
 if (!app) throw new Error("Explorer root not found.");
+
+// The database is the source of truth for editable explorer catalogue content.
+try {
+  const response = await fetch(app.dataset.catalogueUrl || "/api/explorer/catalogue/", { credentials: "same-origin" });
+  if (response.ok) applyDatabaseCatalogue(await response.json());
+} catch (error) {
+  // Keep the bundled catalogue available if the API is temporarily unavailable.
+}
 
 function localize(value, lang) {
   if (!value) return "";

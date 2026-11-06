@@ -1,231 +1,217 @@
 # Himalaya Connect
 
-A complete, responsive travel journal **and interactive 3D cultural explorer** built with **Django, HTML, CSS, Three.js and vanilla JavaScript**. The journal is a layered editorial experience of mountain photography and slow travel stories; the explorer is a playable 3D world across Nepal, Pakistan and China.
+Himalaya Connect is a Django travel journal and interactive 3D cultural explorer. It combines editorial travel stories with playable worlds inspired by Nepal, Pakistan and China.
 
-The journal is fully functional, not a static mock-up. Members can sign up, sign in, reset a password, edit a profile, publish stories, save reading lists, like stories, comment, follow other writers, and manage or delete their account.
+## Screenshots
 
-### The 3D explorer
+<div align="center">
+<table>
+  <tr>
+    <td><img src="img/home.png" alt="Homepage" width="420"></td>
+    <td><img src="img/3D_explorer_home_page.png" alt="3D explorer" width="420"></td>
+  </tr>
+  <tr>
+    <td><img src="img/3D_explore_world.png" alt="3D explorer world" width="420"></td>
+    <td><img src="img/collection.png" alt="Collection on mobile" width="420"></td>
+  </tr>
+</table>
+</div>
 
-Open **`/explore/`** (also linked as “3D Explorer” in the main navigation).
+## What the project includes
 
-- Eleven procedural, walkable 3D worlds: Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, Dunhuang, Pu'er, Xishuangbanna, the Karakoram Highway, and the winding "Great Journey" high trail.
-- Orbit, pan, zoom and walk controls, object raycasting, camera fly-to, highlighting, reset and mobile touch support.
-- A growing collection of cultural objects with stories, facts, source links, quizzes and collectible cards.
-- A scavenger-hunt **Game** section: three themed hunts that track your beacon discoveries and award XP and bonus cards.
-- A 3D cinema screen inside the Journey world that plays a freely-licensed Himalayan time-lapse as a live video texture (with a poster fallback and source credit).
-- A **Films** section with three real, freely-licensed short films — one each from Nepal, Pakistan and China — played as ordinary HTML5 videos.
-- Daily encounters, an etiquette practice lab, a Cultural Bridge comparison activity, XP, achievements and a filtered card gallery.
-- A real OpenStreetMap culture map with verified coordinates and links into the 3D worlds.
-- Persistent progress, language and settings in `localStorage`.
-- English, Simplified Chinese, Nepali and Urdu interface support, including RTL Urdu. Detailed cultural narratives remain in English where a community-reviewed translation is not yet available, and the interface says so.
-- The Cultural Guide runs from a curated offline knowledge base when no server key is configured. With `OPENAI_API_KEY` set, questions are proxied through the Django server; the key never reaches the browser.
+### Travel journal
 
-The explorer needs no Node build step. Three.js r169 and Leaflet 1.9 are vendored under `static/vendor/`. The 3D environments are built from procedural geometry and generated textures; discovery cards use real, locally served photographs with the photographer and licence shown on the card and a link to the source. The Journey world's cinema screen streams a CC BY Himalayan time-lapse from Wikimedia Commons (see credits below); where a browser cannot play WebM inline, a generated poster is shown with a link to the source.
+- Destination guides and long-form stories
+- Categories, tags, search, filters and pagination
+- User profiles, follows, comments, likes and bookmarks
+- Story drafts, publishing and editorial administration
+- Email/password, phone and optional social sign-in flows
 
-## Run it locally
+### 3D cultural explorer
 
-**Requirements:** Python 3.12+ and pip.
+- Eleven procedural, walkable 3D worlds
+- Cultural discovery items with stories, facts and quizzes
+- Collectible cards, XP, achievements and daily encounters
+- Scavenger hunts and comparison activities
+- Cultural guide with offline curated answers and optional server-side AI proxy
+- Leaflet culture map with links into the 3D worlds
+- English, Simplified Chinese, Nepali and Urdu interfaces
+- WebGL fallback and mobile-friendly controls
+
+## Architecture
+
+```mermaid
+flowchart TD
+    Browser[Browser]
+    UI[Vanilla JS + Three.js + Leaflet]
+    API[Django views and JSON API]
+    Auth[Django users and profiles]
+    Journal[Journal models]
+    Explorer[Explorer catalogue models]
+    Player[Player progress models]
+    DB[(SQLite for development / PostgreSQL for production)]
+
+    Browser --> UI
+    UI -->|GET catalogue| API
+    UI -->|load and save progress| API
+    API --> Auth
+    API --> Journal
+    API --> Explorer
+    API --> Player
+    Auth --> DB
+    Journal --> DB
+    Explorer --> DB
+    Player --> DB
+```
+
+The application uses one database and one authentication system. The explorer is a separate Django domain inside the same project, not a second user database.
+
+## Database design
+
+Editorial and explorer data are separated logically within the same database:
+
+```text
+User
+├── Profile
+├── Posts, comments, likes and bookmarks
+└── Player progress
+    ├── Player discoveries
+    ├── Player quiz results
+    └── Player achievements
+
+Destination
+└── ExplorerWorld
+    └── DiscoveryItem
+        └── ExplorerQuiz
+
+ExplorerHunt ── many-to-many ── DiscoveryItem
+ExplorerAchievement
+```
+
+Important explorer models:
+
+| Model | Purpose |
+| --- | --- |
+| `ExplorerWorld` | A 3D environment, optionally linked to a journal `Destination` |
+| `DiscoveryItem` | A cultural object that appears in exactly one world |
+| `ExplorerQuiz` | A quiz associated with a discovery item |
+| `ExplorerHunt` | A collection of target discovery items and a reward |
+| `ExplorerAchievement` | An unlockable player milestone |
+| `PlayerDiscovery` | A user’s discovered item; unique per user and item |
+| `PlayerQuizResult` | Attempts, score and pass state for a user and quiz |
+| `PlayerAchievement` | A user’s unlocked achievement |
+| `ExplorerProgress` | Compatibility save record for local/offline explorer state |
+
+The normalized catalogue is stored in the database. The browser still has a bundled fallback catalogue so the explorer can remain usable if the API is temporarily unavailable.
+
+## Project structure
+
+```text
+config/                         Django settings, URLs, ASGI and WSGI
+journal/
+  models.py                     Journal and explorer database models
+  views.py                      Pages, authentication and explorer APIs
+  urls.py                       Web and API routes
+  admin.py                      Django Admin configuration
+  migrations/                   Database schema history
+  management/commands/
+    seed_content.py             Seed editorial content and starter users
+    import_explorer_content.py  Import the explorer catalogue into the DB
+templates/                      Django HTML templates
+static/
+  css/                          Site and explorer styles
+  js/explore/                   Explorer UI, data fallback and game logic
+  vendor/                       Local Three.js and Leaflet builds
+  images/                       Photography and cultural object images
+tests/                          Browser-level explorer checks
+db.sqlite3                      Local development database; ignored by Git
+```
+
+## Requirements
+
+- Python 3.12 or newer
+- Node.js, required by the explorer content importer
+- A modern browser with WebGL support for the full 3D experience
+
+## Local setup
+
+From the project directory:
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+
 python manage.py migrate
 python manage.py seed_content
+python manage.py import_explorer_content
 python manage.py runserver
 ```
 
-Open <http://127.0.0.1:8000>.
+Open <http://127.0.0.1:8000/>.
 
-On macOS/Linux activate the environment with `source .venv/bin/activate` instead.
+The explorer is available at <http://127.0.0.1:8000/explore/> and Django Admin at <http://127.0.0.1:8000/admin/>.
 
-The repository includes a seeded `db.sqlite3`, so `migrate` is enough if you are opening this exact folder. `seed_content` is safe to run again: it restores the starter editorial data without overwriting story edits.
-
-### Starter accounts
-
-| Role | Username | Password |
-| --- | --- | --- |
-| Editor / superuser | `admin` | `Admin@2026!` |
-| Writer | `mira` | `Himalaya2026!` |
-| Writer | `arjun` | `Himalaya2026!` |
-| Writer | `sana` | `Himalaya2026!` |
-
-Change these before putting the site anywhere public. The passwords can be supplied on a fresh seed:
+The content importer is safe to run again:
 
 ```powershell
-python manage.py seed_content --admin-password "a-long-new-password" --writer-password "another-long-password"
+python manage.py import_explorer_content
 ```
 
-Or set `SEED_ADMIN_PASSWORD` and `SEED_WRITER_PASSWORD` in `.env` before the first seed.
+It updates existing catalogue records instead of creating duplicates.
 
-## What is included
+## Main API routes
 
-### Public site
+| Route | Access | Purpose |
+| --- | --- | --- |
+| `/api/explorer/catalogue/` | Public | Loads worlds, discoveries, quizzes, hunts and achievements |
+| `/api/explorer/progress/` | Signed in | Loads the current user’s explorer save |
+| `/api/explorer/progress/save/` | Signed in | Saves the current user’s explorer save |
+| `/culture-guide/` | POST | Curated or optional live cultural-guide response |
 
-- Interactive 3D explorer with eleven walkable worlds, including the Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, Dunhuang, Pu'er, Xishuangbanna, the Karakoram Highway and the Great Journey, with Google, WeChat, Facebook and phone sign-in, speaking beacons, object stories, quizzes, etiquette scenarios, comparison challenges, achievements, local progress and a collectible card gallery.
-- A real geographic culture map with OpenStreetMap tiles, verified coordinates and world launch links.
-- A daily encounter that rotates deterministically from a curated set, with save, share and quiz actions.
-- Full-screen parallax home page with layered mountain photography, scroll depth, floating notes and scroll-reveal sections.
-- Story index with full-text search, category/destination/tag filters, sort options and pagination.
-- Destination guide pages for Kathmandu Valley, Hunza, Kashgar and the Karakoram Route.
-- Long-form story pages with drop caps, rich-but-safe text formatting, photo credits, author cards, likes, reading-list saves, share buttons and related stories.
-- Author profile pages with follow buttons, bios and published-story grids.
-- About page with editorial principles, travel ethics and photography credits.
-- Contact form with honeypot spam protection and a friendly FAQ.
-- Newsletter signup, search overlay, sitemap and robots.txt.
-- 404 and 500 pages.
-
-### Members
-
-- Sign up with display name, username, email and password.
-- Sign in with either username or email.
-- Password reset by email (console backend in development).
-- Password change from account settings.
-- Editable profile with bio, location, website and avatar upload.
-- Public author profile and follow / unfollow.
-- Writer dashboard with stats, drafts, published stories, reading list and recent comments.
-- Create, edit, publish, unpublish and delete stories.
-- Cover image upload with live preview, photo attribution fields and a plain-text editor with light formatting.
-- Like, bookmark and comment on stories.
-- Delete comments on your own stories.
-- Delete account and all attached content.
-
-### Editorial/admin
-
-- Customised Django admin for stories, categories, destinations, comments, profiles, newsletter subscribers and contact messages.
-- Publish/unpublish and feature actions for stories.
-- Editorial content: 10 stories, 3 writers, 6 categories and 4 destinations.
-
-## Mobile behaviour
-
-The layout was checked at **390 × 844** and **1440 × 1000** with no horizontal overflow. The interactive explorer was additionally exercised in headless Chromium at **390 × 844** and **1440 × 950**: camera controls, world switching, object selection, card collection, quizzes, etiquette feedback, bridge completion, language switching (including RTL Urdu), map markers, progress persistence and the WebGL fallback were checked for console errors.
-
-- Desktop navigation becomes a full-screen editorial drawer.
-- Hero height and type scale respond to small screens; no fixed-width content.
-- Story and destination grids collapse to a single column.
-- Filters wrap and category chips scroll horizontally.
-- Destination cards become a snap-scrolling rail.
-- Auth screens move the photography panel above the form.
-- Dashboard, forms, comments and text remain readable at phone widths.
-- Parallax is reduced automatically for `prefers-reduced-motion`.
-- Content is visible if JavaScript is unavailable (reveal animations only activate after the JS boots).
-
-## Project structure
-
-```text
-config/                  Django project settings and root URLs
-journal/
-  models.py              Categories, destinations, posts, comments, profiles
-  views.py               Public pages, explorer, guide proxy, auth flows, dashboard, social actions
-  tests.py               Journal, explorer and guide tests
-  forms.py               Sign up, profile, post, comment, contact and newsletter
-  backends.py            Email-or-username authentication
-  templatetags/          Safe story formatting, query strings, avatar colours
-  management/commands/   seed_content command
-  data/photo_credits.json
-templates/
-  pages/                 Home, about, contact
-  journal/               Stories, destinations, editor
-  accounts/              Auth, dashboard, profile, settings
-  explore/app.html       Standalone interactive explorer shell
-  partials/              Header, footer, cards, forms, pagination, search
-static/
-  css/main.css           Design system, components, responsive rules
-  css/explore.css        Explorer art direction, glass panels, cards, RTL
-  css/fonts.css          Self-hosted font faces (no external requests)
-  js/main.js             Parallax, menu, search, AJAX likes, editor helpers
-  js/explore/            Explorer modules (data, store, UI, scenes, map, guide)
-  vendor/three/          Vendored Three.js r169 module + licence
-  vendor/leaflet/        Vendored Leaflet map library + licence
-  images/                WebP photography, favicon, grain texture
-  fonts/                 Fraunces, Manrope, Devanagari and Nastaliq WOFF2 + OFL licences
-```
-
-### Explorer internals
-
-```text
-static/js/explore/
-  data.js                Curated objects, worlds, cards, quizzes, etiquette, map data
-  object-images.js       Real photographs and credits for every discovery card
-  social_auth.py         Google, WeChat and phone identity helpers
-  i18n.js                Four-language interface dictionaries
-  store.js               localStorage progress, XP, achievements, streaks
-  ui.js                  Home, world HUD, cards, scenarios, dialogs and toasts
-  map.js                 Leaflet culture map and coordinate markers
-  guide.js               Chat interface + curated knowledge base
-  audio.js               Generated interface tones
-  three/                 Renderer, custom orbit controls, procedural worlds
-```
+Guests can play using browser `localStorage`. Signed-in users additionally receive a database-backed save linked to their existing Django account.
 
 ## Configuration
 
-Copy `.env.example` to `.env` and set:
+Copy `.env.example` to `.env` and configure values appropriate for the environment:
 
-- `DJANGO_SECRET_KEY` — generate a long random value for anything beyond local development.
-- `DJANGO_DEBUG` — `0` in production.
-- `DJANGO_ALLOWED_HOSTS` — comma-separated hostnames.
-- `DJANGO_CSRF_TRUSTED_ORIGINS` — full origins if using HTTPS.
-- Email settings for password reset delivery.
-- `OPENAI_API_KEY` is optional. Leave it blank for the explorer's curated offline guide. If set, set `OPENAI_MODEL` (default `gpt-4o-mini`) and optionally `OPENAI_BASE_URL`. The key is read only by `journal.views.cultural_guide`; it is never returned to the browser.
-- Seed passwords if you are re-seeding a fresh database.
+- `DJANGO_SECRET_KEY`
+- `DJANGO_DEBUG`
+- `DJANGO_ALLOWED_HOSTS`
+- `DJANGO_CSRF_TRUSTED_ORIGINS`
+- Email settings for password resets and contact messages
+- Optional `OPENAI_API_KEY`, `OPENAI_MODEL` and `OPENAI_BASE_URL`
+- Optional Google, WeChat, Facebook and phone-login credentials
 
-- Google sign-in: set `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET` and the exact `GOOGLE_OAUTH_REDIRECT_URI` (`/accounts/google/callback/`) in `.env`.
-- WeChat sign-in: set `WECHAT_APP_ID`, `WECHAT_APP_SECRET` and `WECHAT_REDIRECT_URI` (`/accounts/wechat/callback/`). WeChat requires a verified web-app domain.
-- Facebook sign-in: set `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` and `FACEBOOK_REDIRECT_URI` (`/accounts/facebook/callback/`).
-- Phone sign-in: `SMS_BACKEND=console` prints codes to the server console in development. For production set `SMS_BACKEND=twilio` with `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` and `TWILIO_FROM_NUMBER`, or `SMS_BACKEND=webhook` with `SMS_WEBHOOK_URL` and optional `SMS_WEBHOOK_TOKEN`.
-- Google and WeChat need credentials from their developer consoles; without them the buttons show a clear configuration message and email/password or phone sign-in remains available.
+Never commit `.env`, passwords or API keys.
 
-### Production checklist
-
-1. Set `DJANGO_DEBUG=0`, a real `DJANGO_SECRET_KEY`, correct `DJANGO_ALLOWED_HOSTS` and HTTPS origins.
-2. Run `python manage.py collectstatic` **after** setting `DJANGO_DEBUG=0` so the hashed static manifest is generated. Whitenoise is configured to serve the compressed assets in production.
-3. Point `MEDIA_ROOT` at persistent storage (or use object storage) and serve `/media/` from your web server.
-4. Move from SQLite to PostgreSQL before real traffic.
-5. Use a real SMTP provider for password reset and contact notifications.
-6. Add an edge rate limiter. The app has a lightweight IP throttle for auth, comments, contact and newsletter, but a production deployment deserves a proper one.
-7. Back up the database and media files.
-
-## Tests
+## Tests and validation
 
 ```powershell
+python manage.py check
 python manage.py test
+python manage.py makemigrations --check --dry-run
 ```
 
-The suite covers public rendering, the explorer page and guide endpoint, search and filters, signup, email-or-username login, phone-code signup and verification, unconfigured social providers, draft privacy, story CRUD, author permissions, likes, bookmarks, comments, follows, profile editing, contact, newsletter, sitemap and robots.
+The current test suite covers public pages, authentication, stories, profiles, interactions, explorer rendering, guide behaviour and security-sensitive account flows.
 
-Browser checks used headless Chromium at desktop and phone widths. They covered the 3D canvas and world loading, touch-sized controls, object raycasting, camera focus, collection and quiz rewards, daily save, achievements, map markers, language persistence and RTL, WebGL fallback reading mode, and the production static manifest.
+## Deployment notes
 
-## Photo credits
 
-The photographs are served locally from `static/images/` as optimised WebP files. They remain the property of their photographers and are used under the licences recorded by Wikimedia Commons. Each story page renders its credit and a source link. Discovery card photographs are also stored under `static/images/objects/`; their photographer and licence are shown in the card drawer with a link to the Commons source.
+Before deployment:
 
-| Image | Photographer | Licence |
-| --- | --- | --- |
-| Kathmandu Durbar Square | SristiAwasthi21 | CC BY-SA 4.0 |
-| Peacock Window, Bhaktapur | Nirajan pant | CC BY-SA 4.0 |
-| Momo | Kushal Goyal | CC BY-SA 3.0 |
-| Lokta paper | Gozitano | CC BY-SA 4.0 |
-| Hunza Valley | Tahsin Shah | CC BY-SA 4.0 |
-| Passu Cones | Musab243 | CC BY-SA 4.0 |
-| Baltit Fort | Furqanlw | CC BY-SA 4.0 |
-| Apricot blossom, Hunza | Muhammad Arsalan Mehboob | CC BY-SA 4.0 |
-| Attabad Lake | Hassanzealous | CC BY-SA 4.0 |
-| Karakoram Highway | taylorandayumi | CC BY 2.0 |
-| Khunjerab Pass road | Shaguftakarim | CC BY-SA 4.0 |
-| Kashgar Old City | Radosław Botev | CC BY 3.0 pl |
-| Kashgar Grand Bazaar | David Stanley | CC BY 2.0 |
-| Mogao Caves, Dunhuang | Wikimedia Commons contributor | CC BY-SA 3.0 |
-| Crescent Lake, Dunhuang | N509FZ | CC BY-SA 4.0 |
-| Dunhuang night market | xiquinhosilva | CC BY 2.0 |
+```powershell
+python manage.py migrate
+python manage.py collectstatic --noinput
+python manage.py import_explorer_content
+```
 
-The Journey world's 3D cinema plays *"The Himalayan — Mt. Everest Base Camp trek HD Time Lapse"* by Amit Haware, sourced from Wikimedia Commons under CC BY 3.0. The Films section adds two more: *"Hunza Valley"* (Nabin K. Sapkota & Nasr Rahman, CC BY-SA 4.0) for Pakistan and *"Scenery along a road in Bayingol, Xinjiang"* (Karl Osj. G, CC BY-SA 4.0) for China. All are streamed, not bundled, and are credited on-screen and in the explorer's source notes.
+Also configure persistent media storage, HTTPS, real email delivery, secure secrets, database backups and production rate limiting.
 
-The stories, writer names and profiles are editorial content created for this project. They are not reporting about real individuals. The destinations, cultural context and practical notes were written with care, but should still be checked against current local advice before travelling.
+Because `db.sqlite3` is listed in `.gitignore`, database contents are recreated with migrations, editorial seeding and explorer-content import rather than pushed through Git.
 
-Typography by **Fraunces**, **Manrope**, **Noto Sans Devanagari** and **Noto Nastaliq Urdu**, self-hosted under the SIL Open Font License 1.1. The licence texts are included in `static/fonts/`.
+## Credits and licensing
 
-The 3D explorer vendors **Three.js r169** (MIT licence) and **Leaflet 1.9.4** (BSD-2-Clause licence) under `static/vendor/`; their licence files are kept beside the builds. The culture map uses OpenStreetMap tiles and credits the contributors in the map attribution. The explorer's educational content and sources are listed in the in-app “Sources, ethics & notes” dialog and in each object panel.
+The project vendors Three.js and Leaflet under their respective licences in `static/vendor/`. Photography, videos, fonts and cultural sources are credited in the application and in the relevant content records. OpenStreetMap attribution is shown on the culture map.
 
-## Notes on the rebuild
-
-This folder replaces the previous React/Vite project. There is no Node.js build step any more: templates are rendered by Django, styling is plain CSS, and the journal's parallax/interaction layer is dependency-free JavaScript. The explorer vendors Three.js and Leaflet locally and is served as native ES modules, so the whole result runs as a normal Django site on desktop and phone.
+The 3D scenes are stylised educational interpretations. They are not survey reconstructions or substitutes for current local travel guidance.

@@ -3529,3 +3529,44 @@ export const SOURCE_NOTES = [
   { label: "Wikimedia Commons · Bayingol road scenery, Xinjiang (Karl Osj. G · CC BY-SA 4.0)", url: "https://commons.wikimedia.org/wiki/File:Scenery_along_a_road_inBayingol_Mongolian_Autonomous_Prefecture.webm" },
   { label: "OpenStreetMap contributors", url: "https://www.openstreetmap.org/copyright" },
 ];
+
+/* Replace editable catalogue fields with the normalized database response.
+   Scene-specific geometry and multilingual fallback data remain bundled here. */
+export function applyDatabaseCatalogue(catalogue) {
+  if (!catalogue || typeof catalogue !== "object") return;
+  (catalogue.worlds || []).forEach((world) => {
+    if (!WORLDS[world.slug]) return;
+    WORLDS[world.slug].names = { ...(WORLDS[world.slug].names || {}), en: world.name };
+    WORLDS[world.slug].region = { ...(WORLDS[world.slug].region || {}), en: world.region || "" };
+    WORLDS[world.slug].long = { ...(WORLDS[world.slug].long || {}), en: world.description || "" };
+  });
+  (catalogue.items || []).forEach((row) => {
+    const item = OBJECT_MAP[row.key];
+    if (!item) return;
+    item.names = { ...(item.names || {}), en: row.name };
+    item.story = { ...(typeof item.story === "object" ? item.story : { en: item.story || "" }), en: row.description || "" };
+    if (row.quiz) {
+      item.quiz = {
+        ...(item.quiz || {}),
+        q: row.quiz.question,
+        options: row.quiz.choices,
+        answer: row.quiz.correct_choice,
+      };
+    }
+  });
+  (catalogue.hunts || []).forEach((row) => {
+    const hunt = SCAVENGER_HUNTS.find((candidate) => candidate.id === row.key);
+    if (!hunt) return;
+    hunt.title = { ...(hunt.title || {}), en: row.title };
+    hunt.targets = row.targets || [];
+    hunt.rewardCard = row.reward_card_id || hunt.rewardCard;
+    hunt.xp = row.xp_reward ?? hunt.xp;
+  });
+  (catalogue.achievements || []).forEach((row) => {
+    const achievement = ACHIEVEMENTS.find((candidate) => candidate.id === row.key);
+    if (!achievement) return;
+    achievement.title = { ...(achievement.title || {}), en: row.title };
+    achievement.body = { ...(achievement.body || {}), en: row.description || "" };
+    achievement.xp = row.xp_reward ?? achievement.xp;
+  });
+}
