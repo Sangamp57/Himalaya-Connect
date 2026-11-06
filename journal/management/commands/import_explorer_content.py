@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 
 from django.conf import settings
@@ -22,7 +24,7 @@ from journal.models import (
 
 NODE_EXTRACTOR = r'''
 (async () => {
-  const data = await import("./static/js/explore/data.js");
+  const data = await import("./data.js");
   console.log(JSON.stringify({
     worlds: Object.values(data.WORLDS).map(w => ({
       slug: w.id, name: w.names?.en || w.id, region: w.region?.en || "",
@@ -55,14 +57,25 @@ class Command(BaseCommand):
         if not data_file.exists():
             raise CommandError(f"Explorer data file not found: {data_file}")
         try:
-            result = subprocess.run(
-                ["node", "-e", NODE_EXTRACTOR],
-                cwd=settings.BASE_DIR,
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                check=True,
-            )
+            # Copy the small JS catalogue into a temporary ES-module package.
+            # This keeps the importer working on Node versions that do not
+            # auto-detect ES modules from .js files.
+            with tempfile.TemporaryDirectory() as temp_dir:
+                temp_path = Path(temp_dir)
+                source_dir = data_file.parent
+                for name in ("data.js", "wildlife-data.js", "etiquette-extra.js"):
+                    shutil.copyfile(source_dir / name, temp_path / name)
+                (temp_path / "package.json").write_text(
+                    '{"type": "module"}', encoding="utf-8"
+                )
+                result = subprocess.run(
+                    ["node", "-e", NODE_EXTRACTOR],
+                    cwd=temp_path,
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    check=True,
+                )
             catalogue = json.loads(result.stdout)
         except FileNotFoundError as exc:
             raise CommandError("Node.js is required to import explorer content.") from exc
