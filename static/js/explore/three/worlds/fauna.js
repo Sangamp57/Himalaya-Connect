@@ -395,15 +395,35 @@ export function createFauna(ctx) {
         df = Math.atan2(Math.sin(df), Math.cos(df));
         const rate = turn * dt, t = Math.max(-rate, Math.min(rate, df));
         r.yaw += t;
-        target = inp.n * (inp.run ? vrun : vmax) * Math.max(0, Math.cos(df));
+        // Keep the sign so a rider can reverse out of a collider instead of
+        // being forced to keep driving into it.
+        target = inp.n * (inp.run ? vrun : vmax) * Math.cos(df);
       }
       r.v += (target - r.v) * Math.min(1, dt * 1.8);
-      if (r.v > 0.05) {
-        const nx = r.x + Math.sin(r.yaw) * r.v * dt, nz = r.z + Math.cos(r.yaw) * r.v * dt;
-        const [qx, qz] = kit.resolve(nx, nz, radius);
-        const fx = qx + Math.sin(r.yaw) * radius * 1.2, fz = qz + Math.cos(r.yaw) * radius * 1.2;
-        if (inBounds(qx, qz) && canStand(qx, qz) && canStand(fx, fz) && Math.abs(groundY(fx, fz) - groundY(qx, qz)) < slope) { r.x = qx; r.z = qz; }
-        else r.v = 0;
+      if (Math.abs(r.v) > 0.05) {
+        // Sub-step fast rides so a road edge or small prop cannot trap the
+        // vehicle after a single large frame-to-frame jump.
+        const steps = Math.max(1, Math.ceil(Math.abs(r.v * dt) / 0.65));
+        const step = r.v * dt / steps;
+        for (let i = 0; i < steps; i += 1) {
+          const nx = r.x + Math.sin(r.yaw) * step, nz = r.z + Math.cos(r.yaw) * step;
+          const [qx, qz] = kit.resolve(nx, nz, radius);
+          const direction = step >= 0 ? 1 : -1;
+          const fx = qx + Math.sin(r.yaw) * radius * 1.2 * direction;
+          const fz = qz + Math.cos(r.yaw) * radius * 1.2 * direction;
+          const valid = inBounds(qx, qz) && canStand(qx, qz) && canStand(fx, fz)
+            && Math.abs(groundY(fx, fz) - groundY(qx, qz)) < slope;
+          if (valid) { r.x = qx; r.z = qz; continue; }
+
+          // Try each axis independently so rides slide along walls and
+          // recover from a shallow diagonal collision instead of freezing.
+          const [sx, sz] = kit.resolve(r.x + Math.sin(r.yaw) * step, r.z, radius);
+          if (inBounds(sx, sz) && canStand(sx, sz)) { r.x = sx; r.z = sz; continue; }
+          const [tx, tz] = kit.resolve(r.x, r.z + Math.cos(r.yaw) * step, radius);
+          if (inBounds(tx, tz) && canStand(tx, tz)) { r.x = tx; r.z = tz; continue; }
+          r.v = 0;
+          break;
+        }
       }
     };
   }
@@ -495,15 +515,27 @@ export function createFauna(ctx) {
           df = Math.atan2(Math.sin(df), Math.cos(df));
           const rate = (0.6 + Math.min(1, Math.abs(rr.v) / 6) * 1.4) * dt, t = Math.max(-rate, Math.min(rate, df));
           rr.yaw += t;
-          target = inp.n * (inp.run ? vrun : vmax) * Math.max(0.1, Math.cos(df));
+          // Negative cosine is reverse. The old minimum of 0.1 meant the
+          // jeep could never back away from a bump or roadside collider.
+          target = inp.n * (inp.run ? vrun : vmax) * Math.cos(df);
         }
         rr.v += (target - rr.v) * Math.min(1, dt * (target > rr.v ? 0.9 : 2.2));
-        if (rr.v > 0.05) {
-          const nx = rr.x + Math.sin(rr.yaw) * rr.v * dt, nz = rr.z + Math.cos(rr.yaw) * rr.v * dt;
-          const [qx, qz] = kit.resolve(nx, nz, 1.4);
-          const fx = qx + Math.sin(rr.yaw) * 2.2, fz = qz + Math.cos(rr.yaw) * 2.2;
-          if (inBounds(qx, qz) && canStand(qx, qz) && canStand(fx, fz) && Math.abs(groundY(fx, fz) - groundY(qx, qz)) < 1.6) { rr.x = qx; rr.z = qz; }
-          else rr.v *= -0.2;
+        if (Math.abs(rr.v) > 0.05) {
+          const steps = Math.max(1, Math.ceil(Math.abs(rr.v * dt) / 0.65));
+          const step = rr.v * dt / steps;
+          for (let i = 0; i < steps; i += 1) {
+            const nx = rr.x + Math.sin(rr.yaw) * step, nz = rr.z + Math.cos(rr.yaw) * step;
+            const [qx, qz] = kit.resolve(nx, nz, 1.4);
+            const direction = step >= 0 ? 1 : -1;
+            const fx = qx + Math.sin(rr.yaw) * 2.2 * direction, fz = qz + Math.cos(rr.yaw) * 2.2 * direction;
+            if (inBounds(qx, qz) && canStand(qx, qz) && canStand(fx, fz) && Math.abs(groundY(fx, fz) - groundY(qx, qz)) < 1.6) { rr.x = qx; rr.z = qz; continue; }
+            const [sx, sz] = kit.resolve(rr.x + Math.sin(rr.yaw) * step, rr.z, 1.4);
+            if (inBounds(sx, sz) && canStand(sx, sz)) { rr.x = sx; rr.z = sz; continue; }
+            const [tx, tz] = kit.resolve(rr.x, rr.z + Math.cos(rr.yaw) * step, 1.4);
+            if (inBounds(tx, tz) && canStand(tx, tz)) { rr.x = tx; rr.z = tz; continue; }
+            rr.v = 0;
+            break;
+          }
         }
       },
       seat: () => ({ x: r.x - Math.cos(r.yaw) * 0.42, y: groundY(r.x, r.z) + 1.42 - 0.74, z: r.z + Math.sin(r.yaw) * 0.42, face: r.yaw }),
@@ -702,12 +734,21 @@ export function createFauna(ctx) {
           df = Math.atan2(Math.sin(df), Math.cos(df));
           const rate = (0.8 + Math.min(1, Math.abs(b.v) / 5) * 0.5) * dt, t = Math.max(-rate, Math.min(rate, df));
           b.yaw += t;
-          thrust = inp.n * (inp.run ? vrun : vmax) * Math.max(0.15, Math.cos(df));
+          // Allow reverse thrust so a boat can back away from a bank, pier or
+          // another boat instead of repeatedly colliding with it.
+          thrust = inp.n * (inp.run ? vrun : vmax) * Math.cos(df);
         }
         b.v += (thrust - b.v) * Math.min(1, dt * 0.8);
         const hit = (px, pz) => !water(px, pz) || obstacles.some((o) => Math.hypot(px - o.x, pz - o.z) < o.r);
-        const nx = b.x + Math.sin(b.yaw) * b.v * dt, nz = b.z + Math.cos(b.yaw) * b.v * dt;
-        if (!hit(nx, nz)) { b.x = nx; b.z = nz; } else if (!hit(nx, b.z)) b.x = nx; else if (!hit(b.x, nz)) b.z = nz; else b.v *= -0.25;
+        const steps = Math.max(1, Math.ceil(Math.abs(b.v * dt) / 0.65));
+        const step = b.v * dt / steps;
+        for (let i = 0; i < steps; i += 1) {
+          const nx = b.x + Math.sin(b.yaw) * step, nz = b.z + Math.cos(b.yaw) * step;
+          if (!hit(nx, nz)) { b.x = nx; b.z = nz; }
+          else if (!hit(nx, b.z)) b.x = nx;
+          else if (!hit(b.x, nz)) b.z = nz;
+          else { b.v = 0; break; }
+        }
       },
       seat: () => ({ x: r.x - Math.sin(r.yaw) * 0.7, y: waterY - 0.08 + 0.26 - 0.72, z: r.z - Math.cos(r.yaw) * 0.7, face: r.yaw }),
       dismount: () => {
