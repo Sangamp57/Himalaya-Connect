@@ -125,7 +125,7 @@
             <p class="home-drag-hint home-drag-hint--mobile" data-i18n="home.mobileHint">Choose a world below to begin · The 3D preview turns gently on its own</p>
           </div>
 
-          <aside class="home-rail" aria-label="Your journey">
+          <aside class="home-rail" aria-label="Your journey" data-i18n-aria="home.progress">
             <div class="ex-panel home-progress-card">
               <div class="home-progress-head">
                 <div>
@@ -137,7 +137,7 @@
                 </div>
               </div>
               <div class="home-progress-meta">
-                <span><strong id="home-xp">0</strong> XP</span>
+                <span><strong id="home-xp">0</strong> <span data-i18n="common.xp">XP</span></span>
                 <span><strong id="home-streak">0</strong> <span data-i18n="common.streak">day streak</span></span>
                 <span><strong id="home-found">0</strong>/<span id="home-total">32</span> <span data-i18n="home.statDiscoveries">discoveries</span></span>
               </div>
@@ -162,7 +162,7 @@
             </button>
           </aside>
 
-          <div class="home-worlds" id="home-worlds" aria-label="Choose a 3D world"></div>
+          <div class="home-worlds" id="home-worlds" aria-label="Choose a 3D world" data-i18n-aria="home.countries"></div>
         </div>
       </section>
 
@@ -172,13 +172,15 @@
             <button class="ex-round-button" type="button" data-view="home" aria-label="Show world details" aria-expanded="false"><span data-icon="arrowLeft"></span></button>
             <span class="ex-kicker ex-kicker--small" id="world-eyebrow">World 01 · Nepal</span>
           </div>
-          <h1 id="world-title">Kathmandu</h1>
+          <div class="world-head-main">
+            <h1 id="world-title">Kathmandu</h1>
+            <div class="world-head-meta">
+              <span class="ex-chip" id="world-region">Kathmandu Valley</span>
+              <span class="world-progress" id="world-progress">0 / 8 discoveries</span>
+            </div>
+          </div>
           <p class="world-blurb" id="world-blurb"></p>
           <p class="world-route-note" id="world-route-note" hidden data-i18n="world.routeNote"></p>
-          <div class="world-head-meta">
-            <span class="ex-chip" id="world-region">Kathmandu Valley</span>
-            <span class="world-progress" id="world-progress">0 / 8 discoveries</span>
-          </div>
           <div class="world-actions">
             <button type="button" class="ex-button ex-button--tiny ex-button--ghost" id="world-trail-toggle" aria-expanded="false">
               <span data-icon="layers"></span><span data-i18n="world.trail">Discovery trail</span>
@@ -204,6 +206,7 @@
           <button class="ex-icon-button" type="button" id="reset-camera" aria-label="Reset camera" data-i18n-aria="world.reset"><span data-icon="reset"></span></button>
           <button class="ex-icon-button" type="button" id="film-toggle" aria-label="Pause film" data-i18n-aria="film.pause" hidden><span data-icon="play"></span></button>
           <button class="ex-icon-button" type="button" id="world-help" aria-label="How to explore" data-i18n-aria="common.help"><span data-icon="info"></span></button>
+          <button class="ex-icon-button" type="button" id="world-exit" aria-label="Exit world" data-i18n-aria="world.exit"><span data-icon="close"></span></button>
         </div>
 
         <div class="world-dock ex-panel" id="world-dock" aria-label="Choose another world"></div>
@@ -245,7 +248,7 @@
               <div class="map-list" id="map-list"></div>
             </aside>
             <div class="map-frame">
-              <div id="culture-map" aria-label="Geographic map of cultural places"></div>
+              <div id="culture-map" data-leaflet-src="{% static 'vendor/leaflet/leaflet.js' %}" aria-label="Geographic map of cultural places"></div>
               <div class="map-loading" id="map-loading"><span data-icon="compass"></span><span data-i18n="map.loading"></span></div>
               <div class="map-tile-note" id="map-tile-note" hidden data-i18n="map.tileError"></div>
             </div>
@@ -478,7 +481,6 @@
     </div>
   </noscript>
 
-  <script src="{% static 'vendor/leaflet/leaflet.js' %}" defer></script>
   <script type="module" src="{% static 'js/explore/main.js' %}"></script>
 </body>
 </html>

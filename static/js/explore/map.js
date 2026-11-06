@@ -39,6 +39,7 @@ export class CultureMap {
     this.map = null;
     this.markers = new Map();
     this.initialized = false;
+    this.leafletPromise = null;
     this.tileErrorShown = false;
     this.renderFilters();
     this.renderList();
@@ -111,23 +112,19 @@ export class CultureMap {
   }
 
   waitForLeaflet() {
-    return new Promise((resolve) => {
-      if (window.L) {
-        resolve(window.L);
-        return;
-      }
-      let attempts = 0;
-      const timer = window.setInterval(() => {
-        attempts += 1;
-        if (window.L) {
-          window.clearInterval(timer);
-          resolve(window.L);
-        } else if (attempts > 40) {
-          window.clearInterval(timer);
-          resolve(null);
-        }
-      }, 100);
+    if (window.L) return Promise.resolve(window.L);
+    if (this.leafletPromise) return this.leafletPromise;
+    const src = this.mapEl?.dataset.leafletSrc;
+    if (!src) return Promise.resolve(null);
+    this.leafletPromise = new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.async = true;
+      script.onload = () => resolve(window.L || null);
+      script.onerror = () => resolve(null);
+      document.head.appendChild(script);
     });
+    return this.leafletPromise;
   }
 
   refreshMarkers() {

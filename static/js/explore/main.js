@@ -2,7 +2,6 @@ import {
   BRIDGES,
   CARD_MAP,
   COUNTRIES,
-  ETIQUETTE_SCENARIOS,
   OBJECTS_BY_WORLD,
   OBJECT_MAP,
   SCAVENGER_HUNTS,
@@ -173,11 +172,9 @@ async function boot() {
   document.body.classList.toggle("reduce-motion", Boolean(store.state.settings.reducedMotion));
   ui.setLanguage(store.language);
   ui.renderHome();
-  const encounter = ui.getTodayEncounter();
-  ui.renderToday(encounter, todayState(encounter));
-  ui.renderEtiquette(ui.currentEtiquette, null);
-  ui.renderCollection(collectionFilter);
-  ui.renderBridge(ui.currentBridge, null);
+  /* Panels are rendered lazily when opened. Building all 150 collection
+     cards and every scenario before the first paint made the explorer slower,
+     especially on phones. */
   bindEvents();
   applyInitialSettings();
 
@@ -194,13 +191,22 @@ async function boot() {
     initSceneManager();
     if (route.view === "world") {
       await enterWorld(route.worldId || currentWorldId, { updateHash: false, initial: true, push: false });
+      ui.setLoader(true, 100);
+      window.setTimeout(() => ui.setLoader(false), 320);
     } else {
-      ui.setLoader(true, 28);
-      await ensureOverview({ initial: true });
-      await openView(route.view, { updateHash: false, push: false });
+      /* Render the page first; the decorative 3D overview can arrive after
+         the readable content is already on screen. */
+      await openView(route.view, { updateHash: false, push: false, skipScene: true });
+      ui.setLoader(false);
+      if (route.view === "home") {
+        const loadOverview = () => {
+          if (currentView !== "home" || !hasWebGL || !sceneManager) return;
+          ensureOverview({ initial: true, silent: true }).catch(() => {});
+        };
+        if (window.requestIdleCallback) window.requestIdleCallback(loadOverview, { timeout: 1500 });
+        else window.setTimeout(loadOverview, 220);
+      }
     }
-    ui.setLoader(true, 100);
-    window.setTimeout(() => ui.setLoader(false), 320);
   } catch (error) {
     console.error("Explorer failed to start", error);
     hasWebGL = false;
@@ -269,13 +275,13 @@ function applyInitialSettings() {
    Scenes
    ----------------------------------------------------------------------- */
 
-async function ensureOverview({ initial = false } = {}) {
+async function ensureOverview({ initial = false, silent = false } = {}) {
   if (!hasWebGL || !sceneManager) return;
   if (sceneManager.currentWorldId === "overview" && sceneManager.stage) {
     return;
   }
   if (overviewPromise) return overviewPromise;
-  if (initial || currentView === "home") ui.setLoader(true, currentView === "home" ? 36 : 18);
+  if (!silent && (initial || currentView === "home")) ui.setLoader(true, currentView === "home" ? 36 : 18);
   overviewPromise = (async () => {
     const builder = await WORLD_BUILDERS.overview();
     const config = {
@@ -300,7 +306,7 @@ async function ensureOverview({ initial = false } = {}) {
   try {
     await overviewPromise;
   } finally {
-    if (currentView === "home" || initial) {
+    if (!silent && (currentView === "home" || initial)) {
       ui.setLoader(true, 100);
       window.setTimeout(() => ui.setLoader(false), 220);
     }
@@ -332,6 +338,15 @@ async function enterWorld(worldId, { updateHash = true, push = true, objectId = 
     updateFilmButton();
     if (objectId) selectObject(objectId);
     return;
+  }
+
+  /* A background overview build must finish before a world replaces it. */
+  if (overviewPromise) {
+    try {
+      await overviewPromise;
+    } catch (error) {
+      /* The world can still load if the decorative overview failed. */
+    }
   }
 
   if (sceneManager.currentWorldId === id && sceneManager.stage) {
@@ -552,6 +567,8 @@ async function openView(view, { updateHash = true, push = true, skipScene = fals
     panelReturn = { view: "home" };
   }
 
+  const fromView = currentView;
+  const fromWorld = currentWorldId;
   pauseFilmOnLeave();
   const previousObjectId = currentObjectId;
   currentView = view;
@@ -579,6 +596,10 @@ async function openView(view, { updateHash = true, push = true, skipScene = fals
     map.open();
     guide.setContext({ worldId: null, objectId: null });
   } else if (view === "etiquette") {
+    const etiquetteWorld = fromView === "world"
+      ? fromWorld
+      : panelReturn?.view === "world" ? panelReturn.worldId : null;
+    ui.setEtiquetteWorld(etiquetteWorld);
     ui.renderEtiquette(ui.currentEtiquette, etiquetteChoice);
     guide.setContext({ worldId: null, objectId: null });
   } else if (view === "collection") {
@@ -748,7 +769,7 @@ function showDailyQuiz() {
 }
 
 function chooseEtiquetteOption(optionId) {
-  const scenario = ETIQUETTE_SCENARIOS.find((item) => item.id === ui.currentEtiquette);
+  const scenario = ui.etiquetteScenarios().find((item) => item.id === ui.currentEtiquette);
   const option = scenario?.options.find((item) => item.id === optionId);
   if (!scenario || !option) return;
   etiquetteChoice = optionId;
@@ -1036,8 +1057,9 @@ function bindEvents() {
     }
     const etiquetteNext = event.target.closest("[data-etiquette-next]");
     if (etiquetteNext) {
-      const index = ETIQUETTE_SCENARIOS.findIndex((scenario) => scenario.id === ui.currentEtiquette);
-      const next = ETIQUETTE_SCENARIOS[(index + 1) % ETIQUETTE_SCENARIOS.length];
+      const scenarios = ui.etiquetteScenarios();
+      const index = scenarios.findIndex((scenario) => scenario.id === ui.currentEtiquette);
+      const next = scenarios[(index + 1) % scenarios.length];
       etiquetteChoice = null;
       ui.renderEtiquette(next.id, null);
       return;
@@ -1163,6 +1185,10 @@ function bindEvents() {
   document.getElementById("reset-camera")?.addEventListener("click", () => {
     sceneManager?.resetCamera();
     ui.toast(t("toast.cameraReset"));
+  });
+  document.getElementById("world-exit")?.addEventListener("click", () => {
+    sceneManager?.clearSelection();
+    openView("home");
   });
   document.getElementById("world-help")?.addEventListener("click", () => ui.showHelp());
   document.getElementById("film-toggle")?.addEventListener("click", () => {

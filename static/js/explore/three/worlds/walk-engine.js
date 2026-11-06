@@ -700,7 +700,7 @@ export function createWalker(opts) {
   .ktm-arrive span{font-size:17px}
   .ktm-fade{position:fixed;inset:0;background:#06141b;opacity:0;pointer-events:none;transition:opacity .45s;z-index:2}
   .ktm-fade.on{opacity:1}
-  @media (max-width:760px){.ktm-hud{top:auto;bottom:74px;inset-inline-end:12px}.ktm-map,.ktm-place{display:none}.ktm-prompt{bottom:150px}.ktm-joy{bottom:84px;width:112px;height:112px}}
+  @media (max-width:760px){.ktm-hud{top:auto;bottom:74px;inset-inline-end:12px;gap:5px}.ktm-place{display:none}.ktm-map{display:block;width:108px;height:108px}.ktm-prompt{bottom:150px}.ktm-joy{bottom:84px;width:112px;height:112px}}
   `;
   document.head.appendChild(css);
   const hud = document.createElement("div");

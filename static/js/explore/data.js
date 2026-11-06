@@ -262,6 +262,9 @@ export const WORLDS = {
     secondary: "#3f7a76",
     blurb: {
       en: "Desert dunes, painted caves and a Silk Road oasis where the Gobi meets the night market.",
+      zh: "沙漠沙丘、壁画洞窟与丝路绿洲，戈壁与夜市在此相遇。",
+      ne: "मरुभूमिका बालुवाटार, चित्रित गुफा र रेशम मार्गको मरुभूमि-मरुद्यान, जहाँ गोबी र रात्री बजार भेट्छन्।",
+      ur: "ریگستانی ٹیلے، نقش شدہ غار اور شاہراہ ریشم کا نخلستان، جہاں گوبی اور رات کا بازار ملتے ہیں۔",
     },
     long: {
       en: "Dunhuang is an oasis at the western edge of the Hexi Corridor, where the Gobi desert, the Mingsha dunes and the painted caves of Mogao meet. The walkable scene gathers Crescent Lake, the cave cliff, a night-market lane and the surrounding dunes into one place. It is a composite of a real oasis town and its wider landscape, not a survey map.",
@@ -270,8 +273,8 @@ export const WORLDS = {
     mountain: true,
     journalUrl: "/stories/dunhuang-where-the-desert-keeps-the-silk-road/",
   },
-  puer: { id: "puer", order: 10, countryId: "china", names: { en: "Pu'er", zh: "\u666e\u6d31", ne: "Puer", ur: "Puer" }, region: { en: "Yunnan, China", zh: "\u4e91\u5357", ne: "Yunnan", ur: "Yunnan" }, accent: "#758c4b", secondary: "#b58a47", blurb: { en: "Tea mountains and the Tea Horse Road." }, long: { en: "A walkable Pu'er tea landscape." }, camera: { position: [0, 22, 38], target: [0, 3, 0], min: 12, max: 70 }, mountain: true, journalUrl: "/stories/" },
-  xishuangbanna: { id: "xishuangbanna", order: 11, countryId: "china", names: { en: "Xishuangbanna", zh: "\u897f\u53cc\u7248\u7eb3", ne: "Xishuangbanna", ur: "Xishuangbanna" }, region: { en: "Yunnan, China", zh: "\u4e91\u5357", ne: "Yunnan", ur: "Yunnan" }, accent: "#4f9560", secondary: "#d4a24a", blurb: { en: "Dai culture, rainforest and the Lancang." }, long: { en: "A walkable Xishuangbanna landscape." }, camera: { position: [0, 22, 38], target: [0, 3, 0], min: 12, max: 70 }, mountain: true, journalUrl: "/stories/" },
+  puer: { id: "puer", order: 10, countryId: "china", names: { en: "Pu'er", zh: "普洱", ne: "पुएर", ur: "پیوئر" }, region: { en: "Yunnan, China", zh: "云南, 中国", ne: "युन्नान, चीन", ur: "یوننان، چین" }, accent: "#758c4b", secondary: "#b58a47", blurb: { en: "Tea mountains and the Tea Horse Road.", zh: "茶山与茶马古道。", ne: "चिया पहाड र चिया घोडा मार्ग।", ur: "چائے کے پہاڑ اور چائے گھوڑا راستہ۔" }, long: { en: "A walkable Pu'er tea landscape.", zh: "可行走的普洱茶园景观。", ne: "पुएर चिया बगानको हिँड्न मिल्ने दृश्य।", ur: "پیوئر چائے کے باغات کا قابلِ پیدل منظر۔" }, camera: { position: [0, 22, 38], target: [0, 3, 0], min: 12, max: 70 }, mountain: true, journalUrl: "/stories/" },
+  xishuangbanna: { id: "xishuangbanna", order: 11, countryId: "china", names: { en: "Xishuangbanna", zh: "西双版纳", ne: "सिशुआङबान्ना", ur: "شی شوانگ باننا" }, region: { en: "Yunnan, China", zh: "云南, 中国", ne: "युन्नान, चीन", ur: "یوننان، چین" }, accent: "#4f9560", secondary: "#d4a24a", blurb: { en: "Dai culture, rainforest and the Lancang.", zh: "傣族文化、雨林与澜沧江。", ne: "दाइ संस्कृति, वर्षावन र लान्चाङ नदी।", ur: "دائی ثقافت، بارانی جنگل اور لانکانگ دریا۔" }, long: { en: "A walkable Xishuangbanna landscape.", zh: "可行走的西双版纳景观。", ne: "सिशुआङबान्नाको हिँड्न मिल्ने दृश्य।", ur: "شی شوانگ باننا کا قابلِ پیدل منظر۔" }, camera: { position: [0, 22, 38], target: [0, 3, 0], min: 12, max: 70 }, mountain: true, journalUrl: "/stories/" },
 };
 
 const SRC = {
@@ -296,7 +299,7 @@ const SRC = {
   crescent: { label: "Travel China Guide - Crescent Lake", url: "https://www.travelchinaguide.com/attraction/gansu/dunhuang/crescent-lake.htm" },
   unescoJingmai: { label: "UNESCO - Cultural Landscape of Old Tea Forests of Jingmai Mountain", url: "https://whc.unesco.org/en/list/1665/" },
   teaHorse: { label: "Britannica - Tea Horse Road", url: "https://www.britannica.com/topic/Tea-Horse-Road" },
-  xishuangbanna: { label: "Britannica - Xishuangbanna", url: "https://www.britannica.com/place/Xishuangbanna" },
+  xishuangbanna: { id: "xishuangbanna", order: 11, countryId: "china", names: { en: "Xishuangbanna", zh: "西双版纳", ne: "सिशुआङबान्ना", ur: "شی شوانگ باننا" }, region: { en: "Yunnan, China", zh: "云南, 中国", ne: "युन्नान, चीन", ur: "یوننان، چین" }, accent: "#4f9560", secondary: "#d4a24a", blurb: { en: "Dai culture, rainforest and the Lancang.", zh: "傣族文化、雨林与澜沧江。", ne: "दाइ संस्कृति, वर्षावन र लान्चाङ नदी।", ur: "دائی ثقافت، بارانی جنگل اور لانکانگ دریا۔" }, long: { en: "A walkable Xishuangbanna landscape.", zh: "可行走的西双版纳景观。", ne: "सिशुआङबान्नाको हिँड्न मिल्ने दृश्य।", ur: "شی شوانگ باننا کا قابلِ پیدل منظر۔" }, camera: { position: [0, 22, 38], target: [0, 3, 0], min: 12, max: 70 }, mountain: true, journalUrl: "/stories/" },
   elephant: { label: "WWF - Asian elephant", url: "https://www.worldwildlife.org/species/asian-elephant" },
   kathmanduPost: { label: "Kathmandu Post · heritage and reconstruction", url: "https://kathmandupost.com/" },
 };
@@ -3112,6 +3115,7 @@ export const ACHIEVEMENTS = [
 export const ETIQUETTE_SCENARIOS = [
   {
     id: "first-meeting",
+    worldId: "kathmandu",
     place: "Kathmandu, Nepal",
     icon: "handshake",
     title: { en: "Meeting someone for the first time", zh: "初次见面", ne: "पहिलो भेट", ur: "پہلی ملاقات" },
@@ -3135,6 +3139,7 @@ export const ETIQUETTE_SCENARIOS = [
   },
   {
     id: "home-visit",
+    worldId: "hunza",
     place: "Hunza, Pakistan",
     icon: "home",
     title: { en: "Visiting a friend's home", zh: "拜访朋友家", ne: "साथीको घरमा भेट", ur: "دوست کے گھر جانا" },
@@ -3158,6 +3163,7 @@ export const ETIQUETTE_SCENARIOS = [
   },
   {
     id: "sharing-meal",
+    worldId: "kashgar",
     place: "Kashgar, China",
     icon: "bowl",
     title: { en: "Sharing a meal", zh: "共享一餐", ne: "सँगै खाना खाने", ur: "کھانا بانٹنا" },
@@ -3227,6 +3233,7 @@ export const ETIQUETTE_SCENARIOS = [
   },
   {
     id: "festival",
+    worldId: "kathmandu",
     place: "Nepal",
     icon: "festival",
     title: { en: "Joining a festival", zh: "参加节日", ne: "चाडपर्वमा सहभागी हुने", ur: "تہوار میں شامل ہونا" },
@@ -3250,6 +3257,7 @@ export const ETIQUETTE_SCENARIOS = [
   },
   {
     id: "market",
+    worldId: "kashgar",
     place: "Kashgar, China",
     icon: "market",
     title: { en: "Shopping at a traditional market", zh: "在传统市场购物", ne: "परम्परागत बजारमा किनमेल", ur: "روایتی بازار میں خریداری" },
@@ -3273,6 +3281,7 @@ export const ETIQUETTE_SCENARIOS = [
   },
   {
     id: "photography",
+    worldId: "hunza",
     place: "Hunza, Pakistan",
     icon: "camera",
     title: { en: "Taking photographs respectfully", zh: "尊重地拍照", ne: "सम्मानपूर्वक फोटो खिच्ने", ur: "احترام سے تصویر لینا" },
