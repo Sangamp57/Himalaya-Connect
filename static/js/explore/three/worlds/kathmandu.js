@@ -1812,7 +1812,9 @@ export default function buildKathmandu({ scene, stage, manager }) {
       if (blocked(t.x + camDir.x * s, t.z + camDir.z * s, 0.35)) { allowed = Math.max(1.6, s - 0.7); break; }
     }
     st.camD = st.camD == null ? allowed : st.camD + (allowed - st.camD) * (allowed < st.camD ? 0.5 : 0.08);
-    const d = Math.min(dist, st.camD);
+    /* Deliberate zoom overrides the building-clearance cap so zoom-in/out
+       works everywhere; ordinary follow still avoids clipping. */
+    const d = this.zoomOverride ? dist : Math.min(dist, st.camD);
     camera.position.copy(t).addScaledVector(camDir, d);
     const gy = hgt(camera.position.x, camera.position.z) + 0.8;
     if (camera.position.y < gy) camera.position.y = gy;

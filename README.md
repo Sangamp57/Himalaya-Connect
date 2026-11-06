@@ -9,7 +9,7 @@ The journal is fully functional, not a static mock-up. Members can sign up, sign
 Open **`/explore/`** (also linked as “3D Explorer” in the main navigation).
 
 - Eleven procedural, walkable 3D worlds: Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, Dunhuang, Pu'er, Xishuangbanna, the Karakoram Highway, and the winding "Great Journey" high trail.
-- Orbit, pan, zoom and walk controls, object raycasting, camera fly-to, highlighting, reset and mobile touch support.
+- Orbit, pan, zoom and walk controls, object raycasting, camera fly-to, highlighting, reset and mobile touch support. Every world has a full 360° horizontal orbit, a wider vertical range, and wheel, pinch, button and keyboard zoom with expanded near/far limits.
 - A growing collection of cultural objects with stories, facts, source links, quizzes and collectible cards.
 - A scavenger-hunt **Game** section: three themed hunts that track your beacon discoveries and award XP and bonus cards.
 - A 3D cinema screen inside the Journey world that plays a freely-licensed Himalayan time-lapse as a live video texture (with a poster fallback and source credit).

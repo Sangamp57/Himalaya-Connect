@@ -136,8 +136,17 @@ export class SceneManager {
         target[1] + (position[1] - target[1]) * distanceScale,
         target[2] + (position[2] - target[2]) * distanceScale,
       ];
-      const min = (config.min || 7) * distanceScale;
-      const max = (config.max || 45) * distanceScale;
+      /* Every world gets a much wider zoom range than its authored home view.
+         The old limits often started at the home radius, which made zoom-in
+         impossible in Pokhara, Hunza, Skardu and the Great Journey. */
+      const zoomMin = Math.max(3, (config.min || 7) * 0.5);
+      const zoomMax = Math.max(zoomMin + 24, (config.max || 45) * 1.8);
+      const min = zoomMin * distanceScale;
+      const max = zoomMax * distanceScale;
+      /* Allow a full horizontal 360 orbit and a much wider vertical arc.
+         Walkable worlds still clamp the camera above the terrain. */
+      this.controls.minPhi = 0.08;
+      this.controls.maxPhi = 1.72;
       this.controls.setHome({
         position: scaledPosition,
         target,

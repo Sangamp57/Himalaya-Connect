@@ -945,7 +945,11 @@ export function createWalker(opts) {
       if (kit.blocked(t.x + camDir.x * s, t.z + camDir.z * s, 0.35)) { allowed = Math.max(1.6, s - 0.7); break; }
     }
     st.camD = st.camD == null ? allowed : st.camD + (allowed - st.camD) * (allowed < st.camD ? 0.5 : 0.08);
-    camera.position.copy(t).addScaledVector(camDir, Math.min(dist, st.camD));
+    /* When the visitor deliberately zooms in or out, let the requested
+       distance win instead of the building-clearance cap. This is what makes
+       the zoom buttons and wheel work in dense worlds; normal follow still
+       uses collision clearance. */
+    camera.position.copy(t).addScaledVector(camDir, this.zoomOverride ? dist : Math.min(dist, st.camD));
     const gy = opts.hgt(camera.position.x, camera.position.z) + 0.8;
     if (camera.position.y < gy) camera.position.y = gy;
     camera.lookAt(t);

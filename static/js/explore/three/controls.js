@@ -38,6 +38,9 @@ export class OrbitController {
     this.autoRotate = Boolean(options.autoRotate);
     this.autoRotateSpeed = options.autoRotateSpeed || 0.045;
     this.damping = options.damping || 9;
+    /* Set by any deliberate wheel/pinch/button zoom. Walkable worlds use this
+       to let the requested distance override their building-clearance cap. */
+    this.zoomOverride = false;
     this.enabled = true;
     this.pointers = new Map();
     this.lastGesture = null;
@@ -88,11 +91,13 @@ export class OrbitController {
     this.desiredPhi = this.phi;
     this.desiredTarget.copy(this.target);
     this.transition = null;
+    this.zoomOverride = false;
     this.updateCamera();
   }
 
   beginTransition(to = {}, duration = 900) {
     const now = performance.now();
+    this.zoomOverride = false;
     this.transition = {
       start: now,
       duration,
@@ -191,6 +196,7 @@ export class OrbitController {
       if (this.lastGesture) {
         const scale = this.lastGesture.distance / Math.max(1, distance);
         this.desiredRadius = clamp(this.desiredRadius * scale, this.minRadius, this.maxRadius);
+        this.zoomOverride = true;
         const panX = midpoint.x - this.lastGesture.midpoint.x;
         const panY = midpoint.y - this.lastGesture.midpoint.y;
         this.pan(panX, panY);
@@ -231,6 +237,7 @@ export class OrbitController {
     this.transition = null;
     const factor = Math.exp(event.deltaY * 0.0012);
     this.desiredRadius = clamp(this.desiredRadius * factor, this.minRadius, this.maxRadius);
+    this.zoomOverride = true;
     this.idleSince = performance.now();
   }
 
@@ -254,6 +261,7 @@ export class OrbitController {
   zoomBy(factor) {
     this.transition = null;
     this.desiredRadius = clamp(this.desiredRadius * factor, this.minRadius, this.maxRadius);
+    this.zoomOverride = true;
     this.idleSince = performance.now();
   }
 
