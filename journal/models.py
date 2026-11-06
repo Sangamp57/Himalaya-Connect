@@ -393,6 +393,107 @@ class ExplorerProgress(models.Model):
         return f"Explorer progress · {self.user}"
 
 
+class ExplorerWorld(models.Model):
+    slug = models.SlugField(max_length=100, unique=True)
+    name = models.CharField(max_length=160)
+    destination = models.ForeignKey(
+        "Destination",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="explorer_worlds",
+    )
+    region = models.CharField(max_length=100, blank=True)
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order", "name"]
+
+    def __str__(self):
+        return self.name
+
+
+class DiscoveryItem(models.Model):
+    key = models.CharField(max_length=120, unique=True)
+    world = models.ForeignKey(ExplorerWorld, on_delete=models.CASCADE, related_name="discoveries")
+    name = models.CharField(max_length=180)
+    description = models.TextField(blank=True)
+    card_id = models.CharField(max_length=120, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
+
+class ExplorerQuiz(models.Model):
+    key = models.CharField(max_length=120, unique=True)
+    discovery = models.ForeignKey(
+        DiscoveryItem, null=True, blank=True, on_delete=models.SET_NULL, related_name="quizzes"
+    )
+    question = models.TextField()
+    choices = models.JSONField(default=list)
+    correct_choice = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.key
+
+
+class ExplorerHunt(models.Model):
+    key = models.CharField(max_length=120, unique=True)
+    title = models.CharField(max_length=180)
+    target_items = models.ManyToManyField(DiscoveryItem, related_name="hunts", blank=True)
+    reward_card_id = models.CharField(max_length=120, blank=True)
+    xp_reward = models.PositiveIntegerField(default=40)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title
+
+
+class ExplorerAchievement(models.Model):
+    key = models.CharField(max_length=120, unique=True)
+    title = models.CharField(max_length=180)
+    description = models.TextField(blank=True)
+    xp_reward = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title
+
+
+class PlayerDiscovery(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="discoveries")
+    item = models.ForeignKey(DiscoveryItem, on_delete=models.CASCADE, related_name="player_discoveries")
+    discovered_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "item"], name="unique_player_discovery")]
+
+
+class PlayerQuizResult(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="explorer_quiz_results")
+    quiz = models.ForeignKey(ExplorerQuiz, on_delete=models.CASCADE, related_name="player_results")
+    attempts = models.PositiveIntegerField(default=0)
+    best_score = models.PositiveIntegerField(default=0)
+    passed = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "quiz"], name="unique_player_quiz_result")]
+
+
+class PlayerAchievement(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="explorer_achievements")
+    achievement = models.ForeignKey(ExplorerAchievement, on_delete=models.CASCADE, related_name="player_achievements")
+    unlocked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "achievement"], name="unique_player_achievement")]
+
+
 def ensure_profile(user) -> Profile:
     """Return a profile, creating one for accounts made before signals existed."""
     profile, _ = Profile.objects.get_or_create(

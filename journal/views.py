@@ -37,6 +37,11 @@ from .models import (
     Comment,
     Destination,
     ExplorerProgress,
+    ExplorerAchievement,
+    ExplorerHunt,
+    ExplorerQuiz,
+    ExplorerWorld,
+    DiscoveryItem,
     NewsletterSubscriber,
     PhoneVerification,
     Post,
@@ -160,6 +165,42 @@ def explore(request):
             "explorer_authenticated": request.user.is_authenticated,
         },
     )
+
+
+@require_GET
+def explorer_catalogue(request):
+    worlds = list(ExplorerWorld.objects.filter(is_active=True).values(
+        "slug", "name", "region", "description", "order", "destination_id"
+    ))
+    items = []
+    for item in DiscoveryItem.objects.filter(is_active=True).select_related("world").prefetch_related("quizzes"):
+        quiz = item.quizzes.filter(is_active=True).first()
+        items.append({
+            "key": item.key,
+            "world": item.world.slug,
+            "name": item.name,
+            "description": item.description,
+            "card_id": item.card_id,
+            "quiz": ({
+                "key": quiz.key,
+                "question": quiz.question,
+                "choices": quiz.choices,
+                "correct_choice": quiz.correct_choice,
+            } if quiz else None),
+        })
+    hunts = []
+    for hunt in ExplorerHunt.objects.filter(is_active=True).prefetch_related("target_items"):
+        hunts.append({
+            "key": hunt.key,
+            "title": hunt.title,
+            "reward_card_id": hunt.reward_card_id,
+            "xp_reward": hunt.xp_reward,
+            "targets": list(hunt.target_items.values_list("key", flat=True)),
+        })
+    achievements = list(ExplorerAchievement.objects.filter(is_active=True).values(
+        "key", "title", "description", "xp_reward"
+    ))
+    return JsonResponse({"worlds": worlds, "items": items, "hunts": hunts, "achievements": achievements})
 
 
 @login_required

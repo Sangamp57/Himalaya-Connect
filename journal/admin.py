@@ -7,6 +7,14 @@ from .models import (
     ContactMessage,
     Destination,
     ExplorerProgress,
+    ExplorerAchievement,
+    ExplorerHunt,
+    ExplorerQuiz,
+    ExplorerWorld,
+    DiscoveryItem,
+    PlayerAchievement,
+    PlayerDiscovery,
+    PlayerQuizResult,
     NewsletterSubscriber,
     PhoneVerification,
     Post,
@@ -15,6 +23,8 @@ from .models import (
 )
 
 admin.site.register(ExplorerProgress)
+admin.site.register([ExplorerWorld, DiscoveryItem, ExplorerQuiz, ExplorerHunt, ExplorerAchievement])
+admin.site.register([PlayerDiscovery, PlayerQuizResult, PlayerAchievement])
 
 admin.site.site_header = "Himalaya Connect"
 admin.site.site_title = "Himalaya Connect admin"

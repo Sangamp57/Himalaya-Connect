@@ -678,17 +678,18 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--admin-password",
-            default=os.environ.get("SEED_ADMIN_PASSWORD", "Admin@2026!"),
-            help="Password for the editor account (default: Admin@2026!).",
+            default=os.environ.get("SEED_ADMIN_PASSWORD"),
+            help="Optional password for the demo editor account.",
         )
         parser.add_argument(
             "--writer-password",
-            default=os.environ.get("SEED_WRITER_PASSWORD", "Himalaya2026!"),
-            help="Password for the three writer accounts (default: Himalaya2026!).",
+            default=os.environ.get("SEED_WRITER_PASSWORD"),
+            help="Optional password for the three demo writer accounts.",
         )
 
     def handle(self, *args, **options):
         credits = load_credits()
+        created_accounts = []
         now = timezone.now()
 
         category_lookup = {}
@@ -737,8 +738,12 @@ class Command(BaseCommand):
             },
         )
         if admin_created:
-            admin.set_password(options["admin_password"])
+            if options["admin_password"]:
+                admin.set_password(options["admin_password"])
+            else:
+                admin.set_unusable_password()
             admin.save()
+            created_accounts.append("admin")
             Profile.objects.update_or_create(
                 user=admin,
                 defaults={
@@ -755,8 +760,12 @@ class Command(BaseCommand):
                 defaults={"email": entry["email"], "first_name": entry["name"].split()[0]},
             )
             if created:
-                user.set_password(options["writer_password"])
+                if options["writer_password"]:
+                    user.set_password(options["writer_password"])
+                else:
+                    user.set_unusable_password()
                 user.save()
+                created_accounts.append(entry["username"])
             Profile.objects.update_or_create(
                 user=user,
                 defaults={
@@ -843,7 +852,10 @@ class Command(BaseCommand):
                 f"{len(POSTS)} stories ({created_count} new)."
             )
         )
-        self.stdout.write(
-            "Editor account: admin / %s\nWriter account: mira / %s\n"
-            % (options["admin_password"], options["writer_password"])
-        )
+        if created_accounts:
+            self.stdout.write(
+                "Created demo accounts: %s. Their passwords are not published. "
+                "Use `python manage.py changepassword <username>` to set one, "
+                "or create your own admin with `python manage.py createsuperuser`."
+                % ", ".join(created_accounts)
+            )
