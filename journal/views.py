@@ -111,7 +111,10 @@ def home(request):
         for post in published.exclude(pk__in=seen)[: 3 - len(featured)]:
             featured.append(post)
 
-    latest = list(published[:6])
+    latest = list(published[:9])
+    china_posts = list(
+        published.filter(destination__country="China")[:4]
+    )
     destinations = list(Destination.objects.all())
     categories = list(Category.objects.all())
     contributors = (
@@ -123,12 +126,15 @@ def home(request):
     context = {
         "featured": featured,
         "latest": latest,
+        "china_posts": china_posts,
         "destinations": destinations,
         "categories": categories,
         "contributors": contributors,
         "stats": {
             "stories": published.count(),
             "destinations": len(destinations),
+            "scenes": 11,
+            "objects": 150,
             "contributors": User.objects.filter(
                 posts__status=Post.Status.PUBLISHED
             ).distinct().count(),

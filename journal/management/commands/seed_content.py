@@ -16,8 +16,10 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from django.utils.text import slugify
 
 from journal.models import Category, Comment, Destination, Post, Profile
+from journal.seed_extra import EXTRA_DESTINATIONS, EXTRA_POSTS
 
 User = get_user_model()
 
@@ -610,6 +612,9 @@ POSTS = [
     },
 ]
 
+DESTINATIONS.extend(EXTRA_DESTINATIONS)
+POSTS.extend(EXTRA_POSTS)
+
 COMMENTS = [
     {
         "post": "the-window-that-learned-to-hold-a-city",
@@ -705,7 +710,7 @@ class Command(BaseCommand):
             destination, _ = Destination.objects.update_or_create(
                 name=entry["name"],
                 defaults={
-                    "slug": entry["name"].lower().replace(" ", "-").replace("–", "-"),
+                    "slug": slugify(entry["name"]),
                     "country": entry["country"],
                     "flag": entry["flag"],
                     "tagline": entry["tagline"],

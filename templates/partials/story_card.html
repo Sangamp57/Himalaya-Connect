@@ -1,5 +1,5 @@
 {% load journal_extras %}
-<article class="story-card {% if card_class %}{{ card_class }}{% endif %}" data-reveal>
+<article class="story-card {% if card_class %}{{ card_class }}{% endif %}" data-reveal data-post-slug="{{ post.slug }}">
   <a class="story-card-media" href="{{ post.get_absolute_url }}" aria-label="Read {{ post.title }}">
     <img src="{{ post.cover_src }}" alt="{{ post.cover_alt }}" loading="lazy" decoding="async">
     {% if post.category %}<span class="story-card-category" style="--chip-color: {{ post.category.accent }}">{{ post.category.icon }} {{ post.category.name }}</span>{% endif %}

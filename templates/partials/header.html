@@ -25,6 +25,11 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
       </button>
 
+      <div class="site-lang-switch site-lang-switch--desktop" role="group" aria-label="Language">
+        <button type="button" data-site-lang="en" class="is-active">EN</button>
+        <button type="button" data-site-lang="zh">中文</button>
+      </div>
+
       {% if user.is_authenticated %}
         <a class="button button-small button-accent header-write-button" href="{% url 'post_create' %}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
@@ -89,6 +94,10 @@
       <a href="{% url 'about' %}"><span>04</span> About the journal</a>
       <a href="{% url 'contact' %}"><span>05</span> Contact</a>
     </nav>
+    <div class="site-lang-switch site-lang-switch--drawer" role="group" aria-label="Language">
+      <button type="button" data-site-lang="en" class="is-active">English</button>
+      <button type="button" data-site-lang="zh">中文</button>
+    </div>
     <div class="drawer-categories">
       <p>Browse by thread</p>
       <div class="chip-row">

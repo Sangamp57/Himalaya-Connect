@@ -43,7 +43,7 @@
             {% endif %}
           {% endfor %}
         </div>
-        <p>Four 3D scenes · 32 cultural objects · {{ stats.contributors }} independent voices.</p>
+        <p>{{ stats.scenes }} 3D worlds &middot; {{ stats.objects }} cultural discoveries &middot; {{ stats.contributors }} independent voices.</p>
       </div>
     </div>
 
@@ -128,12 +128,34 @@
   </div>
 </section>
 
+<section class="section section-china">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow"><span></span> China focus</p>
+        <h2>Tea forests, desert water and the Silk Road</h2>
+      </div>
+      <a href="{% url 'story_list' %}" class="text-link">More from China
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <p class="section-china-lede">From the tea mountains of Yunnan to the karez-watered fields of Turpan and the painted caves of Dunhuang, these are working landscapes, not backdrops.</p>
+    <div class="story-grid">
+      {% for post in china_posts %}
+        {% include "partials/story_card.html" with post=post card_class="story-card--small" %}
+      {% empty %}
+        <div class="empty-state"><p>China stories are on their way.</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
 <section class="section section-destinations">
   <div class="container">
     <div class="section-heading section-heading-light">
       <div>
         <p class="eyebrow eyebrow-light"><span></span> Go deeper</p>
-        <h2>Four places, four ways in</h2>
+        <h2>{{ stats.destinations }} places, {{ stats.destinations }} ways in</h2>
       </div>
       <a href="{% url 'destination_list' %}" class="text-link text-link-light">All destinations
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -142,7 +164,7 @@
 
     <div class="destination-rail">
       {% for destination in destinations %}
-        <a class="destination-card" href="{{ destination.get_absolute_url }}" data-reveal data-reveal-delay="{{ forloop.counter0 }}">
+        <a class="destination-card" href="{{ destination.get_absolute_url }}" data-reveal data-reveal-delay="{{ forloop.counter0 }}" data-destination-slug="{{ destination.slug }}">
           <div class="destination-card-media">
             <img src="{% static destination.image %}" alt="{{ destination.name }}" loading="lazy" decoding="async">
           </div>
