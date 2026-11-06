@@ -32,6 +32,38 @@ const t = (key, vars) => translate(store.language, key, vars);
 const sound = new SoundEngine(store.state.settings.sound);
 const ui = new ExploreUI({ store });
 
+// Signed-in players get a portable save game; guests continue using localStorage.
+let serverSaveTimer = null;
+function queueServerSave() {
+  if (app.dataset.authenticated !== "true") return;
+  window.clearTimeout(serverSaveTimer);
+  serverSaveTimer = window.setTimeout(async () => {
+    try {
+      await fetch(app.dataset.progressSaveUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": document.querySelector('meta[name="csrf-token"]')?.content || "",
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ progress: store.state }),
+      });
+    } catch (error) {
+      // localStorage remains the offline fallback
+    }
+  }, 500);
+}
+if (app.dataset.authenticated === "true") {
+  fetch(app.dataset.progressUrl, { credentials: "same-origin" })
+    .then((response) => response.json())
+    .then(({ progress }) => {
+      if (progress) store.loadServerState(progress);
+      else queueServerSave();
+    })
+    .catch(() => {});
+  store.subscribe(queueServerSave);
+}
+
 const guide = new CulturalGuide({
   store,
   t,

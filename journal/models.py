@@ -373,6 +373,26 @@ class ContactMessage(models.Model):
         return f"{self.subject} — {self.name}"
 
 
+class ExplorerProgress(models.Model):
+    """Cloud-saved explorer state for a signed-in player.
+
+    The browser still keeps a local copy so guest and offline play continue to
+    work.  This record gives authenticated users a portable save game.
+    """
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="explorer_progress",
+    )
+    state = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"Explorer progress · {self.user}"
+
+
 def ensure_profile(user) -> Profile:
     """Return a profile, creating one for accounts made before signals existed."""
     profile, _ = Profile.objects.get_or_create(

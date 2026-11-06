@@ -5,6 +5,8 @@ from . import views
 urlpatterns = [
     path("", views.home, name="home"),
     path("explore/", views.explore, name="explore"),
+    path("api/explorer/progress/", views.explorer_progress, name="explorer_progress"),
+    path("api/explorer/progress/save/", views.save_explorer_progress, name="save_explorer_progress"),
     path("culture-guide/", views.cultural_guide, name="cultural_guide"),
     path("stories/", views.story_list, name="story_list"),
     path("stories/new/", views.post_create, name="post_create"),
