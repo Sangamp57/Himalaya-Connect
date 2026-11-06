@@ -116,7 +116,7 @@ class Post(models.Model):
     cover_photo = models.CharField(
         max_length=255,
         blank=True,
-        help_text="A static image path used by the demo content.",
+        help_text="A static image path used by editorial content.",
     )
     cover_alt = models.CharField(max_length=180, blank=True)
     cover_credit = models.CharField(max_length=220, blank=True)
@@ -288,6 +288,62 @@ class Profile(models.Model):
 
     def get_absolute_url(self) -> str:
         return reverse("author_profile", args=[self.user.username])
+
+
+class SocialIdentity(models.Model):
+    class Provider(models.TextChoices):
+        GOOGLE = "google", "Google"
+        WECHAT = "wechat", "WeChat"
+        FACEBOOK = "facebook", "Facebook"
+        PHONE = "phone", "Phone"
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="social_identities",
+    )
+    provider = models.CharField(max_length=20, choices=Provider.choices)
+    provider_user_id = models.CharField(max_length=191)
+    email = models.EmailField(blank=True)
+    display_name = models.CharField(max_length=150, blank=True)
+    avatar_url = models.URLField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_login_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["provider", "provider_user_id"],
+                name="unique_social_provider_user",
+            )
+        ]
+        ordering = ["provider", "provider_user_id"]
+
+    def __str__(self) -> str:
+        return f"{self.get_provider_display()} · {self.provider_user_id}"
+
+
+class PhoneVerification(models.Model):
+    phone = models.CharField(max_length=32, db_index=True)
+    code_hash = models.CharField(max_length=128)
+    expires_at = models.DateTimeField()
+    attempts = models.PositiveSmallIntegerField(default=0)
+    used_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return f"Code for {self.phone}"
+
+    @property
+    def is_expired(self) -> bool:
+        return timezone.now() >= self.expires_at
+
+    @property
+    def is_usable(self) -> bool:
+        return self.used_at is None and not self.is_expired and self.attempts < 5
 
 
 class NewsletterSubscriber(models.Model):

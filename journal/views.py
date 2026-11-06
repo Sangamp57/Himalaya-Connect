@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+from datetime import timedelta
 from urllib import error as urllib_error
 from urllib import request as urllib_request
 
@@ -9,6 +10,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password, make_password
 from django.core.paginator import Paginator
 from django.db.models import Count, F, Q, Sum
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
@@ -22,6 +24,8 @@ from .forms import (
     CommentForm,
     ContactForm,
     NewsletterForm,
+    PhoneLoginForm,
+    PhoneVerifyForm,
     PostForm,
     ProfileForm,
     SignInForm,
@@ -32,11 +36,31 @@ from .models import (
     Comment,
     Destination,
     NewsletterSubscriber,
+    PhoneVerification,
     Post,
     Profile,
     ensure_profile,
 )
 from .ratelimit import is_rate_limited
+from .social_auth import (
+    exchange_facebook,
+    exchange_google,
+    exchange_wechat,
+    facebook_configured,
+    facebook_login_url,
+    facebook_redirect_uri,
+    generate_code,
+    get_or_create_phone_user,
+    get_or_create_social_user,
+    google_configured,
+    google_login_url,
+    google_redirect_uri,
+    normalize_phone,
+    send_sms,
+    wechat_configured,
+    wechat_login_url,
+    wechat_redirect_uri,
+)
 
 User = get_user_model()
 
@@ -113,13 +137,13 @@ def explore(request):
 
     The page is deliberately self-contained: the cultural dataset and the local
     progress model live on the client, so the experience works without an
-    account. Optional server-side AI credentials are detected here, never
+    account. Optional server-side language-model credentials are detected here, never
     exposed to the browser.
     """
     return render(
         request,
         "explore/app.html",
-        {"ai_configured": bool(os.environ.get("OPENAI_API_KEY", "").strip())},
+        {"guide_live": bool(os.environ.get("OPENAI_API_KEY", "").strip())},
     )
 
 
@@ -127,7 +151,7 @@ def explore(request):
 def cultural_guide(request):
     """Secure proxy for the optional live cultural-guide model.
 
-    Without a server-side key the endpoint reports demo mode; the browser then
+    Without a server-side key the endpoint reports curated mode; the browser then
     uses its curated knowledge base. With a key, the request is proxied here so
     the credential never reaches frontend code.
     """
@@ -162,9 +186,9 @@ def cultural_guide(request):
     if not api_key:
         return JsonResponse(
             {
-                "mode": "demo",
+                "mode": "curated",
                 "reply": None,
-                "detail": "No live model is configured. The browser is using the curated demo knowledge base.",
+                "detail": "No live model is configured. The browser is using the curated knowledge base.",
             }
         )
 
@@ -226,7 +250,7 @@ def cultural_guide(request):
             {
                 "mode": "live",
                 "error": "The live guide is unavailable right now.",
-                "detail": "The browser can continue with the curated demo knowledge base.",
+                "detail": "The browser can continue with the curated knowledge base.",
             },
             status=502,
         )
@@ -491,6 +515,147 @@ def signin(request):
         "accounts/login.html",
         {"form": form, "next": request.GET.get("next", "")},
     )
+
+
+def social_login(request, provider):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+    if provider == "google":
+        if not google_configured():
+            messages.error(request, "Google sign-in is not configured on this installation yet.")
+            return redirect("login")
+        return redirect(google_login_url(request))
+    if provider == "wechat":
+        if not wechat_configured():
+            messages.error(request, "WeChat sign-in is not configured on this installation yet.")
+            return redirect("login")
+        return redirect(wechat_login_url(request))
+    if provider == "facebook":
+        if not facebook_configured():
+            messages.error(request, "Facebook sign-in is not configured on this installation yet.")
+            return redirect("login")
+        return redirect(facebook_login_url(request))
+    messages.error(request, "That sign-in provider is not available.")
+    return redirect("login")
+
+
+def social_callback(request, provider):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+    state = request.GET.get("state", "")
+    expected = request.session.pop(f"{provider}_oauth_state", "")
+    if not state or not expected or state != expected:
+        messages.error(request, "The sign-in request expired. Please try again.")
+        return redirect("login")
+    code = request.GET.get("code", "")
+    if not code:
+        messages.error(request, "The sign-in provider did not return a code.")
+        return redirect("login")
+    try:
+        if provider == "google":
+            profile = exchange_google(code, google_redirect_uri(request))
+        elif provider == "wechat":
+            profile = exchange_wechat(code)
+        elif provider == "facebook":
+            profile = exchange_facebook(code, facebook_redirect_uri(request))
+        else:
+            raise ValueError("Unknown provider.")
+        user = get_or_create_social_user(
+            provider,
+            profile["provider_user_id"],
+            email=profile.get("email", ""),
+            display_name=profile.get("display_name", ""),
+            avatar_url=profile.get("avatar_url", ""),
+        )
+    except Exception:
+        messages.error(
+            request,
+            "We could not complete that sign-in. Please try again or use email and password.",
+        )
+        return redirect("login")
+    auth_login(request, user, backend="journal.backends.EmailOrUsernameBackend")
+    ensure_profile(user)
+    messages.success(request, f"Welcome, {user.profile.name}. You are signed in.")
+    return redirect("dashboard")
+
+
+def phone_login(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+    if request.method == "POST":
+        if is_rate_limited(request, "phone_login", limit=8, window_seconds=3600):
+            messages.error(request, "Too many code requests. Please wait a little before trying again.")
+            return redirect("phone_login")
+        form = PhoneLoginForm(request.POST)
+        if form.is_valid():
+            try:
+                phone = normalize_phone(form.cleaned_data["phone"])
+                code = generate_code()
+                PhoneVerification.objects.filter(phone=phone, used_at__isnull=True).delete()
+                PhoneVerification.objects.create(
+                    phone=phone,
+                    code_hash=make_password(code),
+                    expires_at=timezone.now()
+                    + timedelta(seconds=settings.PHONE_CODE_TTL_SECONDS),
+                )
+                send_sms(
+                    phone,
+                    f"{code} is your Himalaya Connect sign-in code. It expires in 10 minutes.",
+                )
+            except Exception:
+                messages.error(
+                    request,
+                    "We could not send a code to that number. Check the number and try again.",
+                )
+            else:
+                request.session["phone_auth_phone"] = phone
+                if settings.DEBUG:
+                    messages.info(request, f"Development mode: your code is {code}.")
+                messages.success(request, "A six-digit code has been sent. Enter it on the next screen.")
+                return redirect("phone_verify")
+    else:
+        form = PhoneLoginForm()
+    return render(request, "accounts/phone_login.html", {"form": form})
+
+
+def phone_verify(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+    phone = request.session.get("phone_auth_phone")
+    if not phone:
+        messages.info(request, "Enter your phone number first.")
+        return redirect("phone_login")
+    if request.method == "POST":
+        if is_rate_limited(request, "phone_verify", limit=30, window_seconds=600):
+            messages.error(request, "Too many attempts. Please request a new code.")
+            return redirect("phone_login")
+        form = PhoneVerifyForm(request.POST)
+        if form.is_valid():
+            verification = (
+                PhoneVerification.objects.filter(phone=phone, used_at__isnull=True)
+                .order_by("-created_at")
+                .first()
+            )
+            code = form.cleaned_data["code"]
+            if not verification or not verification.is_usable:
+                messages.error(request, "That code has expired. Request a new one.")
+                return redirect("phone_login")
+            if not check_password(code, verification.code_hash):
+                verification.attempts += 1
+                verification.save(update_fields=["attempts"])
+                messages.error(request, "That code did not match. Please check it and try again.")
+            else:
+                verification.used_at = timezone.now()
+                verification.save(update_fields=["used_at"])
+                user = get_or_create_phone_user(phone)
+                request.session.pop("phone_auth_phone", None)
+                auth_login(request, user, backend="journal.backends.EmailOrUsernameBackend")
+                ensure_profile(user)
+                messages.success(request, "You are signed in with your phone number.")
+                return redirect("dashboard")
+    else:
+        form = PhoneVerifyForm()
+    return render(request, "accounts/phone_verify.html", {"form": form, "phone": phone})
 
 
 @require_POST

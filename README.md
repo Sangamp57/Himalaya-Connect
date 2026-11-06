@@ -1,6 +1,6 @@
 # Himalaya Connect
 
-A complete, responsive travel journal **and interactive 3D cultural explorer** built with **Django, HTML, CSS, Three.js and vanilla JavaScript**. The journal is a layered editorial experience of mountain photography and slow travel stories; the explorer is a playable miniature world across Nepal, Pakistan and China.
+A complete, responsive travel journal **and interactive 3D cultural explorer** built with **Django, HTML, CSS, Three.js and vanilla JavaScript**. The journal is a layered editorial experience of mountain photography and slow travel stories; the explorer is a playable 3D world across Nepal, Pakistan and China.
 
 The journal is fully functional, not a static mock-up. Members can sign up, sign in, reset a password, edit a profile, publish stories, save reading lists, like stories, comment, follow other writers, and manage or delete their account.
 
@@ -8,9 +8,9 @@ The journal is fully functional, not a static mock-up. Members can sign up, sign
 
 Open **`/explore/`** (also linked as “3D Explorer” in the main navigation).
 
-- Five procedural, explorable 3D scenes: Kathmandu, Hunza Valley, Kashgar, a thematic Karakoram Cultural Route, and a winding "Great Journey" mountain-trail world.
-- Real orbit/pan/zoom camera controls, object raycasting, camera fly-to, highlighting, reset and mobile touch support.
-- 35 cultural objects with stories, facts, source links, quizzes and collectible cards.
+- Eleven procedural, walkable 3D worlds: Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, Dunhuang, Pu'er, Xishuangbanna, the Karakoram Highway, and the winding "Great Journey" high trail.
+- Orbit, pan, zoom and walk controls, object raycasting, camera fly-to, highlighting, reset and mobile touch support.
+- A growing collection of cultural objects with stories, facts, source links, quizzes and collectible cards.
 - A scavenger-hunt **Game** section: three themed hunts that track your beacon discoveries and award XP and bonus cards.
 - A 3D cinema screen inside the Journey world that plays a freely-licensed Himalayan time-lapse as a live video texture (with a poster fallback and source credit).
 - A **Films** section with three real, freely-licensed short films — one each from Nepal, Pakistan and China — played as ordinary HTML5 videos.
@@ -18,9 +18,9 @@ Open **`/explore/`** (also linked as “3D Explorer” in the main navigation).
 - A real OpenStreetMap culture map with verified coordinates and links into the 3D worlds.
 - Persistent progress, language and settings in `localStorage`.
 - English, Simplified Chinese, Nepali and Urdu interface support, including RTL Urdu. Detailed cultural narratives remain in English where a community-reviewed translation is not yet available, and the interface says so.
-- The AI Cultural Guide is a clearly labelled curated demo when no server key is configured. With `OPENAI_API_KEY` set, questions are proxied through the Django server; the key never reaches the browser.
+- The Cultural Guide runs from a curated offline knowledge base when no server key is configured. With `OPENAI_API_KEY` set, questions are proxied through the Django server; the key never reaches the browser.
 
-The explorer needs no Node build step. Three.js r169 and Leaflet 1.9 are vendored under `static/vendor/`. Photographs are not used inside the 3D worlds: the environments are built from procedural geometry and generated textures. The Journey world's cinema screen streams a CC BY Himalayan time-lapse from Wikimedia Commons (see credits below); where a browser cannot play WebM inline, a generated poster is shown with a link to the source.
+The explorer needs no Node build step. Three.js r169 and Leaflet 1.9 are vendored under `static/vendor/`. The 3D environments are built from procedural geometry and generated textures; discovery cards use real, locally served photographs with the photographer and licence shown on the card and a link to the source. The Journey world's cinema screen streams a CC BY Himalayan time-lapse from Wikimedia Commons (see credits below); where a browser cannot play WebM inline, a generated poster is shown with a link to the source.
 
 ## Run it locally
 
@@ -31,7 +31,7 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py seed_demo
+python manage.py seed_content
 python manage.py runserver
 ```
 
@@ -39,9 +39,9 @@ Open <http://127.0.0.1:8000>.
 
 On macOS/Linux activate the environment with `source .venv/bin/activate` instead.
 
-The repository includes a seeded `db.sqlite3`, so `migrate` is enough if you are opening this exact folder. `seed_demo` is safe to run again: it restores the demo editorial data without overwriting story edits.
+The repository includes a seeded `db.sqlite3`, so `migrate` is enough if you are opening this exact folder. `seed_content` is safe to run again: it restores the starter editorial data without overwriting story edits.
 
-### Demo accounts
+### Starter accounts
 
 | Role | Username | Password |
 | --- | --- | --- |
@@ -53,16 +53,16 @@ The repository includes a seeded `db.sqlite3`, so `migrate` is enough if you are
 Change these before putting the site anywhere public. The passwords can be supplied on a fresh seed:
 
 ```powershell
-python manage.py seed_demo --admin-password "a-long-new-password" --demo-password "another-long-password"
+python manage.py seed_content --admin-password "a-long-new-password" --writer-password "another-long-password"
 ```
 
-Or set `DEMO_ADMIN_PASSWORD` and `DEMO_USER_PASSWORD` in `.env` before the first seed.
+Or set `SEED_ADMIN_PASSWORD` and `SEED_WRITER_PASSWORD` in `.env` before the first seed.
 
 ## What is included
 
 ### Public site
 
-- Interactive 3D explorer with four miniature worlds, speaking beacons, object stories, quizzes, etiquette scenarios, comparison challenges, achievements, local progress and a collectible card gallery.
+- Interactive 3D explorer with eleven walkable worlds, including the Kathmandu Valley, Pokhara, Hunza Valley, Skardu, Kashgar, Turpan, Dunhuang, Pu'er, Xishuangbanna, the Karakoram Highway and the Great Journey, with Google, WeChat, Facebook and phone sign-in, speaking beacons, object stories, quizzes, etiquette scenarios, comparison challenges, achievements, local progress and a collectible card gallery.
 - A real geographic culture map with OpenStreetMap tiles, verified coordinates and world launch links.
 - A daily encounter that rotates deterministically from a curated set, with save, share and quiz actions.
 - Full-screen parallax home page with layered mountain photography, scroll depth, floating notes and scroll-reveal sections.
@@ -94,7 +94,7 @@ Or set `DEMO_ADMIN_PASSWORD` and `DEMO_USER_PASSWORD` in `.env` before the first
 
 - Customised Django admin for stories, categories, destinations, comments, profiles, newsletter subscribers and contact messages.
 - Publish/unpublish and feature actions for stories.
-- Editorial demo content: 10 stories, 3 writers, 6 categories and 4 destinations.
+- Editorial content: 10 stories, 3 writers, 6 categories and 4 destinations.
 
 ## Mobile behaviour
 
@@ -116,12 +116,12 @@ The layout was checked at **390 × 844** and **1440 × 1000** with no horizontal
 config/                  Django project settings and root URLs
 journal/
   models.py              Categories, destinations, posts, comments, profiles
-  views.py               Public pages, explorer, AI proxy, auth flows, dashboard, social actions
-  tests.py               Journal, explorer and demo-guide tests
+  views.py               Public pages, explorer, guide proxy, auth flows, dashboard, social actions
+  tests.py               Journal, explorer and guide tests
   forms.py               Sign up, profile, post, comment, contact and newsletter
   backends.py            Email-or-username authentication
   templatetags/          Safe story formatting, query strings, avatar colours
-  management/commands/   seed_demo command
+  management/commands/   seed_content command
   data/photo_credits.json
 templates/
   pages/                 Home, about, contact
@@ -146,11 +146,13 @@ static/
 ```text
 static/js/explore/
   data.js                Curated objects, worlds, cards, quizzes, etiquette, map data
+  object-images.js       Real photographs and credits for every discovery card
+  social_auth.py         Google, WeChat and phone identity helpers
   i18n.js                Four-language interface dictionaries
   store.js               localStorage progress, XP, achievements, streaks
   ui.js                  Home, world HUD, cards, scenarios, dialogs and toasts
   map.js                 Leaflet culture map and coordinate markers
-  guide.js               Chat interface + curated demo knowledge
+  guide.js               Chat interface + curated knowledge base
   audio.js               Generated interface tones
   three/                 Renderer, custom orbit controls, procedural worlds
 ```
@@ -164,8 +166,14 @@ Copy `.env.example` to `.env` and set:
 - `DJANGO_ALLOWED_HOSTS` — comma-separated hostnames.
 - `DJANGO_CSRF_TRUSTED_ORIGINS` — full origins if using HTTPS.
 - Email settings for password reset delivery.
-- `OPENAI_API_KEY` is optional. Leave it blank for the explorer's labelled demo guide. If set, set `OPENAI_MODEL` (default `gpt-4o-mini`) and optionally `OPENAI_BASE_URL`. The key is read only by `journal.views.cultural_guide`; it is never returned to the browser.
-- Demo passwords if you are re-seeding a fresh database.
+- `OPENAI_API_KEY` is optional. Leave it blank for the explorer's curated offline guide. If set, set `OPENAI_MODEL` (default `gpt-4o-mini`) and optionally `OPENAI_BASE_URL`. The key is read only by `journal.views.cultural_guide`; it is never returned to the browser.
+- Seed passwords if you are re-seeding a fresh database.
+
+- Google sign-in: set `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET` and the exact `GOOGLE_OAUTH_REDIRECT_URI` (`/accounts/google/callback/`) in `.env`.
+- WeChat sign-in: set `WECHAT_APP_ID`, `WECHAT_APP_SECRET` and `WECHAT_REDIRECT_URI` (`/accounts/wechat/callback/`). WeChat requires a verified web-app domain.
+- Facebook sign-in: set `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` and `FACEBOOK_REDIRECT_URI` (`/accounts/facebook/callback/`).
+- Phone sign-in: `SMS_BACKEND=console` prints codes to the server console in development. For production set `SMS_BACKEND=twilio` with `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` and `TWILIO_FROM_NUMBER`, or `SMS_BACKEND=webhook` with `SMS_WEBHOOK_URL` and optional `SMS_WEBHOOK_TOKEN`.
+- Google and WeChat need credentials from their developer consoles; without them the buttons show a clear configuration message and email/password or phone sign-in remains available.
 
 ### Production checklist
 
@@ -183,13 +191,13 @@ Copy `.env.example` to `.env` and set:
 python manage.py test
 ```
 
-The suite covers public rendering, the explorer page and demo-guide endpoint, search and filters, signup, email-or-username login, draft privacy, story CRUD, author permissions, likes, bookmarks, comments, follows, profile editing, contact, newsletter, sitemap and robots.
+The suite covers public rendering, the explorer page and guide endpoint, search and filters, signup, email-or-username login, phone-code signup and verification, unconfigured social providers, draft privacy, story CRUD, author permissions, likes, bookmarks, comments, follows, profile editing, contact, newsletter, sitemap and robots.
 
 Browser checks used headless Chromium at desktop and phone widths. They covered the 3D canvas and world loading, touch-sized controls, object raycasting, camera focus, collection and quiz rewards, daily save, achievements, map markers, language persistence and RTL, WebGL fallback reading mode, and the production static manifest.
 
 ## Photo credits
 
-The demo photographs are served locally from `static/images/` as optimised WebP files. They remain the property of their photographers and are used under the licences recorded by Wikimedia Commons. Each story page renders its credit and a source link.
+The photographs are served locally from `static/images/` as optimised WebP files. They remain the property of their photographers and are used under the licences recorded by Wikimedia Commons. Each story page renders its credit and a source link. Discovery card photographs are also stored under `static/images/objects/`; their photographer and licence are shown in the card drawer with a link to the Commons source.
 
 | Image | Photographer | Licence |
 | --- | --- | --- |
@@ -206,10 +214,13 @@ The demo photographs are served locally from `static/images/` as optimised WebP 
 | Khunjerab Pass road | Shaguftakarim | CC BY-SA 4.0 |
 | Kashgar Old City | Radosław Botev | CC BY 3.0 pl |
 | Kashgar Grand Bazaar | David Stanley | CC BY 2.0 |
+| Mogao Caves, Dunhuang | Wikimedia Commons contributor | CC BY-SA 3.0 |
+| Crescent Lake, Dunhuang | N509FZ | CC BY-SA 4.0 |
+| Dunhuang night market | xiquinhosilva | CC BY 2.0 |
 
 The Journey world's 3D cinema plays *"The Himalayan — Mt. Everest Base Camp trek HD Time Lapse"* by Amit Haware, sourced from Wikimedia Commons under CC BY 3.0. The Films section adds two more: *"Hunza Valley"* (Nabin K. Sapkota & Nasr Rahman, CC BY-SA 4.0) for Pakistan and *"Scenery along a road in Bayingol, Xinjiang"* (Karl Osj. G, CC BY-SA 4.0) for China. All are streamed, not bundled, and are credited on-screen and in the explorer's source notes.
 
-The stories, writer names and profiles are fictional demo content created for this project. They are not reporting about real individuals. The destinations, cultural context and practical notes were written with care, but should still be checked against current local advice before travelling.
+The stories, writer names and profiles are editorial content created for this project. They are not reporting about real individuals. The destinations, cultural context and practical notes were written with care, but should still be checked against current local advice before travelling.
 
 Typography by **Fraunces**, **Manrope**, **Noto Sans Devanagari** and **Noto Nastaliq Urdu**, self-hosted under the SIL Open Font License 1.1. The licence texts are included in `static/fonts/`.
 

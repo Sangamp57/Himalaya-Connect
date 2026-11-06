@@ -178,6 +178,30 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 
+# ---------------------------------------------------------------------------
+# Social sign-in and phone verification
+# ---------------------------------------------------------------------------
+GOOGLE_OAUTH_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID", "")
+GOOGLE_OAUTH_CLIENT_SECRET = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET", "")
+GOOGLE_OAUTH_REDIRECT_URI = os.environ.get("GOOGLE_OAUTH_REDIRECT_URI", "")
+
+WECHAT_APP_ID = os.environ.get("WECHAT_APP_ID", "")
+WECHAT_APP_SECRET = os.environ.get("WECHAT_APP_SECRET", "")
+WECHAT_REDIRECT_URI = os.environ.get("WECHAT_REDIRECT_URI", "")
+
+FACEBOOK_APP_ID = os.environ.get("FACEBOOK_APP_ID", "")
+FACEBOOK_APP_SECRET = os.environ.get("FACEBOOK_APP_SECRET", "")
+FACEBOOK_REDIRECT_URI = os.environ.get("FACEBOOK_REDIRECT_URI", "")
+
+SMS_BACKEND = os.environ.get("SMS_BACKEND", "console")
+SMS_SENDER = os.environ.get("SMS_SENDER", "Himalaya Connect")
+TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "")
+TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN", "")
+TWILIO_FROM_NUMBER = os.environ.get("TWILIO_FROM_NUMBER", "")
+SMS_WEBHOOK_URL = os.environ.get("SMS_WEBHOOK_URL", "")
+SMS_WEBHOOK_TOKEN = os.environ.get("SMS_WEBHOOK_TOKEN", "")
+PHONE_CODE_TTL_SECONDS = int(os.environ.get("PHONE_CODE_TTL_SECONDS", "600"))
+
 X_FRAME_OPTIONS = "DENY"
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SESSION_COOKIE_HTTPONLY = True

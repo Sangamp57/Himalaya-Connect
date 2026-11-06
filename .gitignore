@@ -24,3 +24,6 @@ Thumbs.db
 .coverage
 htmlcov/
 .pytest_cache/
+
+# Local Blender source files
+blender/

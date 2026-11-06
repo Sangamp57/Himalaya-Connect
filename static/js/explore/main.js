@@ -15,6 +15,7 @@ import { ExploreUI } from "./ui.js";
 import { SceneManager, webglAvailable } from "./three/scene.js";
 import { CultureMap } from "./map.js";
 import { CulturalGuide } from "./guide.js";
+import { WorldGuide } from "./world-guide.js";
 import { SoundEngine } from "./audio.js";
 
 const app = document.getElementById("explore-app");
@@ -34,7 +35,7 @@ const ui = new ExploreUI({ store });
 const guide = new CulturalGuide({
   store,
   t,
-  aiConfigured: app.dataset.aiConfigured === "true",
+  guideLive: app.dataset.guideLive === "true",
   endpoint: app.dataset.guideUrl || "/culture-guide/",
   csrfToken: document.querySelector('meta[name="csrf-token"]')?.content || "",
   elements: {
@@ -53,6 +54,39 @@ const guide = new CulturalGuide({
 });
 
 let currentView = "home";
+
+/* The home scene is a fixed 3D backdrop with a scrolling content layer. */
+const homePanel = document.querySelector('[data-view-panel="home"]');
+let homeScrollFrame = 0;
+function syncHomeScroll() {
+  homeScrollFrame = 0;
+  if (!homePanel) return;
+  const offset = homePanel.scrollTop;
+  homePanel.style.setProperty("--home-scroll", `${offset}px`);
+  window.__homeScroll = offset;
+}
+homePanel?.addEventListener(
+  "scroll",
+  () => {
+    if (!homeScrollFrame) homeScrollFrame = window.requestAnimationFrame(syncHomeScroll);
+  },
+  { passive: true }
+);
+window.addEventListener(
+  "wheel",
+  (event) => {
+    if (currentView !== "home" || !homePanel || event.ctrlKey || event.metaKey) return;
+    const max = homePanel.scrollHeight - homePanel.clientHeight;
+    if (max <= 0) return;
+    const next = Math.max(0, Math.min(max, homePanel.scrollTop + event.deltaY));
+    if (next !== homePanel.scrollTop) {
+      homePanel.scrollTop = next;
+      event.preventDefault();
+    }
+  },
+  { passive: false }
+);
+syncHomeScroll();
 let currentWorldId = store.state.lastWorld && WORLDS[store.state.lastWorld] ? store.state.lastWorld : "kathmandu";
 let currentObjectId = null;
 let collectionFilter = "all";
@@ -66,8 +100,14 @@ let booted = false;
 
 const WORLD_BUILDERS = {
   kathmandu: () => import("./three/worlds/kathmandu.js").then((module) => module.default),
-  hunza: () => import("./three/worlds/hunza.js").then((module) => module.default),
+  pokhara: () => import("./three/worlds/pokhara.js").then((module) => module.default),
+  hunza: () => import("./three/worlds/hunza-walkable.js").then((module) => module.default),
+  skardu: () => import("./three/worlds/skardu.js").then((module) => module.default),
   kashgar: () => import("./three/worlds/kashgar.js").then((module) => module.default),
+  turpan: () => import("./three/worlds/turpan.js").then((module) => module.default),
+  dunhuang: () => import("./three/worlds/dunhuang.js").then((module) => module.default),
+  puer: () => import("./three/worlds/puer.js").then((module) => module.default),
+  xishuangbanna: () => import("./three/worlds/xishuangbanna.js").then((module) => module.default),
   karakoram: () => import("./three/worlds/karakoram.js").then((module) => module.default),
   journey: () => import("./three/worlds/journey.js").then((module) => module.default),
   overview: () => import("./three/worlds/overview.js").then((module) => module.default),
@@ -200,10 +240,10 @@ async function ensureOverview({ initial = false } = {}) {
   overviewPromise = (async () => {
     const builder = await WORLD_BUILDERS.overview();
     const config = {
-      position: [0.5, 17, 32],
-      target: [0, 0.4, -0.8],
-      min: 16,
-      max: 44,
+      position: [0.5, 20, 40],
+      target: [0, 0.4, 0],
+      min: 18,
+      max: 52,
       autoRotate: true,
       autoRotateSpeed: 0.032,
     };
@@ -388,6 +428,9 @@ function refreshSceneLabels() {
     texts["overview:kathmandu"] = localize(nepal?.names, store.language);
     texts["overview:hunza"] = localize(pakistan?.names, store.language);
     texts["overview:kashgar"] = localize(china?.names, store.language);
+    texts["overview:dunhuang"] = localize(WORLDS.dunhuang.names, store.language);
+    texts["overview:puer"] = localize(WORLDS.puer.names, store.language);
+    texts["overview:xishuangbanna"] = localize(WORLDS.xishuangbanna.names, store.language);
     texts["overview:karakoram"] = localize(WORLDS.karakoram.names, store.language);
     texts["overview:journey"] = localize(WORLDS.journey.names, store.language);
   } else {
@@ -400,6 +443,53 @@ function refreshSceneLabels() {
     }
   }
   sceneManager.updateLabels(store.language, dirFor(store.language), texts);
+}
+
+
+/* -----------------------------------------------------------------------
+   3D world guide (a tab of the Guide view)
+   ----------------------------------------------------------------------- */
+let worldGuide = null;
+let guideTabNow = "ask";
+function setGuideTab(tab) {
+  guideTabNow = tab === "worlds" ? "worlds" : "ask";
+  const panel = document.querySelector(".guide-panel");
+  if (!panel) return;
+  const tabs = WorldGuide.tabs(store.language);
+  panel.querySelectorAll("[data-guide-tab]").forEach((b) => {
+    const on = b.dataset.guideTab === guideTabNow;
+    b.classList.toggle("is-active", on);
+    b.setAttribute("aria-selected", String(on));
+    b.textContent = b.dataset.guideTab === "worlds" ? tabs.worlds : tabs.ask;
+  });
+  panel.classList.toggle("is-world-guide", guideTabNow === "worlds");
+  const root = document.getElementById("world-guide");
+  root.hidden = guideTabNow !== "worlds";
+  if (guideTabNow === "worlds") {
+    if (!worldGuide) {
+      worldGuide = new WorldGuide({
+        root,
+        getLang: () => store.language,
+        onOpenCard: (id) => openCard(id),
+        onGo: (worldId, placeKey) => goToPlace(worldId, placeKey),
+      });
+      worldGuide.setWorld(currentWorldId);
+    }
+    worldGuide.render();
+  }
+}
+async function goToPlace(worldId, placeKey) {
+  const before = window.__walk || window.__ktm || null;
+  const same = sceneManager && sceneManager.currentWorldId === worldId && before;
+  await enterWorld(worldId);
+  const t0 = performance.now();
+  const tick = () => {
+    const A = window.__walk || window.__ktm;
+    const ready = A && A.places && A.places[placeKey] && sceneManager && sceneManager.currentWorldId === worldId && (same || A !== before);
+    if (ready) { window.setTimeout(() => A.travelTo(placeKey), same ? 0 : 900); return; }
+    if (performance.now() - t0 < 60000) window.setTimeout(tick, 300);
+  };
+  tick();
 }
 
 /* -----------------------------------------------------------------------
@@ -456,7 +546,9 @@ async function openView(view, { updateHash = true, push = true, skipScene = fals
     guide.setContext({ worldId: null, objectId: null });
   } else if (view === "guide") {
     guide.setContext({ worldId: currentWorldId, objectId: previousObjectId || null });
-    window.setTimeout(() => document.getElementById("guide-input")?.focus({ preventScroll: true }), 220);
+    if (worldGuide) worldGuide.setWorld(currentWorldId);
+    setGuideTab(guideTabNow);
+    if (guideTabNow === "ask") window.setTimeout(() => document.getElementById("guide-input")?.focus({ preventScroll: true }), 220);
   }
   ui.updateTopbar();
 }
@@ -518,9 +610,10 @@ function autoCollectCard(cardId) {
 function showObjectQuiz(object) {
   const quizId = `object-${object.id}`;
   const previous = store.getQuizResult(quizId);
+  const localQuiz = object.quizI18n?.[store.language] || object.quiz;
   const quiz = {
-    ...object.quiz,
-    q: object.quiz.q,
+    ...localQuiz,
+    q: localQuiz.q,
   };
   ui.showQuiz(quiz, {
     previouslyPassed: Boolean(previous?.passed),
@@ -786,6 +879,11 @@ async function openTodayWorld(button) {
 
 function bindEvents() {
   document.addEventListener("click", (event) => {
+    const guideTab = event.target.closest("[data-guide-tab]");
+    if (guideTab) {
+      setGuideTab(guideTab.dataset.guideTab);
+      return;
+    }
     const viewButton = event.target.closest("[data-view]");
     if (viewButton) {
       event.preventDefault();
@@ -961,6 +1059,20 @@ function bindEvents() {
   });
 
   document.getElementById("object-drawer-close")?.addEventListener("click", closeObjectPanel);
+
+  const worldHead = document.querySelector(".world-head");
+  const worldHeadBack = worldHead?.querySelector(".world-head-top [data-view='home']");
+  worldHeadBack?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const expanded = worldHead.classList.toggle("is-expanded");
+    worldHeadBack.setAttribute(
+      "aria-label",
+      expanded ? "Hide world details" : "Show world details"
+    );
+    worldHeadBack.setAttribute("aria-expanded", String(expanded));
+  });
+
   document.getElementById("world-trail-toggle")?.addEventListener("click", () => toggleTrail(ui.el.worldTrail.hidden));
   document.getElementById("world-trail-close")?.addEventListener("click", () => toggleTrail(false));
   document.getElementById("zoom-in")?.addEventListener("click", () => sceneManager?.zoom(0.82));
@@ -1050,7 +1162,7 @@ function bindEvents() {
     if (!sceneManager || currentView !== "world") return;
     if (document.querySelector("dialog[open]")) return;
     const target = event.target;
-    if (target && (target.matches("input, textarea, select") || target.isContentEditable)) return;
+    if (target && target.matches && (target.matches("input, textarea, select") || target.isContentEditable)) return;
     if (event.key === "ArrowLeft") {
       event.preventDefault();
       sceneManager.rotate(-0.14, 0);
@@ -1093,6 +1205,7 @@ function changeLanguage(lang) {
   ui.setLanguage(lang);
   guide.setLanguage(lang);
   map.setLanguage(lang);
+  if (currentView === "guide") setGuideTab(guideTabNow);
   refreshSceneLabels();
   ui.renderHome();
   const encounter = ui.getTodayEncounter();

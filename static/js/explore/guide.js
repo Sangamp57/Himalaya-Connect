@@ -2,10 +2,10 @@ import { BRIDGES, CARD_MAP, OBJECT_MAP, WORLDS } from "./data.js";
 import { icon } from "./icons.js";
 
 const WELCOME = {
-  en: "I'm the demo cultural guide. I can explain an object you open, compare traditions, or help with respectful etiquette. This prototype uses a curated knowledge base — it is not a live model.",
-  zh: "我是演示版文化向导。我可以解释你打开的物件、比较传统，或提供尊重的礼仪建议。本原型使用精选知识库，并非实时模型。",
-  ne: "म प्रदर्शन सांस्कृतिक मार्गदर्शक हुँ। तपाईंले खोल्नुभएको वस्तु व्याख्या गर्न, परम्परा तुलना गर्न वा शिष्टाचारमा सहयोग गर्न सक्छु। यो प्रोटोटाइप छनोट ज्ञान आधार प्रयोग गर्छ, प्रत्यक्ष मोडेल होइन।",
-  ur: "میں ڈیمو ثقافتی رہنما ہوں۔ میں آپ کی کھولی ہوئی شے کی وضاحت، روایات کا موازنہ یا باادب آداب میں مدد کر سکتا ہوں۔ یہ نمونہ منتخب معلومات استعمال کرتا ہے، براہ راست ماڈل نہیں۔",
+  en: "I'm the cultural guide. I can explain an object you open, compare traditions, or help with respectful etiquette. I use a curated knowledge base; connect a live service for current, source-based answers.",
+  zh: "我是文化向导。我可以解释你打开的物件、比较传统，或提供尊重的礼仪建议。我使用精选知识库；连接实时服务可获取最新、有来源的回答。",
+  ne: "म सांस्कृतिक मार्गदर्शक हुँ। तपाईंले खोल्नुभएको वस्तु व्याख्या गर्न, परम्परा तुलना गर्न वा शिष्टाचारमा सहयोग गर्न सक्छु। म संग्रहित ज्ञान आधार प्रयोग गर्छु; ताजा, स्रोतसहितका उत्तरका लागि प्रत्यक्ष सेवा जोड्नुहोस्।",
+  ur: "میں ثقافتی رہنما ہوں۔ میں آپ کی کھولی ہوئی شے کی وضاحت، روایات کا موازنہ یا باادب آداب میں مدد کر سکتا ہوں۔ میں منتخب معلومات استعمال کرتا ہوں؛ تازہ، حوالہ جات کے ساتھ جوابات کے لیے لائیو سروس منسلک کریں۔",
 };
 
 const RESPONSES = {
@@ -59,11 +59,11 @@ function categoryIn(lang, category) {
 }
 
 export class CulturalGuide {
-  constructor({ store, t, aiConfigured, endpoint, csrfToken, elements, onOpenObject, onToast }) {
+  constructor({ store, t, guideLive, endpoint, csrfToken, elements, onOpenObject, onToast }) {
     this.store = store;
     this.t = t;
     this.lang = store.language;
-    this.aiConfigured = Boolean(aiConfigured);
+    this.guideLive = Boolean(guideLive);
     this.endpoint = endpoint;
     this.csrfToken = csrfToken;
     this.onOpenObject = onOpenObject;
@@ -100,14 +100,14 @@ export class CulturalGuide {
   }
 
   updateModeUi() {
-    const demo = !this.aiConfigured;
+    const curated = !this.guideLive;
     if (this.elements.notice) {
-      this.elements.notice.textContent = this.t(demo ? "guide.demoNotice" : "guide.liveNotice");
-      this.elements.notice.classList.toggle("is-live", !demo);
+      this.elements.notice.textContent = this.t(curated ? "guide.curatedNotice" : "guide.liveNotice");
+      this.elements.notice.classList.toggle("is-live", !curated);
     }
     if (this.elements.modeChip) {
       const label = this.elements.modeChip.querySelector("span:last-child");
-      if (label) label.textContent = this.t(demo ? "guide.demo" : "guide.live");
+      if (label) label.textContent = this.t(curated ? "guide.curated" : "guide.live");
     }
   }
 
@@ -173,10 +173,10 @@ export class CulturalGuide {
     if (!text || this.busy) return;
     this.elements.input.value = "";
     this.addMessage("user", text);
-    if (this.aiConfigured) {
+    if (this.guideLive) {
       this.askLive(text);
     } else {
-      this.answerDemo(text);
+      this.answerCurated(text);
     }
   }
 
@@ -258,17 +258,17 @@ export class CulturalGuide {
       const data = await response.json().catch(() => ({}));
       typing.remove();
       if (!response.ok || data.mode !== "live" || !data.reply) {
-        this.aiConfigured = false;
+        this.guideLive = false;
         this.updateModeUi();
-        this.answerDemo(text, { afterLiveFailure: true });
+        this.answerCurated(text, { afterLiveFailure: true });
         return;
       }
       this.addMessage("assistant", data.reply);
     } catch (error) {
       typing.remove();
-      this.aiConfigured = false;
+      this.guideLive = false;
       this.updateModeUi();
-      this.answerDemo(text, { afterLiveFailure: true });
+      this.answerCurated(text, { afterLiveFailure: true });
       this.onToast?.(this.t("guide.error"));
     } finally {
       this.busy = false;
@@ -276,23 +276,23 @@ export class CulturalGuide {
     }
   }
 
-  answerDemo(text, options = {}) {
+  answerCurated(text, options = {}) {
     this.busy = true;
     this.elements.send.disabled = true;
     const typing = this.addTyping();
     window.setTimeout(() => {
       typing.remove();
-      const reply = this.buildDemoReply(text);
+      const reply = this.buildCuratedReply(text);
       this.addMessage("assistant", reply.content, { relatedId: reply.relatedId });
       this.busy = false;
       this.elements.send.disabled = false;
       if (options.afterLiveFailure) {
-        this.addMessage("assistant", this.lang === "en" ? "The live service is unavailable, so I've switched to the curated demo knowledge base." : this.t("guide.demoNotice"));
+        this.addMessage("assistant", this.lang === "en" ? "The live service is unavailable, so I've switched to the curated knowledge base." : this.t("guide.curatedNotice"));
       }
     }, this.store.state.settings.reducedMotion ? 50 : 520);
   }
 
-  buildDemoReply(text) {
+  buildCuratedReply(text) {
     const query = text.toLowerCase();
     const object = this.context.objectId ? OBJECT_MAP[this.context.objectId] : null;
     const lang = this.lang;

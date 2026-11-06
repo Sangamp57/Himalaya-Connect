@@ -328,7 +328,7 @@ class ExploreTests(TestCase):
         self.assertContains(response, 'id="guide-title"')
 
     @patch.dict(os.environ, {"OPENAI_API_KEY": ""}, clear=False)
-    def test_cultural_guide_reports_demo_mode_without_key(self):
+    def test_cultural_guide_reports_curated_mode_without_key(self):
         response = self.client.post(
             reverse("cultural_guide"),
             data=json.dumps({"message": "What is a momo?", "language": "en"}),
@@ -336,7 +336,7 @@ class ExploreTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         body = response.json()
-        self.assertEqual(body["mode"], "demo")
+        self.assertEqual(body["mode"], "curated")
         self.assertIsNone(body["reply"])
 
     def test_cultural_guide_rejects_empty_message(self):

@@ -1,0 +1,29 @@
+{% extends "accounts/_auth_base.html" %}
+
+{% block title %}Enter your code · Himalaya Connect{% endblock %}
+{% block meta_description %}Enter the one-time code sent to your phone to sign in to Himalaya Connect.{% endblock %}
+
+{% block auth_content %}
+<div class="auth-form-head">
+  <p class="eyebrow"><span></span> Check your messages</p>
+  <h1>Enter the<br><em>six-digit code.</em></h1>
+  <p>We sent a code to <strong>{{ phone }}</strong>. It expires in ten minutes.</p>
+</div>
+
+<form method="post" class="auth-form" novalidate>
+  {% csrf_token %}
+  {% for field in form %}
+    {% include "partials/form_field.html" with field=field %}
+  {% endfor %}
+  <button class="button button-dark button-block auth-submit" type="submit">Verify and sign in
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </button>
+</form>
+
+<p class="auth-switch"><a href="{% url 'phone_login' %}">Use a different phone number</a></p>
+
+<div class="auth-footnote">
+  <span class="auth-footnote-mark">☎</span>
+  <p>If the code has expired, request a new one. Never share your code with anyone.</p>
+</div>
+{% endblock %}

@@ -98,7 +98,9 @@ export class SceneManager {
     const elapsed = this.clock.elapsedTime;
     if (this.stage) this.stage.update(elapsed, delta);
     this.controls.update(delta);
-    this.renderer.render(this.scene, this.camera);
+    /* a world may supply its own renderer (e.g. post-processing); otherwise draw directly */
+    if (this.stage && typeof this.stage.render === "function") this.stage.render(this.renderer, this.scene, this.camera, delta);
+    else this.renderer.render(this.scene, this.camera);
   }
 
   buildStage({ scene, lang = this.language, dir = this.dir }) {

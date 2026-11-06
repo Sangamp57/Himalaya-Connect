@@ -7,8 +7,10 @@ from .models import (
     ContactMessage,
     Destination,
     NewsletterSubscriber,
+    PhoneVerification,
     Post,
     Profile,
+    SocialIdentity,
 )
 
 admin.site.site_header = "Himalaya Connect"
@@ -171,6 +173,22 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ("name", "user", "location", "joined_at")
     search_fields = ("display_name", "user__username", "user__email", "bio")
     autocomplete_fields = ("user", "following")
+
+
+@admin.register(SocialIdentity)
+class SocialIdentityAdmin(admin.ModelAdmin):
+    list_display = ("provider", "provider_user_id", "user", "email", "last_login_at")
+    list_filter = ("provider",)
+    search_fields = ("provider_user_id", "email", "user__username", "user__email")
+    autocomplete_fields = ("user",)
+
+
+@admin.register(PhoneVerification)
+class PhoneVerificationAdmin(admin.ModelAdmin):
+    list_display = ("phone", "created_at", "expires_at", "attempts", "used_at")
+    list_filter = ("used_at",)
+    search_fields = ("phone",)
+    readonly_fields = ("phone", "code_hash", "expires_at", "attempts", "used_at", "created_at")
 
 
 @admin.register(NewsletterSubscriber)

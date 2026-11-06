@@ -504,8 +504,10 @@ export class WorldStage {
       emissiveIntensity = 0,
       map = null,
       side = THREE.FrontSide,
+      vertexColors = false,
     } = options;
-    const key = [color, roughness, metalness, flatShading, transparent, opacity, emissive, emissiveIntensity, map?.uuid || "", side].join("|");
+    const em = emissive && emissive.isColor ? emissive.getHexString() : emissive;
+    const key = [color, roughness, metalness, flatShading, transparent, opacity, em, emissiveIntensity, map?.uuid || "", side, vertexColors].join("|");
     if (this.materialCache.has(key)) return this.materialCache.get(key);
     const material = new THREE.MeshStandardMaterial({
       color,
@@ -518,6 +520,7 @@ export class WorldStage {
       emissiveIntensity,
       map,
       side,
+      vertexColors,
     });
     this.materials.add(material);
     if (map) this.textures.add(map);

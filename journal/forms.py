@@ -333,6 +333,44 @@ class NewsletterForm(StyledFormMixin, forms.Form):
         return ""
 
 
+class PhoneLoginForm(StyledFormMixin, forms.Form):
+    phone = forms.CharField(
+        label="Phone number",
+        max_length=32,
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "+977 98XXXXXXXX",
+                "autocomplete": "tel",
+                "inputmode": "tel",
+            }
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._style_fields()
+
+
+class PhoneVerifyForm(StyledFormMixin, forms.Form):
+    code = forms.CharField(
+        label="Six-digit code",
+        max_length=6,
+        min_length=6,
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "123456",
+                "autocomplete": "one-time-code",
+                "inputmode": "numeric",
+                "pattern": "[0-9]{6}",
+            }
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._style_fields()
+
+
 class SearchForm(forms.Form):
     q = forms.CharField(
         required=False,

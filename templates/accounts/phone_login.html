@@ -1,0 +1,29 @@
+{% extends "accounts/_auth_base.html" %}
+
+{% block title %}Sign in with your phone · Himalaya Connect{% endblock %}
+{% block meta_description %}Sign in to Himalaya Connect with a one-time SMS code.{% endblock %}
+
+{% block auth_content %}
+<div class="auth-form-head">
+  <p class="eyebrow"><span></span> Phone sign-in</p>
+  <h1>A code,<br><em>then the journal.</em></h1>
+  <p>Enter the number you use for messages. We will send a six-digit code; no password is needed.</p>
+</div>
+
+<form method="post" class="auth-form" novalidate>
+  {% csrf_token %}
+  {% for field in form %}
+    {% include "partials/form_field.html" with field=field %}
+  {% endfor %}
+  <button class="button button-dark button-block auth-submit" type="submit">Send my code
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </button>
+</form>
+
+<p class="auth-switch"><a href="{% url 'login' %}">Use email or a social account instead</a></p>
+
+<div class="auth-footnote">
+  <span class="auth-footnote-mark">☎</span>
+  <p>Your number is used only to send this sign-in code. In local development, the code appears in the server console and in the message above.</p>
+</div>
+{% endblock %}
