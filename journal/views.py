@@ -18,6 +18,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET, require_POST
 
 from .forms import (
@@ -35,6 +36,7 @@ from .models import (
     Category,
     Comment,
     Destination,
+    ExplorerProgress,
     NewsletterSubscriber,
     PhoneVerification,
     Post,
@@ -63,6 +65,10 @@ from .social_auth import (
 )
 
 User = get_user_model()
+
+# A full explorer save is normally a few kilobytes. Keep the API from becoming
+# a convenient way to store arbitrarily large JSON blobs.
+MAX_EXPLORER_PROGRESS_BYTES = 256 * 1024
 
 
 def _is_ajax(request: HttpRequest) -> bool:
@@ -143,8 +149,42 @@ def explore(request):
     return render(
         request,
         "explore/app.html",
-        {"guide_live": bool(os.environ.get("OPENAI_API_KEY", "").strip())},
+        {
+            "guide_live": bool(os.environ.get("OPENAI_API_KEY", "").strip()),
+            "explorer_authenticated": request.user.is_authenticated,
+        },
     )
+
+
+@login_required
+@require_GET
+@never_cache
+def explorer_progress(request):
+    progress = ExplorerProgress.objects.filter(user=request.user).first()
+    return JsonResponse({"progress": progress.state if progress else None})
+
+
+@login_required
+@require_POST
+def save_explorer_progress(request):
+    if len(request.body) > MAX_EXPLORER_PROGRESS_BYTES:
+        return JsonResponse(
+            {"error": "Progress payload is too large."},
+            status=413,
+        )
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+        if not isinstance(payload, dict):
+            raise ValueError
+        state = payload.get("progress")
+        if not isinstance(state, dict):
+            raise ValueError
+    except (ValueError, TypeError, json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({"error": "Invalid progress payload."}, status=400)
+    progress, _ = ExplorerProgress.objects.update_or_create(
+        user=request.user, defaults={"state": state}
+    )
+    return JsonResponse({"saved": True, "updated_at": progress.updated_at.isoformat()})
 
 
 @require_POST

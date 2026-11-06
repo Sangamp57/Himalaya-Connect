@@ -32,6 +32,42 @@ const t = (key, vars) => translate(store.language, key, vars);
 const sound = new SoundEngine(store.state.settings.sound);
 const ui = new ExploreUI({ store });
 
+// Signed-in players get a portable save game; guests continue using localStorage.
+let serverSaveTimer = null;
+function queueServerSave() {
+  if (app.dataset.authenticated !== "true") return;
+  window.clearTimeout(serverSaveTimer);
+  serverSaveTimer = window.setTimeout(async () => {
+    try {
+      await fetch(app.dataset.progressSaveUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": document.querySelector('meta[name="csrf-token"]')?.content || "",
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ progress: store.state }),
+      });
+    } catch (error) {
+      // localStorage remains the offline fallback
+    }
+  }, 500);
+}
+if (app.dataset.authenticated === "true") {
+  fetch(app.dataset.progressUrl, { credentials: "same-origin" })
+    .then((response) => response.json())
+    .then(({ progress }) => {
+      if (progress) {
+        store.loadServerState(progress);
+        refreshAfterServerLoad();
+      } else {
+        queueServerSave();
+      }
+    })
+    .catch(() => {});
+  store.subscribe(queueServerSave);
+}
+
 const guide = new CulturalGuide({
   store,
   t,
@@ -573,6 +609,25 @@ function closePanel() {
   } else {
     openView("home");
   }
+}
+
+/* A signed-in player's cloud save arrives asynchronously. Refresh whatever is
+   currently on screen so XP, discoveries and settings appear without a reload. */
+function refreshAfterServerLoad() {
+  sound.setEnabled(store.state.settings.sound);
+  ui.syncSettings(store.state.settings);
+  ui.updateTopbar();
+  if (currentView === "home") ui.renderHome();
+  else if (currentView === "world" && WORLDS[currentWorldId]) {
+    ui.renderWorld(WORLDS[currentWorldId], {
+      discovered: store.state.discoveredObjects,
+      selectedId: currentObjectId,
+    });
+  } else if (currentView === "collection") ui.renderCollection(collectionFilter);
+  else if (currentView === "game") ui.renderGame();
+  else if (currentView === "etiquette") ui.renderEtiquette(ui.currentEtiquette, etiquetteChoice);
+  else if (currentView === "bridge") ui.renderBridge(ui.currentBridge, bridgeChoice);
+  refreshSceneLabels();
 }
 
 function parseHash() {

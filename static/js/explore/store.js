@@ -496,6 +496,14 @@ export class ExplorerStore {
     );
   }
 
+  loadServerState(state) {
+    if (!state || typeof state !== "object") return false;
+    this.progress = mergeProgress(defaultProgress(), state);
+    this.persist();
+    this.emit({ type: "server-load" });
+    return true;
+  }
+
   reset() {
     this.progress = defaultProgress();
     this.touchStreak();

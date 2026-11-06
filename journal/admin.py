@@ -6,12 +6,15 @@ from .models import (
     Comment,
     ContactMessage,
     Destination,
+    ExplorerProgress,
     NewsletterSubscriber,
     PhoneVerification,
     Post,
     Profile,
     SocialIdentity,
 )
+
+admin.site.register(ExplorerProgress)
 
 admin.site.site_header = "Himalaya Connect"
 admin.site.site_title = "Himalaya Connect admin"
