@@ -1676,8 +1676,9 @@ body:not(.has-overlay-header) .user-menu summary,
 
 .featured-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(330px, 0.82fr);
+  grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.85fr);
   grid-template-rows: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
   gap: 24px;
 }
 
@@ -1873,13 +1874,14 @@ body:not(.has-overlay-header) .user-menu summary,
 }
 
 .story-card--feature .story-card-media {
-  flex: 1;
-  min-height: 440px;
-  aspect-ratio: auto;
+  flex: 0 0 auto;
+  min-height: 0;
+  aspect-ratio: 16 / 10;
 }
 
 .story-card--feature .story-card-body {
-  padding: 32px 34px 28px;
+  flex: 1;
+  padding: 26px 30px 24px;
 }
 
 .story-card--feature h3 {
